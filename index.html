@@ -208,6 +208,11 @@ tailwind.config = {
     #tabContent .max-w-lg { max-width: 1200px !important; }
   }
 
+  /* Keep nav bars at fixed size regardless of font scaling */
+  .bottom-bar { font-size: 16px; }
+  #appHeader { font-size: 16px; }
+  .desktop-nav { font-size: 16px; }
+
   /* Desktop nav hidden by default (shown via media query) */
   .desktop-nav { display: none; }
 </style>
@@ -224,7 +229,10 @@ tailwind.config = {
         <h1 class="font-heading font-800 text-xl leading-tight">Alps to Tuscany</h1>
         <p class="text-xs text-gray-500 dark:text-gray-400 font-body">Family Trip Hub</p>
       </div>
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-1">
+        <button onclick="cycleFontSize()" class="tap flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="Change font size" title="Font size">
+          <span id="fontSizeIcon" class="font-heading font-700 text-sm">A</span>
+        </button>
         <button id="darkToggleHeader" onclick="toggleDarkMode()" class="tap flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="Toggle dark mode">
           <span id="darkIconHeader" class="text-xl">🌙</span>
         </button>
@@ -239,6 +247,9 @@ tailwind.config = {
     </button>
     <button onclick="switchTab('days')" class="desktop-tab-btn flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-heading font-600 transition hover:bg-gray-100 dark:hover:bg-gray-700 text-left w-full" data-tab="days">
       <span class="text-lg">🗺</span> All Days
+    </button>
+    <button onclick="switchTab('packing')" class="desktop-tab-btn flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-heading font-600 transition hover:bg-gray-100 dark:hover:bg-gray-700 text-left w-full" data-tab="packing">
+      <span class="text-lg">🧳</span> Packing List
     </button>
     <button onclick="switchTab('notes')" class="desktop-tab-btn flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-heading font-600 transition hover:bg-gray-100 dark:hover:bg-gray-700 text-left w-full" data-tab="notes">
       <span class="text-lg">📝</span> Notes & Lists
@@ -268,6 +279,11 @@ tailwind.config = {
         <!-- Day Cards -->
         <div id="dayCards" class="flex flex-col gap-4 mt-1"></div>
       </div>
+    </div>
+
+    <!-- Tab: Packing List -->
+    <div id="tab-packing" class="tab-panel">
+      <div class="max-w-lg mx-auto px-4 py-4" id="packingContent"></div>
     </div>
 
     <!-- Tab: Notes & Lists -->
@@ -307,6 +323,10 @@ tailwind.config = {
     <button onclick="switchTab('days')" class="tab-btn tap flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition" data-tab="days">
       <span class="text-xl">🗺</span>
       <span class="text-xs font-heading font-600">Days</span>
+    </button>
+    <button onclick="switchTab('packing')" class="tab-btn tap flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition" data-tab="packing">
+      <span class="text-xl">🧳</span>
+      <span class="text-xs font-heading font-600">Pack</span>
     </button>
     <button onclick="switchTab('notes')" class="tab-btn tap flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition" data-tab="notes">
       <span class="text-xl">📝</span>
@@ -540,27 +560,82 @@ const CATEGORIES = [
   { id: 'other', label: '📱 Other', color: 'cat-other' }
 ];
 
+const DEFAULT_PACKING = [
+  { cat: '📄 Documents & Money', items: [
+    'Passports (all family members)',
+    'Travel insurance docs (printed + digital)',
+    'International driving permit',
+    'Printed hotel confirmations (backup)',
+    'Rental car reservation (Munich pickup → Florence drop-off)',
+    'Credit/debit cards — notify bank of travel dates',
+    'Cash — some euros for tolls & small shops',
+    'Copies of passports (separate from originals)'
+  ]},
+  { cat: '📱 Tech & Electronics', items: [
+    'Phone chargers + cables (USB-C / Lightning)',
+    'Portable battery pack (charged!)',
+    'EU power adapters (2x — Type C/F)',
+    'Car phone mount',
+    'Camera + memory cards',
+    'Kids\' tablets + headphones',
+    'Download offline Google Maps (Austria + Italy)',
+    'Download movies/shows for Day 5 big drive',
+    'AirTags / Tile trackers for luggage'
+  ]},
+  { cat: '👕 Clothing', items: [
+    'Comfortable walking shoes (everyone)',
+    'Rain jackets (March weather!)',
+    'Layers — Austria mountains are cold!',
+    'Sunglasses',
+    'Hats / sun protection',
+    'Swimsuits — Das Edelweiss waterpark + hotel pools',
+    'One nice outfit for dinners',
+    'Pajamas',
+    'Socks & underwear (11 days worth)'
+  ]},
+  { cat: '🧴 Toiletries & Health', items: [
+    'Sunscreen',
+    'Toothbrushes & toothpaste',
+    'Prescription medications',
+    'Kids\' medicine (Tylenol, Benadryl, band-aids)',
+    'Motion sickness remedies (for mountain roads)',
+    'Hand sanitizer',
+    'Lip balm (dry alpine air)',
+    'Travel-size shampoo / body wash'
+  ]},
+  { cat: '👶 Kids Essentials', items: [
+    'Comfort items (stuffed animals, blankets)',
+    'Activity bag for flights — coloring books, stickers',
+    'Snacks for Day 5 big drive',
+    'Reusable water bottles (everyone)',
+    'Small backpack for each kid (day trips)',
+    'Card games / travel games',
+    'Favorite snacks from home'
+  ]},
+  { cat: '🚗 Car & Road Trip', items: [
+    'Buy Austria Vignette (motorway sticker) online',
+    'Snacks & water for car',
+    'Trash bags for car',
+    'Paper towels / wet wipes',
+    'Neck pillows for kids',
+    'USB car charger',
+    'Printed ZTL rules for Italy'
+  ]},
+  { cat: '📋 Pre-Trip To-Do', items: [
+    'Book Salzburg hotel',
+    'Book Val d\'Orcia hotel',
+    'Book Verona hotel',
+    'Book Florence airport hotel',
+    'Reserve rental car',
+    'Notify bank of travel dates',
+    'Check Arena di Verona hours',
+    'Confirm Das Edelweiss reservation',
+    'Set GPS to avoid city centers in Italy',
+    'Save Parcheggio Cittadella (Verona) in Maps'
+  ]}
+];
+
 const DEFAULT_CHECKLISTS = {
-  packing: {
-    title: '🧳 Packing List',
-    items: [
-      { text: 'Passports (all family members)', checked: false },
-      { text: 'EU power adapters (2x)', checked: false },
-      { text: 'Car phone mount', checked: false },
-      { text: 'Kids\' tablets + headphones', checked: false },
-      { text: 'Download offline Google Maps (Austria + Italy)', checked: false },
-      { text: 'Snacks for Day 5 big drive', checked: false },
-      { text: 'Comfort items for kids (stuffed animals, blankets)', checked: false },
-      { text: 'Sunscreen + hats', checked: false },
-      { text: 'Comfortable walking shoes (everyone)', checked: false },
-      { text: 'Rain jackets (March weather!)', checked: false },
-      { text: 'Camera / phone charger / portable battery', checked: false },
-      { text: 'Printed hotel confirmations (backup)', checked: false },
-      { text: 'International driving permit (if needed)', checked: false },
-      { text: 'Travel insurance docs', checked: false },
-      { text: 'Kids\' activity bag for flights', checked: false }
-    ]
-  },
   pretip: {
     title: '📋 Pre-Trip To-Do',
     items: [
@@ -615,7 +690,9 @@ function getDefaultState() {
     expandedDays: [],
     activeTab: 'today',
     activeNotesTab: 'journal',
-    budget: 15000
+    budget: 15000,
+    fontSize: 0,
+    packingList: initPackingList()
   };
 }
 
@@ -633,6 +710,8 @@ function loadState() {
       if (state.activeTab === undefined) state.activeTab = 'today';
       if (state.activeNotesTab === undefined) state.activeNotesTab = 'journal';
       if (state.budget === undefined) state.budget = 15000;
+      if (state.fontSize === undefined) state.fontSize = 0;
+      if (!state.packingList) state.packingList = initPackingList();
     } else {
       state = getDefaultState();
     }
@@ -718,6 +797,30 @@ function toggleDarkMode() {
 }
 
 // ============================================================
+// FONT SIZE
+// ============================================================
+const FONT_SIZES = [
+  { level: 0, scale: 100, label: 'A', desc: 'Default' },
+  { level: 1, scale: 115, label: 'A+', desc: 'Large' },
+  { level: 2, scale: 130, label: 'A++', desc: 'Extra Large' }
+];
+
+function applyFontSize() {
+  const idx = state.fontSize || 0;
+  const size = FONT_SIZES[idx] || FONT_SIZES[0];
+  document.documentElement.style.fontSize = size.scale + '%';
+  const icon = document.getElementById('fontSizeIcon');
+  if (icon) icon.textContent = size.label;
+}
+
+function cycleFontSize() {
+  state.fontSize = ((state.fontSize || 0) + 1) % FONT_SIZES.length;
+  applyFontSize();
+  saveState();
+  renderSettings();
+}
+
+// ============================================================
 // TAB SWITCHING
 // ============================================================
 function isDesktop() {
@@ -750,6 +853,7 @@ function switchTab(tab) {
   });
   if (tab === 'today') renderToday();
   if (tab === 'days') renderDays();
+  if (tab === 'packing') renderPacking();
   if (tab === 'notes') renderNotes();
   if (tab === 'settings') renderSettings();
 }
@@ -904,6 +1008,125 @@ function saveTodayNote(dayNum, text) {
     state.notes.push({ id: 'today-' + dayNum, text, day: dayNum, timestamp: new Date().toISOString() });
   }
   saveState();
+}
+
+// ============================================================
+// RENDER: PACKING LIST
+// ============================================================
+function initPackingList() {
+  return DEFAULT_PACKING.map(cat => ({
+    cat: cat.cat,
+    items: cat.items.map(text => ({ text, checked: false })),
+    customItems: []
+  }));
+}
+
+function renderPacking() {
+  const el = document.getElementById('packingContent');
+  const list = state.packingList;
+  const totalItems = list.reduce((s, c) => s + c.items.length + c.customItems.length, 0);
+  const checkedItems = list.reduce((s, c) => s + c.items.filter(i => i.checked).length + c.customItems.filter(i => i.checked).length, 0);
+  const pct = totalItems > 0 ? Math.round((checkedItems / totalItems) * 100) : 0;
+  const allDone = pct === 100;
+
+  el.innerHTML = `
+    <div class="flex justify-between items-center mb-2">
+      <h2 class="font-heading font-700 text-xl">🧳 Packing List</h2>
+      <span class="text-sm font-heading font-600 ${allDone ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}">${checkedItems}/${totalItems}</span>
+    </div>
+    <div class="progress-track mb-4"><div class="progress-fill ${allDone ? 'bg-green-500' : 'bg-teal-500'}" style="width:${pct}%"></div></div>
+    ${allDone ? '<div class="text-center py-3 mb-4 bg-green-50 dark:bg-green-900/20 rounded-xl"><p class="font-heading font-700 text-green-600 dark:text-green-400">All packed! Ready to go!</p></div>' : ''}
+    <div class="space-y-4">
+      ${list.map((cat, ci) => renderPackingCategory(cat, ci)).join('')}
+    </div>
+    <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700 flex gap-3">
+      <button onclick="uncheckAllPacking()" class="tap flex-1 py-3 rounded-xl border border-gray-200 dark:border-gray-700 font-heading font-600 text-sm transition hover:bg-gray-100 dark:hover:bg-gray-800">Uncheck All</button>
+      <button onclick="resetPacking()" class="tap flex-1 py-3 rounded-xl bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 font-heading font-600 text-sm transition hover:bg-red-100 dark:hover:bg-red-900/50">Reset List</button>
+    </div>`;
+}
+
+function renderPackingCategory(cat, ci) {
+  const allItems = [...cat.items, ...cat.customItems];
+  const checked = allItems.filter(i => i.checked).length;
+  const total = allItems.length;
+  const pct = total > 0 ? Math.round((checked / total) * 100) : 0;
+  const isDone = checked === total && total > 0;
+
+  return `<div class="glass rounded-2xl overflow-hidden">
+    <button onclick="togglePackingCat(${ci})" class="w-full tap flex items-center justify-between p-4 text-left">
+      <div class="flex items-center gap-2">
+        <span class="font-heading font-700 text-sm ${isDone ? 'line-through text-gray-400' : ''}">${escHtml(cat.cat)}</span>
+        ${isDone ? '<span class="text-green-500 text-xs">✅</span>' : ''}
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-xs text-gray-400">${checked}/${total}</span>
+        <span class="chevron text-xs text-gray-400" id="packChev-${ci}">▼</span>
+      </div>
+    </button>
+    <div id="packBody-${ci}" class="px-4 pb-4 hidden">
+      <div class="progress-track mb-3"><div class="progress-fill ${isDone ? 'bg-green-500' : 'bg-teal-500'}" style="width:${pct}%"></div></div>
+      <div class="space-y-1.5">
+        ${cat.items.map((item, ii) => `<div class="flex items-center gap-3 tap py-1" onclick="togglePackingItem(${ci},${ii},'items')">
+          <div class="check-box ${item.checked ? 'checked' : ''}"></div>
+          <span class="text-sm ${item.checked ? 'line-through text-gray-400' : ''} flex-1">${escHtml(item.text)}</span>
+        </div>`).join('')}
+        ${cat.customItems.map((item, ii) => `<div class="flex items-center gap-3 tap py-1" onclick="togglePackingItem(${ci},${ii},'customItems')">
+          <div class="check-box ${item.checked ? 'checked' : ''}"></div>
+          <span class="text-sm ${item.checked ? 'line-through text-gray-400' : ''} flex-1">${escHtml(item.text)}</span>
+          <button onclick="event.stopPropagation();removePackingItem(${ci},${ii})" class="text-red-300 hover:text-red-500 text-xs p-1 transition" aria-label="Remove">✕</button>
+        </div>`).join('')}
+      </div>
+      <div class="flex gap-2 mt-3">
+        <input type="text" id="packAdd-${ci}" class="flex-1 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-400" placeholder="Add item..." onkeydown="if(event.key==='Enter')addPackingItem(${ci})">
+        <button onclick="addPackingItem(${ci})" class="tap px-4 py-2 bg-teal-600 text-white rounded-lg text-sm font-600 hover:bg-teal-700 transition">Add</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function togglePackingCat(ci) {
+  const body = document.getElementById('packBody-' + ci);
+  const chev = document.getElementById('packChev-' + ci);
+  if (body) body.classList.toggle('hidden');
+  if (chev) chev.classList.toggle('open');
+}
+
+function togglePackingItem(ci, ii, which) {
+  state.packingList[ci][which][ii].checked = !state.packingList[ci][which][ii].checked;
+  saveState();
+  renderPacking();
+}
+
+function addPackingItem(ci) {
+  const input = document.getElementById('packAdd-' + ci);
+  const text = input.value.trim();
+  if (!text) return;
+  state.packingList[ci].customItems.push({ text, checked: false });
+  input.value = '';
+  saveState();
+  renderPacking();
+}
+
+function removePackingItem(ci, ii) {
+  state.packingList[ci].customItems.splice(ii, 1);
+  saveState();
+  renderPacking();
+}
+
+function uncheckAllPacking() {
+  state.packingList.forEach(cat => {
+    cat.items.forEach(i => i.checked = false);
+    cat.customItems.forEach(i => i.checked = false);
+  });
+  saveState();
+  renderPacking();
+}
+
+function resetPacking() {
+  if (!confirm('Reset packing list to defaults? Custom items will be removed.')) return;
+  state.packingList = initPackingList();
+  saveState();
+  renderPacking();
 }
 
 // ============================================================
@@ -1494,15 +1717,26 @@ function renderSettings() {
   el.innerHTML = `
     <h2 class="font-heading font-700 text-xl mb-4">⚙️ Settings</h2>
 
-    <!-- Dark Mode -->
-    <div class="glass rounded-2xl p-4 mb-4 flex items-center justify-between">
-      <div>
-        <p class="font-heading font-600 text-sm">🌙 Dark Mode</p>
-        <p class="text-xs text-gray-400">Essential for nighttime hotel use</p>
+    <!-- Dark Mode & Font Size -->
+    <div class="glass rounded-2xl p-4 mb-4 space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="font-heading font-600 text-sm">🌙 Dark Mode</p>
+          <p class="text-xs text-gray-400">Essential for nighttime hotel use</p>
+        </div>
+        <button onclick="toggleDarkMode()" class="tap w-14 h-8 rounded-full transition ${state.darkMode ? 'bg-teal-600' : 'bg-gray-300'} relative">
+          <span class="absolute top-1 ${state.darkMode ? 'right-1' : 'left-1'} w-6 h-6 bg-white rounded-full shadow transition-all"></span>
+        </button>
       </div>
-      <button onclick="toggleDarkMode()" class="tap w-14 h-8 rounded-full transition ${state.darkMode ? 'bg-teal-600' : 'bg-gray-300'} relative">
-        <span class="absolute top-1 ${state.darkMode ? 'right-1' : 'left-1'} w-6 h-6 bg-white rounded-full shadow transition-all"></span>
-      </button>
+      <div class="border-t border-gray-200 dark:border-gray-700 pt-4 flex items-center justify-between">
+        <div>
+          <p class="font-heading font-600 text-sm">🔤 Font Size</p>
+          <p class="text-xs text-gray-400">${FONT_SIZES[state.fontSize || 0].desc}</p>
+        </div>
+        <div class="flex items-center gap-1">
+          ${FONT_SIZES.map((f, i) => `<button onclick="state.fontSize=${i};applyFontSize();saveState();renderSettings();" class="tap w-10 h-10 rounded-xl font-heading font-700 text-sm transition ${(state.fontSize || 0) === i ? 'bg-teal-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300'}">${f.label}</button>`).join('')}
+        </div>
+      </div>
     </div>
 
     <!-- Trip Stats -->
@@ -1601,6 +1835,7 @@ function clearAllData() {
 function init() {
   loadState();
   applyDarkMode();
+  applyFontSize();
   switchTab(state.activeTab || 'today');
 }
 
