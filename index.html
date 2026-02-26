@@ -117,6 +117,17 @@ tailwind.config = {
   .dark .cat-parking { background: #312e81; color: #a5b4fc; }
   .dark .cat-other { background: #334155; color: #94a3b8; }
 
+  /* Alternative cities explorer */
+  .alt-explorer { border: 2px dashed rgba(194,65,12,0.3); background: linear-gradient(135deg, rgba(255,237,213,0.4), rgba(254,215,170,0.2)); }
+  .dark .alt-explorer { border-color: rgba(251,146,60,0.3); background: linear-gradient(135deg, rgba(124,45,18,0.3), rgba(154,52,18,0.15)); }
+  .alt-city-card { border: 1px solid rgba(194,65,12,0.2); transition: all 0.3s ease; cursor: pointer; }
+  .alt-city-card:hover { border-color: rgba(194,65,12,0.5); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  .dark .alt-city-card { border-color: rgba(251,146,60,0.2); }
+  .dark .alt-city-card:hover { border-color: rgba(251,146,60,0.5); }
+  .alt-city-card.expanded { border-color: #c2410c; background: rgba(255,237,213,0.3); }
+  .dark .alt-city-card.expanded { border-color: #fb923c; background: rgba(124,45,18,0.3); }
+  .alt-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 999px; font-size: 0.7rem; font-weight: 600; background: linear-gradient(135deg, #c2410c, #9a3412); color: white; }
+
   /* Modal overlay */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; display: flex; align-items: flex-end; justify-content: center; }
   .modal-content { width: 100%; max-width: 500px; max-height: 85vh; overflow-y: auto; border-radius: 16px 16px 0 0; padding: 24px; padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)); }
@@ -251,6 +262,9 @@ tailwind.config = {
     <button onclick="switchTab('days')" class="desktop-tab-btn flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-heading font-600 transition hover:bg-gray-100 dark:hover:bg-gray-700 text-left w-full" data-tab="days">
       <span class="text-lg">🗺</span> All Days
     </button>
+    <button onclick="switchTab('hotels')" class="desktop-tab-btn flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-heading font-600 transition hover:bg-gray-100 dark:hover:bg-gray-700 text-left w-full" data-tab="hotels">
+      <span class="text-lg">🏨</span> Hotels
+    </button>
     <button onclick="switchTab('packing')" class="desktop-tab-btn flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-heading font-600 transition hover:bg-gray-100 dark:hover:bg-gray-700 text-left w-full" data-tab="packing">
       <span class="text-lg">🧳</span> Packing List
     </button>
@@ -282,6 +296,11 @@ tailwind.config = {
         <!-- Day Cards -->
         <div id="dayCards" class="flex flex-col gap-4 mt-1"></div>
       </div>
+    </div>
+
+    <!-- Tab: Hotels -->
+    <div id="tab-hotels" class="tab-panel">
+      <div class="max-w-lg mx-auto px-4 py-4" id="hotelsContent"></div>
     </div>
 
     <!-- Tab: Packing List -->
@@ -326,6 +345,10 @@ tailwind.config = {
     <button onclick="switchTab('days')" class="tab-btn tap flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition" data-tab="days">
       <span class="text-xl">🗺</span>
       <span class="text-xs font-heading font-600">Days</span>
+    </button>
+    <button onclick="switchTab('hotels')" class="tab-btn tap flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition" data-tab="hotels">
+      <span class="text-xl">🏨</span>
+      <span class="text-xs font-heading font-600">Hotels</span>
     </button>
     <button onclick="switchTab('packing')" class="tab-btn tap flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition" data-tab="packing">
       <span class="text-xl">🧳</span>
@@ -372,7 +395,9 @@ const DAYS = [
     hotels: [
       { name: 'Hotel Sacher Salzburg', url: 'https://www.sacher.com/hotel-sacher-salzburg/', why: 'Grand historic luxury on the Salzach River. Famous Sacher Torte — kids will devour it!', parking: 'Valet available', price: '€€€€', perk: 'Spacious rooms, riverside views' },
       { name: 'Sheraton Grand Salzburg', url: 'https://www.marriott.com/hotels/travel/szggs-sheraton-grand-salzburg/', why: 'Best for families — large indoor pool, multiple restaurants, rooms with sofa beds.', parking: 'Hotel garage', price: '€€€', perk: 'Indoor pool, kids menu, sofa beds' },
-      { name: 'Hotel Bristol Salzburg', url: 'https://www.bristol-salzburg.at/en/', why: 'Family-run 3 generations, 5-star, steps from Mirabell Palace. Award-winning restaurant.', parking: 'Garage ~300m (~€30/night)', price: '€€€', perk: 'Central location, elegant rooms' }
+      { name: 'Hotel Bristol Salzburg', url: 'https://www.bristol-salzburg.at/en/', why: 'Family-run 3 generations, 5-star, steps from Mirabell Palace. Award-winning restaurant.', parking: 'Garage ~300m (~€30/night)', price: '€€€', perk: 'Central location, elegant rooms' },
+      { name: 'IMLAUER HOTEL PITTER', url: 'https://imlauer.com/hotel-pitter-salzburg/?lang=en', why: 'Classic 4-star on Rainerstraße since 1864. Walking distance to Old Town, huge breakfast buffet kids love.', parking: 'Hotel garage available (~€25/night)', price: '€€€', perk: 'Central, spacious family rooms' },
+      { name: 'Hotel Goldgasse', url: 'https://www.hotelgoldgasse.at/en/', why: 'Boutique design hotel IN the heart of Old Town. Each room uniquely themed — kids love picking their favorite!', parking: 'Public garage nearby (~€28/night)', price: '€€€', perk: 'Old Town location, unique design' }
     ]
   },
   {
@@ -439,6 +464,59 @@ const DAYS = [
       'Brenner → Val d\'Orcia (~4 hrs): A22 south through Trentino, A1 toward Siena',
       'Total: ~5 hours driving + stops'
     ],
+    midwayStops: [
+      {
+        city: 'Bolzano (Bozen)', emoji: '🏔️', driveFromPrev: '~2.5 hrs from Grossarl',
+        driveToNext: '~3.5 hrs to Val d\'Orcia',
+        pitch: 'Where Austria meets Italy! Bilingual city with Dolomite views, amazing food markets, and Ötzi the Iceman — a 5,300-year-old mummy.',
+        whyStop: 'Splits the drive perfectly. Ötzi museum is incredible for kids. Mix of Austrian & Italian culture — strudel AND gelato! Cable car to Renon for mountain views.',
+        highlights: [
+          { name: 'Ötzi the Iceman Museum', desc: 'South Tyrol Museum — see a 5,300-year-old mummy and all his belongings. Kids are fascinated!' },
+          { name: 'Funivia del Renon', desc: 'Cable car from city center to Renon/Ritten — panoramic Dolomite views in 12 minutes. Earth pyramids hike at the top.' },
+          { name: 'Piazza Walther & Market', desc: 'Beautiful main square. Daily fruit market on Piazza delle Erbe — sample speck, apples, strudel, local cheeses.' }
+        ],
+        hotels: [
+          { name: 'Parkhotel Laurin', url: 'https://www.laurin.it/en/', price: '€€€€', desc: 'Art Nouveau gem in the city center. Pool, garden, gourmet restaurant. Elegant family rooms.' },
+          { name: 'Hotel Greif', url: 'https://www.greif.it/en/', price: '€€€', desc: 'Design hotel on Piazza Walther. Each room designed by a different artist. Rooftop bar.' },
+          { name: 'Stadt Hotel Città', url: 'https://www.hotelcitta.info/en/', price: '€€', desc: 'Central, modern, great value. Steps from Ötzi museum and piazza. Family rooms available.' }
+        ],
+        ztlNote: '⚠️ ZTL in old town — park at Parking Walther (underground, central) or P7 near train station.'
+      },
+      {
+        city: 'Trento', emoji: '🔬', driveFromPrev: '~3 hrs from Grossarl',
+        driveToNext: '~3 hrs to Val d\'Orcia',
+        pitch: 'Renaissance jewel with the spectacular MUSE science museum — one of Italy\'s best interactive museums for families.',
+        whyStop: 'MUSE science museum is world-class and incredibly kid-friendly. Beautiful frescoed buildings. Buonconsiglio Castle has medieval frescoes kids love. Great food scene.',
+        highlights: [
+          { name: 'MUSE Science Museum', desc: 'Renzo Piano-designed interactive museum. Dinosaurs, glacier exhibits, tropical greenhouse, kids\' zones. Best family museum in northern Italy!' },
+          { name: 'Buonconsiglio Castle', desc: 'Largest castle complex in Trentino. Medieval frescoes of the months — vivid scenes of daily life 700 years ago.' },
+          { name: 'Piazza Duomo', desc: 'Stunning frescoed facades, Neptune fountain, and the Cathedral. Charming cafes for aperitivo.' }
+        ],
+        hotels: [
+          { name: 'Grand Hotel Trento', url: 'https://www.grandhoteltrento.com/en/', price: '€€€', desc: '4-star in Art Nouveau building. Central, elegant, great breakfast. Steps from Piazza Duomo.' },
+          { name: 'Hotel Aquila d\'Oro', url: 'https://www.aquiladoro.it/en/', price: '€€€', desc: 'Boutique hotel in a 16th-century building. Heart of old town, charming rooms, excellent restaurant.' },
+          { name: 'NH Trento', url: 'https://www.nh-hotels.com/en/hotel/nh-trento', price: '€€', desc: 'Modern 4-star near MUSE museum. Pool, parking, family-friendly. Great base for the science museum.' }
+        ],
+        ztlNote: '⚠️ ZTL in center — park at Autosilo Buonconsiglio or P1 Ex-Zuffo (both near center, well-signed).'
+      },
+      {
+        city: 'Lake Garda — Riva del Garda', emoji: '⛵', driveFromPrev: '~3.5 hrs from Grossarl',
+        driveToNext: '~3.5 hrs to Val d\'Orcia',
+        pitch: 'Northern tip of Italy\'s largest lake — dramatic cliffs, crystal water, and a relaxed lakeside vibe. Perfect overnight reset.',
+        whyStop: 'Gorgeous lakeside walks after a long drive. Kids can splash at the beach. Climb the Bastione fortress for sunset views. Fresh lake fish for dinner!',
+        highlights: [
+          { name: 'Riva del Garda Waterfront', desc: 'Stroll the palm-lined promenade. Kids play at the pebble beach. Dramatic mountain backdrop.' },
+          { name: 'Bastione Fortress', desc: '15-minute walk up for panoramic lake views — especially magical at sunset. Free to visit.' },
+          { name: 'MAG Museum', desc: 'Art & history in the lakeside Rocca fortress. Rotating exhibits, beautiful setting.' }
+        ],
+        hotels: [
+          { name: 'Hotel Du Lac et Du Parc', url: 'https://www.dulacetduparc.com/en/', price: '€€€€', desc: 'Grand 4-star resort with thermal pools, huge park, lake views. Multiple restaurants, kids\' activities.' },
+          { name: 'Lido Palace', url: 'https://www.lido-palace.it/en/', price: '€€€€€', desc: 'Belle Époque 5-star luxury. Infinity pool, world-class spa, lake-view suites. Pure indulgence.' },
+          { name: 'Hotel Sole', url: 'https://www.hotelsole.net/en/', price: '€€', desc: 'Right on the harbor with lake-view terrace. Charming rooms, great restaurant, family-friendly.' }
+        ],
+        ztlNote: '✅ No ZTL in Riva — easy parking at the lakefront lots or hotel parking.'
+      }
+    ],
     destinations: [
       { name: 'Innsbruck Old Town', url: 'https://www.innsbruck.info/en/', desc: 'Quick coffee & leg stretch. Golden Roof (Goldenes Dachl). Mountains tower over the city!', star: true },
       { name: 'Val d\'Orcia UNESCO Site', url: 'https://www.italia.it/en/tuscany/things-to-do/val-orcia', desc: 'Rolling hills, cypress trees, medieval villages.' }
@@ -449,6 +527,59 @@ const DAYS = [
       { name: 'Tenuta Santo Pietro', url: 'https://www.tenutasantopietro.com/', why: 'Family-friendly luxury agriturismo. Cooking classes, truffle hunting!', parking: 'Free on-site', price: '€€€', perk: 'Cooking classes, farm animals, truffle hunts' },
       { name: 'Castello Banfi – Il Borgo', url: 'https://www.castellobanfiwineresort.it/en/', why: 'Relais & Chateaux wine estate near Montalcino. Historic castle.', parking: 'Estate parking', price: '€€€€', perk: 'Castle tours, vineyard walks' },
       { name: 'L\'Olmo', url: 'https://www.olmopienza.it/', why: 'Boutique 4-star just outside Pienza, only 8 rooms. Pool, rolling fields.', parking: 'Free on-site', price: '€€€', perk: 'Intimate, quiet, pool' }
+    ],
+    alternatives: [
+      {
+        city: 'Chianti', emoji: '🍷', driveFromPrev: '~4.5 hrs from Grossarl',
+        pitch: 'Wine country between Florence & Siena — rolling vineyards, medieval castles, and the most charming hill villages in Tuscany.',
+        whySwap: 'Closer to Florence for the final days. More wine-focused. Greve in Chianti is a foodie paradise.',
+        highlights: [
+          { name: 'Greve in Chianti', desc: 'Heart of Chianti Classico — triangular piazza, Saturday market, wine tastings everywhere.' },
+          { name: 'Castello di Verrazzano', desc: 'Historic vineyard estate — wine + olive oil tastings with stunning views. Family-friendly tours.' },
+          { name: 'Radda in Chianti', desc: 'Perfectly preserved medieval village on a hilltop ridge. Tiny lanes, artisan shops, incredible views.' }
+        ],
+        hotels: [
+          { name: 'Castello di Spaltenna', url: 'https://www.spaltenna.it/', price: '€€€€', desc: 'Medieval castle turned luxury hotel in Gaiole. Pool, spa, vineyard views.' },
+          { name: 'Villa Bordoni', url: 'https://www.villabordoni.com/', price: '€€€', desc: 'Boutique villa in Greve. Excellent restaurant, infinity pool, cooking classes.' },
+          { name: 'Borgo San Felice', url: 'https://www.borgosanfelice.com/en/index', price: '€€€€', desc: 'Relais & Chateaux resort in a restored medieval hamlet. Pool, spa, Michelin dining, vineyard views.' },
+          { name: 'Villa Le Barone', url: 'https://www.villalebarone.com/', price: '€€€', desc: 'Charming 28-room villa in Panzano. Pool with panoramic views, great breakfast with local products.' }
+        ],
+        ztlNote: '✅ Most Chianti villages have no ZTL — park near town centers easily.'
+      },
+      {
+        city: 'Cortona', emoji: '🌅', driveFromPrev: '~5 hrs from Grossarl',
+        pitch: 'Ancient Etruscan hilltop city made famous by "Under the Tuscan Sun." Stunning Lake Trasimeno views.',
+        whySwap: 'More off-the-beaten-path. Fewer crowds than Val d\'Orcia. Amazing sunsets over the valley. Close to Umbria too!',
+        highlights: [
+          { name: 'Piazza della Repubblica', desc: 'Main square with cafes, gelaterias, and the stunning Palazzo Comunale steps.' },
+          { name: 'Fortezza del Girifalco', desc: 'Medici fortress at the top — panoramic views of Lake Trasimeno and the entire valley.' },
+          { name: 'MAEC Museum', desc: 'Etruscan artifacts spanning 3,000 years — the bronze chandelier is extraordinary.' }
+        ],
+        hotels: [
+          { name: 'Il Falconiere', url: 'https://www.ilfalconiere.it/en/', price: '€€€€', desc: 'Relais & Chateaux with Michelin-star dining. Pool, vineyard, 17th-century villa.' },
+          { name: 'Hotel San Michele', url: 'https://www.hotelsanmichele.net/', price: '€€', desc: 'Renaissance palazzo in the heart of town. Charming rooms, unbeatable location.' },
+          { name: 'Villa Marsili', url: 'https://www.villamarsili.net/', price: '€€€', desc: '18th-century palace in town center. Elegant rooms, panoramic terrace with sweeping valley views.' },
+          { name: 'Relais La Corte dei Papi', url: 'https://www.lacortedeipapi.com/en/', price: '€€€€', desc: 'Luxury countryside retreat with pool and spa. Vineyard setting, just 5 min drive to Cortona center.' }
+        ],
+        ztlNote: '⚠️ ZTL in historic center — park at Parcheggio Spirale (outside walls, escalator up to town).'
+      },
+      {
+        city: 'Siena', emoji: '🏇', driveFromPrev: '~5 hrs from Grossarl',
+        pitch: 'Italy\'s best-preserved medieval city. The shell-shaped Piazza del Campo is one of Europe\'s greatest squares.',
+        whySwap: 'More "city" feel than countryside. The Duomo is jaw-dropping. Great restaurants and gelaterias. Kids love the Palio stories.',
+        highlights: [
+          { name: 'Piazza del Campo', desc: 'One of the world\'s most beautiful squares — shell-shaped, tilted, surrounded by medieval palaces. Site of the famous Palio horse race.' },
+          { name: 'Siena Cathedral (Duomo)', desc: 'Striped marble masterpiece. The floor mosaics alone are worth the visit. Climb to the panoramic terrace!' },
+          { name: 'Torre del Mangia', desc: '88m tower overlooking Piazza del Campo — 400 steps to the top for incredible views. Kids count the steps!' }
+        ],
+        hotels: [
+          { name: 'Grand Hotel Continental', url: 'https://www.royaldemeure.com/grand-hotel-continental-siena/', price: '€€€€', desc: 'Only 5-star in Siena\'s center. UNESCO heritage building with frescoed ceilings.' },
+          { name: 'Hotel Athena', url: 'https://www.hotelathena.com/', price: '€€€', desc: 'Great views from terrace, OUTSIDE ZTL with free parking. Family rooms available.' },
+          { name: 'Palazzo Ravizza', url: 'https://www.palazzoravizza.it/en/', price: '€€€', desc: 'Family-run since 1929. Garden with panoramic views, elegant rooms. Inside the walls but peaceful.' },
+          { name: 'La Certosa di Maggiano', url: 'https://www.lacertosadimaggiano.com/', price: '€€€€', desc: 'Former 14th-century Carthusian monastery. Pool, gardens, serene atmosphere. Just outside the center.' }
+        ],
+        ztlNote: '🔴 Strict ZTL — park OUTSIDE the walls! Parcheggio Il Campo (underground) or Fortezza (near center). Walk or take minibus in.'
+      }
     ]
   },
   {
@@ -467,7 +598,43 @@ const DAYS = [
       { name: 'Il Rossellino (Pienza)', url: 'https://www.discovertuscany.com/valdorcia/visit-pienza.html', desc: 'Traditional cooking in charming piazza.' },
       { name: 'La Bandita Townhouse (Pienza)', url: 'https://www.discovertuscany.com/valdorcia/visit-pienza.html', desc: 'Modern Tuscan with international twists.' }
     ],
-    hotels: []
+    hotels: [],
+    alternatives: [
+      {
+        city: 'San Gimignano', emoji: '🗼', driveFromPrev: '~1.5 hrs from Chianti / ~2 hrs from Val d\'Orcia',
+        pitch: 'The "Medieval Manhattan" — 14 stone towers still standing from the original 72. UNESCO World Heritage. Gelato world champion is here!',
+        whySwap: 'More dramatic skyline than Pienza. The tower views are unforgettable. Gelateria Dondoli won World Gelato Champion — twice!',
+        highlights: [
+          { name: 'Torre Grossa', desc: 'The tallest tower (54m) — climb for 360° views of rolling Tuscan countryside and all the other towers.' },
+          { name: 'Gelateria Dondoli', desc: 'Two-time World Gelato Champion. Try the Crema di Santa Fina (saffron) or Raspberry + Rosemary!' },
+          { name: 'Piazza della Cisterna', desc: 'Triangular piazza with a 13th-century well. Surrounded by towers and medieval houses.' }
+        ],
+        hotels: [
+          { name: 'Hotel L\'Antico Pozzo', url: 'https://www.anticopozzo.com/', price: '€€€', desc: '15th-century townhouse in the heart of town. Vaulted ceilings, terrace views.' },
+          { name: 'Villasanpaolo Resort', url: 'https://www.villasanpaolo.com/', price: '€€€', desc: 'Outside walls with pool and panoramic tower views. Free parking!' },
+          { name: 'La Collegiata', url: 'https://www.lacollegiatahotel.it/', price: '€€€€', desc: 'Converted Franciscan convent with pool and lush gardens. Stunning tower views. Shuttle to town.' },
+          { name: 'Hotel Leon Bianco', url: 'https://www.leonbianco.com/', price: '€€', desc: 'Budget-friendly right on Piazza della Cisterna. Medieval atmosphere, friendly staff, unbeatable location.' }
+        ],
+        ztlNote: '🔴 ZTL in center — park at P1 or P2 outside the walls (well-signed). ~5 min walk to Porta San Giovanni.'
+      },
+      {
+        city: 'Lucca', emoji: '🚲', driveFromPrev: '~2.5 hrs from Val d\'Orcia',
+        pitch: 'The most livable Tuscan city — completely intact Renaissance walls you can bike on top of! Puccini\'s birthplace.',
+        whySwap: 'Much more relaxed than other Tuscan towns. The wall-top bike ride is magical for families. Excellent food scene without tourist markup.',
+        highlights: [
+          { name: 'City Wall Bike Ride', desc: '4.2km loop on top of the Renaissance walls — shaded by trees, views into gardens. Rent bikes at any gate!' },
+          { name: 'Piazza dell\'Anfiteatro', desc: 'Oval piazza built on the ruins of a Roman amphitheater — the shape is perfectly preserved.' },
+          { name: 'Torre Guinigi', desc: 'A medieval tower with OAK TREES growing on top! 230 steps up for amazing views.' }
+        ],
+        hotels: [
+          { name: 'Grand Universe Lucca', url: 'https://www.granduniverselucca.com/', price: '€€€€', desc: 'Autograph Collection hotel on Piazza del Giglio. Rooftop terrace with Duomo views.' },
+          { name: 'Hotel Ilaria', url: 'https://www.hotelilaria.com/', price: '€€', desc: 'Inside the walls, quiet courtyard, free bikes to borrow. Great family value.' },
+          { name: 'Palazzo Dipinto', url: 'https://www.palazzodipinto.com/en/', price: '€€€', desc: 'Design hotel in a restored palazzo. Modern elegance inside the walls, rooftop terrace, charming courtyard.' },
+          { name: 'San Luca Palace Hotel', url: 'https://www.sanlucapalace.com/en/', price: '€€€', desc: '4-star near Piazza Napoleone. Refined rooms, excellent breakfast, convenient to everything.' }
+        ],
+        ztlNote: '⚠️ ZTL inside the walls — but plentiful parking just OUTSIDE the gates. Walk or bike in!'
+      }
+    ]
   },
   {
     day: 7, date: 'Mar 29', weekday: 'Sat', flag: '🇮🇹', phase: 'italy',
@@ -485,7 +652,43 @@ const DAYS = [
       { name: 'Podere il Casale', url: 'https://www.discovertuscany.com/valdorcia/', desc: 'Farm with 1,000+ sheep — watch pecorino being made! Picnic with views.' },
       { name: 'San Quirico d\'Orcia', url: 'https://www.discovertuscany.com/valdorcia/', desc: 'Romanesque church, Horti Leonini Renaissance gardens.' }
     ],
-    hotels: []
+    hotels: [],
+    alternatives: [
+      {
+        city: 'Volterra', emoji: '⚡', driveFromPrev: '~1.5 hrs from Val d\'Orcia',
+        pitch: 'Etruscan hilltop city older than Rome itself. Dramatic cliff-edge setting. Famous for alabaster craftsmanship.',
+        whySwap: 'More ancient history than other Tuscan towns (3,000+ years!). Less crowded. The Etruscan ruins and Roman theater are unique. Twilight fans — this is the Volturi city!',
+        highlights: [
+          { name: 'Roman Theater', desc: 'Remarkably preserved 1st-century BC theater — you can see it from the viewing terrace above for free.' },
+          { name: 'Alabaster Workshops', desc: 'Watch artisans carve translucent stone — a tradition since the Etruscans. Kids can try!' },
+          { name: 'Le Balze Cliffs', desc: 'Dramatic eroded cliffs on the edge of town — churches have literally fallen off the edge over centuries.' }
+        ],
+        hotels: [
+          { name: 'Park Hotel Le Fonti', url: 'https://www.parkhotellefonti.com/', price: '€€€', desc: 'Panoramic pool overlooking the valley. Just outside the walls with easy parking.' },
+          { name: 'Hotel La Locanda', url: 'https://www.hotel-lalocanda.com/', price: '€€', desc: 'Boutique B&B in a restored medieval building. Central, charming, family-run.' },
+          { name: 'Hotel San Lino', url: 'https://www.hotelsanlinovolterra.com/', price: '€€', desc: 'Former 17th-century convent with pool. Central location, courtyard garden, free parking nearby.' },
+          { name: 'Agriturismo Marcampo', url: 'https://www.agriturismo-marcampo.com/', price: '€€', desc: 'Working farm with vineyard just outside walls. Wine tastings, olive oil, pool with valley views.' }
+        ],
+        ztlNote: '⚠️ ZTL in center — park at Parcheggio Docciola (free! below the walls) or paid lots near Porta Fiorentina.'
+      },
+      {
+        city: 'Arezzo', emoji: '🎨', driveFromPrev: '~1 hr from Val d\'Orcia',
+        pitch: 'Roberto Benigni\'s "Life is Beautiful" was filmed here! Antique market capital of Italy. Stunning Piero della Francesca frescoes.',
+        whySwap: 'Authentic Italian city that\'s NOT a tourist town. First-Saturday antique market is legendary. Great food, lower prices. Easy day trip to Cortona.',
+        highlights: [
+          { name: 'Piazza Grande', desc: '"Life is Beautiful" was filmed here! Sloped medieval piazza — Italy\'s best antique fair first Sunday of every month.' },
+          { name: 'Basilica di San Francesco', desc: 'Piero della Francesca\'s "Legend of the True Cross" frescoes — one of Italy\'s greatest artwork cycles.' },
+          { name: 'Fortezza Medicea', desc: 'Medici fortress at the top of town — free park with panoramic views. Kids run wild on the grass.' }
+        ],
+        hotels: [
+          { name: 'Graziella Patio Hotel', url: 'https://www.hotelgraziellapatio.it/', price: '€€€', desc: 'Boutique hotel in 16th-century palazzo. Central, elegant, exceptional breakfast.' },
+          { name: 'Hotel Continentale', url: 'https://www.hotelcontinentale.com/', price: '€€', desc: 'On Piazza Guido Monaco, steps from the train station. Modern, family-friendly.' },
+          { name: 'Badia di Pomaio', url: 'https://www.badiadipomaio.it/', price: '€€€€', desc: 'Restored 11th-century abbey with infinity pool. Panoramic hilltop setting, 5 min from center.' },
+          { name: 'Hotel Patio', url: 'https://www.hotelpatio.it/', price: '€€€', desc: 'Boutique hotel in historic palazzo near Piazza Grande. Stylish rooms, courtyard, great breakfast.' }
+        ],
+        ztlNote: '⚠️ ZTL in center — park at Parcheggio Pietri (covered, near center) or free lots near the Fortezza.'
+      }
+    ]
   },
   {
     day: 8, date: 'Mar 30', weekday: 'Sun', flag: '🇮🇹', phase: 'italy',
@@ -505,38 +708,138 @@ const DAYS = [
       { name: 'Lamberti Tower', url: 'https://www.visitverona.it/en', desc: 'Tallest in Verona — amazing views. Kids love the climb.' }
     ],
     hotels: [
-      { name: 'Hotel Indigo Verona', url: 'https://www.ihg.com/hotelindigo/hotels/us/en/verona/vrnin/hoteldetail', why: 'Elegant 1920s Liberty-style. 10-min walk to Arena.', parking: 'Available, outside ZTL', price: '€€€', perk: 'Walkable, stylish rooms' },
+      { name: 'Hotel Indigo Verona', url: 'https://www.ihg.com/hotelindigo/hotels/us/en/verona/vrndi/hoteldetail', why: 'Elegant 1920s Liberty-style. 10-min walk to Arena.', parking: 'Available, outside ZTL', price: '€€€', perk: 'Walkable, stylish rooms' },
       { name: 'Best Western CTC Verona', url: 'https://www.ctchotelverona.com/en/', why: 'Spacious rooms, free shuttle to center. Ample parking.', parking: 'Free ample parking', price: '€€€', perk: 'Free shuttle, restaurant' },
-      { name: 'Relais Villa dei Gelsi & Spa', url: 'https://www.villadeigelsi.com/', why: 'Luxury farmstay with pool, spa, indoor pool. 1.5 km from center.', parking: 'Free private parking', price: '€€€', perk: 'Pool, spa, family rooms' }
+      { name: 'Hotel Villa del Quar', url: 'https://hotelvilladelquar.it/en/', why: 'Relais & Chateaux 5-star in Valpolicella vineyards. Pool, gourmet restaurant, just 6km from center.', parking: 'Free private parking', price: '€€€€', perk: 'Vineyard setting, pool, gourmet dining' },
+      { name: 'Hotel Due Torri', url: 'https://hotelduetorri.duetorrihotels.com/en', why: '5-star grand hotel on Piazza Sant\'Anastasia since 1882. Opulent interiors, central location.', parking: 'Valet parking available', price: '€€€€', perk: 'Historic luxury, central piazza' },
+      { name: 'Hotel Colomba d\'Oro', url: 'https://colombahotel.com/en/', why: 'Charming 4-star in a converted 14th-century chapel. Steps from Arena di Verona.', parking: 'Nearby garage available', price: '€€€', perk: 'Historic charm, steps to Arena' }
+    ],
+    alternatives: [
+      {
+        city: 'Bologna', emoji: '🍝', driveFromPrev: '~2 hrs from Val d\'Orcia',
+        pitch: 'Italy\'s food capital. The oldest university in the world. Miles of covered porticoes (UNESCO). Seriously underrated!',
+        whySwap: 'Best food in Italy, period. Ragù, tortellini, mortadella — all born here. More "real Italian life" than Verona. The porticoes mean you\'re covered even in rain!',
+        highlights: [
+          { name: 'Mercato di Mezzo', desc: 'Indoor food market in medieval streets — taste fresh pasta, mortadella, Parmigiano Reggiano, gelato.' },
+          { name: 'Two Towers (Due Torri)', desc: 'Climb Torre degli Asinelli (498 steps!) for panoramic views. The leaning Garisenda tower is Italy\'s other leaning tower.' },
+          { name: 'Porticoes Walk', desc: '40km of covered arcades (UNESCO!) — the longest in the world. Walk from Piazza Maggiore to the hilltop Sanctuary of San Luca.' }
+        ],
+        hotels: [
+          { name: 'Grand Hotel Majestic', url: 'https://www.grandhotelmajestic.duetorrihotels.com/', price: '€€€€', desc: '5-star in an 18th-century palazzo on Via Indipendenza. Frescoed ceilings, central location.' },
+          { name: 'Hotel Touring', url: 'https://www.hoteltouring.it/', price: '€€', desc: 'Great value near the station. Modern, family rooms, easy parking nearby.' },
+          { name: 'Art Hotel Orologio', url: 'https://www.art-hotel-orologio.it/en/', price: '€€€', desc: 'Boutique hotel facing Piazza Maggiore clock tower. Can\'t beat the location for sightseeing.' },
+          { name: 'Hotel Corona d\'Oro', url: 'https://www.hco.it/en/', price: '€€€€', desc: 'Historic palace hotel on Via Oberdan. Art Nouveau details, central, elegant breakfast salon.' }
+        ],
+        ztlNote: '🔴 Large ZTL zone in center — park at Parcheggio Staveco or Tanari (outside ZTL). Take the free shuttle or walk.'
+      },
+      {
+        city: 'Padua (Padova)', emoji: '🎓', driveFromPrev: '~2.5 hrs from Val d\'Orcia',
+        pitch: 'Home of Giotto\'s Scrovegni Chapel (one of the world\'s greatest artworks). Oldest botanical garden in the world. Venice is 30 min by train!',
+        whySwap: 'The Scrovegni Chapel alone is worth the detour. Much cheaper and less crowded than Venice. Take a day trip to Venice by train (no car/parking stress!).',
+        highlights: [
+          { name: 'Scrovegni Chapel', desc: 'Giotto\'s 1305 frescoes — considered the birth of Western art. MUST book timed tickets in advance!' },
+          { name: 'Prato della Valle', desc: 'One of Europe\'s largest squares — an island surrounded by a canal with 78 statues. Kids love running around it.' },
+          { name: 'Day Trip to Venice', desc: '30 min by train! Leave the car in Padua and explore Venice stress-free. No parking nightmares.' }
+        ],
+        hotels: [
+          { name: 'NH Padova', url: 'https://www.nh-hotels.com/hotel/nh-padova', price: '€€€', desc: 'Modern 4-star near the center. Pool, parking, family rooms. Easy walk to Scrovegni.' },
+          { name: 'Belludi 37', url: 'https://www.belludi37.it/', price: '€€', desc: 'Stylish boutique B&B on Prato della Valle. Bikes available, excellent breakfast.' },
+          { name: 'Methis Hotel & SPA', url: 'https://www.methishotel.com/', price: '€€€', desc: 'Design hotel with spa on the river. Modern rooms, excellent restaurant, near Prato della Valle.' },
+          { name: 'Hotel Grand\'Italia', url: 'https://www.hotelgranditalia.it/', price: '€€€', desc: 'Elegant 4-star facing Basilica di Sant\'Antonio. Classic style, rooftop terrace, family rooms.' }
+        ],
+        ztlNote: '⚠️ ZTL in center — park at Parcheggio Rabin (near Scrovegni Chapel) or the train station garage.'
+      },
+      {
+        city: 'Lake Garda', emoji: '🏖', driveFromPrev: '~2.5 hrs from Val d\'Orcia',
+        pitch: 'Italy\'s largest lake with dramatic mountain backdrop. Gardaland theme park! Lemon groves, castles, and crystal-clear water.',
+        whySwap: 'Perfect family destination — Gardaland (Italy\'s #1 theme park), beaches, boat rides. Sirmione\'s castle-on-the-lake is magical. More relaxing than a city stop.',
+        highlights: [
+          { name: 'Sirmione', desc: 'Fairy-tale peninsula with a moated Scaliger castle. Thermal springs, gelato walks along the lake.' },
+          { name: 'Gardaland', desc: 'Italy\'s biggest theme park — roller coasters, water rides, LEGOLAND Water Park. Full day of family fun.' },
+          { name: 'Malcesine', desc: 'Take the cable car to Monte Baldo (1,760m!) for breathtaking lake views. Kids love the ride.' }
+        ],
+        hotels: [
+          { name: 'Lefay Resort & Spa', url: 'https://www.lefayresorts.com/en/lago-di-garda/', price: '€€€€€', desc: 'Luxury wellness resort overlooking the lake. Infinity pool, spa, stunning views. Family suites.' },
+          { name: 'Hotel Sirmione', url: 'https://www.termedisirmione.com/', price: '€€€', desc: 'Lakefront thermal hotel in Sirmione. Pool, spa, direct lake access. Central location.' },
+          { name: 'Grand Hotel Fasano', url: 'https://www.ghf.it/en/', price: '€€€€€', desc: 'Historic grand hotel in Gardone Riviera. Private beach, Michelin restaurant, lush botanical gardens.' },
+          { name: 'Lido Palace', url: 'https://www.lido-palace.it/en/', price: '€€€€€', desc: 'Belle Époque luxury in Riva del Garda. Lake-view infinity pool, world-class spa, panoramic restaurant.' }
+        ],
+        ztlNote: '✅ Most lakeside towns have no ZTL — easy parking, especially in off-season (March). Sirmione has limited entry in summer but fine in spring.'
+      }
     ]
   },
   {
     day: 9, date: 'Mar 31', weekday: 'Mon', flag: '🇮🇹', phase: 'italy',
-    title: 'Verona → Florence Area',
-    am: 'Morning Verona stroll — last gelato!',
-    pm: '2.5 hr drive to Florence airport area',
-    sleep: 'Florence Airport Hotel', sleepIcon: '✈️',
-    parking: '✅ Airport hotel parking', parkingStatus: 'ok',
-    ztl: '✅ No ZTL near airport', ztlStatus: 'ok',
-    familyTip: 'Let the kids pick one last Verona treat (gelato, obviously). Highway drive = good nap time. DON\'T go into Florence city center with the car!',
-    destinations: [],
+    title: 'Bologna — Italy\'s Food Capital 🍝',
+    am: 'Last Verona gelato → 1.5 hr drive to Bologna',
+    pm: 'Explore the porticoes, Two Towers, Mercato di Mezzo — eat EVERYTHING',
+    sleep: 'Bologna', sleepIcon: '🏛',
+    parking: '⚠️ Park OUTSIDE ZTL — use Parcheggio Staveco or Tanari', parkingStatus: 'warn',
+    ztl: '🔴 Large ZTL in center — park outside, walk or shuttle in', ztlStatus: 'danger',
+    familyTip: 'Bologna is THE food capital of Italy — this is where ragù, tortellini, and mortadella were born! Mercato di Mezzo is heaven for foodies. The Two Towers climb (498 steps!) is epic. 40km of covered porticoes mean rain doesn\'t matter!',
+    destinations: [
+      { name: 'Mercato di Mezzo', url: 'https://www.mercatodimezzo.it/', desc: 'Indoor food market in medieval streets — fresh pasta, mortadella, Parmigiano Reggiano, the best gelato. Taste EVERYTHING!', star: true },
+      { name: 'Two Towers (Due Torri)', url: 'https://www.duetorribologna.com/', desc: 'Climb Torre degli Asinelli (498 steps!) for panoramic views. The leaning Garisenda next door is Italy\'s other leaning tower.', star: true },
+      { name: 'Piazza Maggiore', url: 'https://www.bolognawelcome.com/en/', desc: 'Grand main square with Basilica di San Petronio (5th largest church in the world!). Street performers, cafes.', star: true },
+      { name: 'Porticoes Walk', url: 'https://www.bolognawelcome.com/en/', desc: '40km of covered arcades (UNESCO!) — the longest in the world. Walk from Piazza Maggiore to the hilltop Sanctuary of San Luca.' },
+      { name: 'FICO Eataly World', url: 'https://www.fico.it/en/', desc: 'World\'s largest food theme park — watch pasta, cheese & chocolate being made. Rides + tastings! Kids LOVE it.' }
+    ],
     hotels: [
-      { name: 'Hilton Garden Inn Florence Novoli', url: 'https://www.hilton.com/en/hotels/flrfigi-hilton-garden-inn-florence-novoli/', why: 'Modern, near airport. Tram to Florence center.', parking: 'Free self-parking', price: '€€', perk: 'Restaurant, tram to city' },
-      { name: 'Villa Campestri Olive Oil Resort', url: 'https://www.villacampestri.com/en/', why: 'Final splurge! 5-star olive oil estate. Pool, spa, incredible breakfast.', parking: 'Free on-site', price: '€€€€', perk: 'Pool, farm, stunning grounds' },
-      { name: 'Starhotels Tuscany', url: 'https://www.starhotels.com/en/our-hotels/tuscany-florence/', why: '4-star, tram stop right in front — direct to city center.', parking: 'Self-parking', price: '€€€', perk: 'Tram access, restaurant' }
+      { name: 'Grand Hotel Majestic', url: 'https://www.grandhotelmajestic.duetorrihotels.com/', why: '5-star in 18th-century palazzo on Via Indipendenza. Frescoed ceilings, central location.', parking: 'Valet available', price: '€€€€', perk: 'Historic luxury, central' },
+      { name: 'Art Hotel Orologio', url: 'https://www.art-hotel-orologio.it/en/', why: 'Boutique hotel facing Piazza Maggiore clock tower. Can\'t beat the location!', parking: 'Nearby garage', price: '€€€', perk: 'Best location in Bologna' },
+      { name: 'Hotel Corona d\'Oro', url: 'https://www.hco.it/en/', why: 'Historic palace hotel on Via Oberdan. Art Nouveau details, elegant breakfast salon.', parking: 'Nearby public garage', price: '€€€€', perk: 'Art Nouveau charm, central' },
+      { name: 'Hotel Touring', url: 'https://www.hoteltouring.it/', why: 'Great value near station. Modern, family rooms, easy parking nearby.', parking: 'Nearby parking', price: '€€', perk: 'Family-friendly, good value' }
+    ],
+    alternatives: [
+      {
+        city: 'Modena', emoji: '🏎️', driveFromPrev: '~1 hr from Verona',
+        pitch: 'Ferrari & Lamborghini museums, world-famous balsamic vinegar, and Osteria Francescana (world\'s best restaurant). Petrolheads\' paradise!',
+        whySwap: 'Ferrari Museum is a dream for car-loving kids. Balsamic vinegar tastings are fascinating. Modena cathedral is UNESCO. Smaller and more intimate than Bologna.',
+        highlights: [
+          { name: 'Museo Enzo Ferrari', desc: 'Stunning car museum under a yellow hood-shaped roof. Interactive exhibits, racing simulators — kids go wild!' },
+          { name: 'Acetaia (Balsamic Vinegar)', desc: 'Tour a traditional balsamic vinegar producer — see barrels aging 25+ years. Taste the real thing (nothing like supermarket bottles!).' },
+          { name: 'Piazza Grande', desc: 'UNESCO World Heritage square with the Romanesque Cathedral and Ghirlandina tower. Stunning at sunset.' }
+        ],
+        hotels: [
+          { name: 'Best Western Premier Milano Palace Hotel', url: 'https://www.milanopalacehotel.it/en/', price: '€€€', desc: '4-star near Piazza Grande. Elegant rooms, great breakfast, walkable to everything.' },
+          { name: 'Hotel Cervetta 5', url: 'https://www.hotelcervetta5.it/en/', price: '€€', desc: 'Small boutique in the center. Modern, stylish, steps from the Cathedral. Great value.' }
+        ],
+        ztlNote: '⚠️ ZTL in center — park at Parcheggio Novi Sad (large, near center) or hotel parking.'
+      },
+      {
+        city: 'Parma', emoji: '🧀', driveFromPrev: '~1.5 hrs from Verona',
+        pitch: 'Parmigiano Reggiano AND Prosciutto di Parma — both born here! UNESCO Creative City of Gastronomy. Gorgeous Romanesque architecture.',
+        whySwap: 'The ultimate food pilgrimage — visit actual Parmigiano dairies and prosciutto producers. Baptistery is one of Italy\'s most beautiful buildings. More relaxed than Bologna.',
+        highlights: [
+          { name: 'Parmigiano Reggiano Dairy Visit', desc: 'Watch wheels of Parmigiano being made — early morning visits to working dairies. Fresh cheese tastings! Book ahead.' },
+          { name: 'Baptistery of Parma', desc: 'Pink Verona marble octagon — stunning inside and out. Medieval frescoes are breathtaking.' },
+          { name: 'Prosciutto di Parma Trail', desc: 'Visit a prosciuttificio in Langhirano — see thousands of hams aging on racks. Taste the difference!' }
+        ],
+        hotels: [
+          { name: 'Grand Hotel de la Ville', url: 'https://www.grandhoteldelaville.it/en/', price: '€€€', desc: '4-star hotel near Piazza Garibaldi. Elegant, central, excellent restaurant with local specialties.' },
+          { name: 'Hotel Button', url: 'https://www.hotelbutton.it/en/', price: '€€', desc: 'Charming 3-star in the center. Simple, clean, great breakfast with local products. Family-friendly.' }
+        ],
+        ztlNote: '⚠️ ZTL in center — park at Parcheggio Goito (near center) or Toschi garage. Both walkable.'
+      }
     ]
   },
   {
     day: 10, date: 'Apr 1', weekday: 'Tue', flag: '📦', phase: 'italy',
-    title: 'Buffer Day — Relax & Pack',
-    am: 'Sleep in! Buffer morning. Kids play at hotel.',
-    pm: 'Relaxed final Italian dinner — no rush',
+    title: 'Buffer Day → Florence Airport',
+    am: 'Sleep in! Last Italian breakfast → 1.5 hr drive to Florence airport area',
+    pm: 'Relax at hotel, pool if available, pack up. Final Italian dinner — no rush!',
     sleep: 'Florence Airport Hotel', sleepIcon: '✈️',
-    parking: '✅ Hotel parking', parkingStatus: 'ok',
-    ztl: '✅ No ZTL', ztlStatus: 'ok',
-    familyTip: 'This is YOUR day. Let kids swim, do laundry, pack calmly. One last pizza. Set out tomorrow\'s travel clothes tonight!',
+    parking: '✅ Airport hotel parking', parkingStatus: 'ok',
+    ztl: '✅ No ZTL near airport', ztlStatus: 'ok',
+    familyTip: 'This is YOUR day. Let kids swim, do laundry, pack calmly. One last pizza. Set out tomorrow\'s travel clothes tonight! DON\'T drive into Florence city center with the car.',
     destinations: [],
-    hotels: []
+    hotels: [
+      { name: 'Hilton Garden Inn Florence Novoli', url: 'https://www.hilton.com/en/hotels/flrfigi-hilton-garden-inn-florence-novoli/', why: 'Modern, near airport. Tram to Florence center.', parking: 'Free self-parking', price: '€€', perk: 'Restaurant, tram to city' },
+      { name: 'Villa Campestri Olive Oil Resort', url: 'https://www.villacampestri.com/en/', why: 'Final splurge! 5-star olive oil estate. Pool, spa, incredible breakfast.', parking: 'Free on-site', price: '€€€€', perk: 'Pool, farm, stunning grounds' },
+      { name: 'Starhotels Tuscany', url: 'https://www.starhotels.com/en/our-hotels/tuscany-florence/', why: '4-star, tram stop right in front — direct to city center.', parking: 'Self-parking', price: '€€€', perk: 'Tram access, restaurant' },
+      { name: 'Hotel Kraft', url: 'https://www.hotelkraft.it/en/', why: 'Elegant rooftop pool with Arno River views. Near Santa Maria Novella station.', parking: 'Garage available (~€30/night)', price: '€€€', perk: 'Rooftop pool, central location' },
+      { name: 'Plaza Hotel Lucchesi', url: 'https://www.plazalucchesi.it/en/', why: 'Classic 4-star on the Arno with rooftop bar and panoramic views. Great for families.', parking: 'Garage available', price: '€€€', perk: 'River views, rooftop terrace' }
+    ]
   },
   {
     day: 11, date: 'Apr 2', weekday: 'Wed', flag: '✈️', phase: 'departure',
@@ -777,6 +1080,281 @@ function mapsUrl(name) {
   return 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(name);
 }
 
+function renderAlternatives(d) {
+  if (!d.alternatives || d.alternatives.length === 0) return '';
+  return `<div class="alt-explorer rounded-2xl p-4 mt-4">
+    <button onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.chevron').classList.toggle('open')" class="tap flex items-center justify-between w-full text-left">
+      <div class="flex items-center gap-2">
+        <span class="alt-badge">✨ NEW</span>
+        <span class="font-heading font-700 text-sm">Explore Alternative Cities</span>
+      </div>
+      <span class="chevron text-sm text-gray-400">▼</span>
+    </button>
+    <div class="hidden mt-3">
+      <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Instead of the planned route, consider these alternative bases for your Tuscany days:</p>
+      <div class="space-y-3">${d.alternatives.map((alt, i) => `
+        <div class="alt-city-card rounded-xl overflow-hidden" id="alt-${d.day}-${i}">
+          <button onclick="toggleAltCity(${d.day}, ${i})" class="tap w-full text-left p-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-2xl">${alt.emoji}</span>
+                <div>
+                  <p class="font-heading font-700 text-sm">${escHtml(alt.city)}</p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">${escHtml(alt.driveFromPrev)}</p>
+                </div>
+              </div>
+              <span class="chevron text-xs text-gray-400" id="altChev-${d.day}-${i}">▼</span>
+            </div>
+            <p class="text-xs mt-2 leading-relaxed">${escHtml(alt.pitch)}</p>
+          </button>
+          <div class="hidden px-3 pb-3" id="altBody-${d.day}-${i}">
+            <div class="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-2.5 mb-3">
+              <p class="text-xs font-600 text-orange-800 dark:text-orange-300">💡 Why swap? ${escHtml(alt.whySwap)}</p>
+            </div>
+            <p class="font-heading font-600 text-xs mb-2">🏛 Highlights</p>
+            <div class="space-y-2 mb-3">${alt.highlights.map(h => `<div class="glass rounded-lg p-2.5">
+              <p class="font-heading font-600 text-xs">${escHtml(h.name)}</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${escHtml(h.desc)}</p>
+            </div>`).join('')}</div>
+            ${alt.hotels.length > 0 ? `<p class="font-heading font-600 text-xs mb-2">🏨 Where to Stay</p>
+            <div class="space-y-2 mb-3">${alt.hotels.map(h => `<div class="glass rounded-lg p-2.5">
+              <div class="flex justify-between items-start">
+                <p class="font-heading font-600 text-xs">${escHtml(h.name)}</p>
+                <span class="text-xs text-amber-600 dark:text-amber-400 font-600 ml-2">${h.price}</span>
+              </div>
+              <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${escHtml(h.desc)}</p>
+              <a href="${h.url}" target="_blank" rel="noopener noreferrer" class="inline-block mt-1 text-xs font-600 text-teal-600 dark:text-teal-400">View →</a>
+            </div>`).join('')}</div>` : ''}
+            <div class="rounded-lg p-2.5 text-xs ${alt.ztlNote.startsWith('✅') ? 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300' : alt.ztlNote.startsWith('🔴') ? 'bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-300' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300'}">
+              🚗 ${escHtml(alt.ztlNote)}
+            </div>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleAltCity(day, idx) {
+  const body = document.getElementById('altBody-' + day + '-' + idx);
+  const card = document.getElementById('alt-' + day + '-' + idx);
+  const chev = document.getElementById('altChev-' + day + '-' + idx);
+  if (body) {
+    body.classList.toggle('hidden');
+    card.classList.toggle('expanded');
+    chev.classList.toggle('open');
+  }
+}
+
+// ============================================================
+// RENDER: MIDWAY STOPS (for day cards)
+// ============================================================
+function renderMidwayStops(d) {
+  if (!d.midwayStops || d.midwayStops.length === 0) return '';
+  return `<div class="alt-explorer rounded-2xl p-4 mt-4" style="border-color:rgba(217,119,6,0.3);background:linear-gradient(135deg,rgba(254,243,199,0.4),rgba(253,230,138,0.2))">
+    <button onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.chevron').classList.toggle('open')" class="tap flex items-center justify-between w-full text-left">
+      <div class="flex items-center gap-2">
+        <span class="alt-badge" style="background:linear-gradient(135deg,#d97706,#92400e)">🛑 OPTION</span>
+        <span class="font-heading font-700 text-sm">Break Up the Drive — Overnight Stop</span>
+      </div>
+      <span class="chevron text-sm text-gray-400">▼</span>
+    </button>
+    <div class="hidden mt-3">
+      <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Instead of driving straight through, consider an overnight at one of these worthwhile stops:</p>
+      <div class="space-y-3">${d.midwayStops.map((stop, i) => `
+        <div class="alt-city-card rounded-xl overflow-hidden" style="border-color:rgba(217,119,6,0.2)" id="midway-${d.day}-${i}">
+          <button onclick="toggleMidway(${d.day}, ${i})" class="tap w-full text-left p-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-2xl">${stop.emoji}</span>
+                <div>
+                  <p class="font-heading font-700 text-sm">${escHtml(stop.city)}</p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">${escHtml(stop.driveFromPrev)} · then ${escHtml(stop.driveToNext)}</p>
+                </div>
+              </div>
+              <span class="chevron text-xs text-gray-400" id="midwayChev-${d.day}-${i}">▼</span>
+            </div>
+            <p class="text-xs mt-2 leading-relaxed">${escHtml(stop.pitch)}</p>
+          </button>
+          <div class="hidden px-3 pb-3" id="midwayBody-${d.day}-${i}">
+            <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-2.5 mb-3">
+              <p class="text-xs font-600 text-amber-800 dark:text-amber-300">💡 Why stop? ${escHtml(stop.whyStop)}</p>
+            </div>
+            <p class="font-heading font-600 text-xs mb-2">🏛 Highlights</p>
+            <div class="space-y-2 mb-3">${stop.highlights.map(h => `<div class="glass rounded-lg p-2.5">
+              <p class="font-heading font-600 text-xs">${escHtml(h.name)}</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${escHtml(h.desc)}</p>
+            </div>`).join('')}</div>
+            ${stop.hotels && stop.hotels.length > 0 ? `<p class="font-heading font-600 text-xs mb-2">🏨 Where to Stay</p>
+            <div class="space-y-2 mb-3">${stop.hotels.map(h => `<div class="glass rounded-lg p-2.5">
+              <div class="flex justify-between items-start">
+                <p class="font-heading font-600 text-xs">${escHtml(h.name)}</p>
+                <span class="text-xs text-amber-600 dark:text-amber-400 font-600 ml-2">${h.price}</span>
+              </div>
+              <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${escHtml(h.desc)}</p>
+              <div class="flex gap-3 mt-1">
+                <a href="${h.url}" target="_blank" rel="noopener noreferrer" class="text-xs font-600 text-teal-600 dark:text-teal-400">View →</a>
+                <a href="${mapsUrl(h.name)}" target="_blank" rel="noopener noreferrer" class="text-xs font-600 text-blue-600 dark:text-blue-400">📍 Map</a>
+              </div>
+            </div>`).join('')}</div>` : ''}
+            <div class="rounded-lg p-2.5 text-xs ${stop.ztlNote.startsWith('✅') ? 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300' : stop.ztlNote.startsWith('🔴') ? 'bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-300' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300'}">
+              🚗 ${escHtml(stop.ztlNote)}
+            </div>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleMidway(day, idx) {
+  const body = document.getElementById('midwayBody-' + day + '-' + idx);
+  const card = document.getElementById('midway-' + day + '-' + idx);
+  const chev = document.getElementById('midwayChev-' + day + '-' + idx);
+  if (body) {
+    body.classList.toggle('hidden');
+    card.classList.toggle('expanded');
+    chev.classList.toggle('open');
+  }
+}
+
+// ============================================================
+// RENDER: HOTELS TAB
+// ============================================================
+function renderHotelCard(h, isMain) {
+  if (isMain) {
+    return `<div class="glass rounded-xl p-3 hover:shadow-md transition">
+      <div class="flex justify-between items-start mb-1">
+        <p class="font-heading font-600 text-sm">${escHtml(h.name)}</p>
+        <span class="text-xs text-amber-600 dark:text-amber-400 font-600 flex-shrink-0 ml-2">${h.price}</span>
+      </div>
+      <p class="text-xs text-gray-500 dark:text-gray-400">${escHtml(h.why)}</p>
+      <div class="flex flex-wrap gap-2 mt-2 text-xs">
+        <span class="px-2 py-0.5 bg-blue-50 dark:bg-blue-900/30 rounded-full">🚗 ${escHtml(h.parking)}</span>
+        <span class="px-2 py-0.5 bg-pink-50 dark:bg-pink-900/30 rounded-full">👨‍👩‍👧‍👦 ${escHtml(h.perk)}</span>
+      </div>
+      <div class="flex gap-3 mt-2">
+        <a href="${h.url}" target="_blank" rel="noopener noreferrer" class="text-xs font-600 text-teal-600 dark:text-teal-400 tap">View →</a>
+        <a href="${mapsUrl(h.name)}" target="_blank" rel="noopener noreferrer" class="text-xs font-600 text-blue-600 dark:text-blue-400 tap">📍 Navigate</a>
+      </div>
+    </div>`;
+  }
+  return `<div class="glass rounded-xl p-3 hover:shadow-md transition">
+    <div class="flex justify-between items-start mb-1">
+      <p class="font-heading font-600 text-sm">${escHtml(h.name)}</p>
+      <span class="text-xs text-amber-600 dark:text-amber-400 font-600 flex-shrink-0 ml-2">${h.price}</span>
+    </div>
+    <p class="text-xs text-gray-500 dark:text-gray-400">${escHtml(h.desc)}</p>
+    <div class="flex gap-3 mt-2">
+      <a href="${h.url}" target="_blank" rel="noopener noreferrer" class="text-xs font-600 text-teal-600 dark:text-teal-400 tap">View →</a>
+      <a href="${mapsUrl(h.name)}" target="_blank" rel="noopener noreferrer" class="text-xs font-600 text-blue-600 dark:text-blue-400 tap">📍 Navigate</a>
+    </div>
+  </div>`;
+}
+
+function renderHotels() {
+  const container = document.getElementById('hotelsContent');
+  let html = `<div class="mb-6">
+    <h1 class="font-heading font-800 text-2xl mb-1">🏨 Hotels by Destination</h1>
+    <p class="text-sm text-gray-500 dark:text-gray-400">All accommodation options organized by day and city</p>
+  </div>`;
+
+  // Track which sleep locations we've already shown to avoid duplicates
+  let lastSleep = '';
+  DAYS.forEach(d => {
+    const hasMainHotels = d.hotels && d.hotels.length > 0;
+    const hasAltHotels = d.alternatives && d.alternatives.some(a => a.hotels && a.hotels.length > 0);
+    const hasMidwayHotels = d.midwayStops && d.midwayStops.some(m => m.hotels && m.hotels.length > 0);
+
+    // Skip days with no hotel content at all
+    if (!hasMainHotels && !hasAltHotels && !hasMidwayHotels) {
+      // Show a small reference for days staying at same place
+      if (d.sleep !== 'Home sweet home') {
+        html += `<div class="mb-4 opacity-60">
+          <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+            <span>${d.flag}</span>
+            <span class="font-heading font-600">Day ${d.day}</span>
+            <span>·</span>
+            <span>🛏 ${escHtml(d.sleep)} ${d.sleepIcon}</span>
+          </div>
+        </div>`;
+      }
+      lastSleep = d.sleep;
+      return;
+    }
+
+    // Section header
+    html += `<div class="mb-6">
+      <div class="${phaseBg(d.phase)} text-white rounded-xl p-3 mb-3">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">${d.sleepIcon}</span>
+          <div>
+            <p class="font-heading font-700 text-lg">Day ${d.day} — ${escHtml(d.sleep)}</p>
+            <p class="text-xs opacity-80">${d.date} (${d.weekday}) · ${escHtml(d.title)}</p>
+          </div>
+        </div>
+      </div>`;
+
+    // Main hotels
+    if (hasMainHotels) {
+      html += `<div class="hotel-grid mb-4" style="gap:0.75rem">${d.hotels.map(h => renderHotelCard(h, true)).join('')}</div>`;
+    }
+
+    // Midway stop hotels
+    if (hasMidwayHotels) {
+      html += `<div class="mb-4">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-600" style="background:linear-gradient(135deg,#d97706,#92400e);color:white">🛑 Midway Stops</span>
+          <span class="text-xs text-gray-500 dark:text-gray-400">Break up the big drive</span>
+        </div>`;
+      d.midwayStops.forEach(m => {
+        if (!m.hotels || m.hotels.length === 0) return;
+        html += `<div class="mb-4 pl-3 border-l-2 border-amber-300 dark:border-amber-700">
+          <p class="font-heading font-600 text-sm mb-1">${m.emoji} ${escHtml(m.city)}</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">${escHtml(m.driveFromPrev)} · then ${escHtml(m.driveToNext)}</p>
+          <div class="hotel-grid" style="gap:0.5rem">${m.hotels.map(h => renderHotelCard(h, false)).join('')}</div>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+
+    // Alternative city hotels
+    if (hasAltHotels) {
+      html += `<div class="mb-4">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="alt-badge">✨ Alternatives</span>
+          <span class="text-xs text-gray-500 dark:text-gray-400">Other cities to consider</span>
+        </div>`;
+      d.alternatives.forEach(a => {
+        if (!a.hotels || a.hotels.length === 0) return;
+        html += `<div class="mb-4 pl-3 border-l-2 border-orange-300 dark:border-orange-700">
+          <p class="font-heading font-600 text-sm mb-1">${a.emoji} ${escHtml(a.city)}</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">${escHtml(a.driveFromPrev || '')}</p>
+          <div class="hotel-grid" style="gap:0.5rem">${a.hotels.map(h => renderHotelCard(h, false)).join('')}</div>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+
+    html += `</div>`; // close section
+    lastSleep = d.sleep;
+  });
+
+  // Total count
+  let totalHotels = 0;
+  DAYS.forEach(d => {
+    totalHotels += (d.hotels ? d.hotels.length : 0);
+    if (d.alternatives) d.alternatives.forEach(a => totalHotels += (a.hotels ? a.hotels.length : 0));
+    if (d.midwayStops) d.midwayStops.forEach(m => totalHotels += (m.hotels ? m.hotels.length : 0));
+  });
+
+  html += `<div class="text-center text-xs text-gray-400 dark:text-gray-500 mt-8 mb-4">
+    ${totalHotels} hotel options across all destinations
+  </div>`;
+
+  container.innerHTML = html;
+}
+
 // ============================================================
 // DARK MODE
 // ============================================================
@@ -860,6 +1438,7 @@ function switchTab(tab) {
   });
   if (tab === 'today') renderToday();
   if (tab === 'days') renderDays();
+  if (tab === 'hotels') renderHotels();
   if (tab === 'packing') renderPacking();
   if (tab === 'notes') renderNotes();
   if (tab === 'settings') renderSettings();
@@ -941,27 +1520,6 @@ function renderDayCardFull(d, isToday) {
         </div>
       </div>`).join('')}</div></div>` : '';
 
-  const hotelsHtml = d.hotels && d.hotels.length > 0
-    ? `<div class="mb-3">
-      <button onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.chevron').classList.toggle('open')" class="tap flex items-center gap-2 font-heading font-600 text-sm mb-2 w-full text-left">
-        🏨 Hotel Picks <span class="chevron text-xs">▼</span>
-      </button>
-      <div class="hidden hotel-grid" style="gap:0.5rem">${d.hotels.map(h => `<div class="glass rounded-xl p-3 hover:shadow-md transition">
-        <div class="flex justify-between items-start mb-1">
-          <p class="font-heading font-600 text-sm">${escHtml(h.name)}</p>
-          <span class="text-xs text-amber-600 dark:text-amber-400 font-600 flex-shrink-0 ml-2">${h.price}</span>
-        </div>
-        <p class="text-xs text-gray-500 dark:text-gray-400">${escHtml(h.why)}</p>
-        <div class="flex flex-wrap gap-2 mt-2 text-xs">
-          <span class="px-2 py-0.5 bg-blue-50 dark:bg-blue-900/30 rounded-full">🚗 ${escHtml(h.parking)}</span>
-          <span class="px-2 py-0.5 bg-pink-50 dark:bg-pink-900/30 rounded-full">👨‍👩‍👧‍👦 ${escHtml(h.perk)}</span>
-        </div>
-        <div class="flex gap-3 mt-2">
-          <a href="${h.url}" target="_blank" rel="noopener noreferrer" class="text-xs font-600 text-teal-600 dark:text-teal-400 tap">View →</a>
-          <a href="${mapsUrl(h.name)}" target="_blank" rel="noopener noreferrer" class="text-xs font-600 text-blue-600 dark:text-blue-400 tap">📍 Navigate</a>
-        </div>
-      </div>`).join('')}</div></div>` : '';
-
   // Today's Notes + Expenses
   const todayNotesHtml = isToday ? `<div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
     <p class="font-heading font-600 text-sm mb-2">📝 Today's Notes</p>
@@ -999,7 +1557,11 @@ function renderDayCardFull(d, isToday) {
       ${driveRouteHtml}
       ${parkingStrategyHtml}
       ${destsHtml}
-      ${hotelsHtml}
+      ${renderMidwayStops(d)}
+      ${renderAlternatives(d)}
+      <div class="mt-3 text-center">
+        <button onclick="switchTab('hotels')" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-heading font-600 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition tap">🏨 View Hotels for This Day →</button>
+      </div>
       ${todayNotesHtml}
     </div>
   </div>`;
@@ -1278,27 +1840,6 @@ function renderCollapsibleDay(d) {
         </div>
       </div>`).join('')}</div></div>` : '';
 
-  const hotelsHtml = d.hotels && d.hotels.length > 0
-    ? `<div class="mb-3">
-      <button onclick="event.stopPropagation();this.nextElementSibling.classList.toggle('hidden');this.querySelector('.chevron').classList.toggle('open')" class="tap flex items-center gap-2 font-heading font-600 text-sm mb-2 w-full text-left">
-        🏨 Hotel Picks <span class="chevron text-xs">▼</span>
-      </button>
-      <div class="hidden hotel-grid" style="gap:0.5rem">${d.hotels.map(h => `<div class="glass rounded-xl p-3 hover:shadow-md transition">
-        <div class="flex justify-between items-start mb-1">
-          <p class="font-heading font-600 text-sm">${escHtml(h.name)}</p>
-          <span class="text-xs text-amber-600 dark:text-amber-400 font-600 flex-shrink-0 ml-2">${h.price}</span>
-        </div>
-        <p class="text-xs text-gray-500 dark:text-gray-400">${escHtml(h.why)}</p>
-        <div class="flex flex-wrap gap-2 mt-2 text-xs">
-          <span class="px-2 py-0.5 bg-blue-50 dark:bg-blue-900/30 rounded-full">🚗 ${escHtml(h.parking)}</span>
-          <span class="px-2 py-0.5 bg-pink-50 dark:bg-pink-900/30 rounded-full">👨‍👩‍👧‍👦 ${escHtml(h.perk)}</span>
-        </div>
-        <div class="flex gap-3 mt-2">
-          <a href="${h.url}" target="_blank" rel="noopener noreferrer" class="text-xs font-600 text-teal-600 dark:text-teal-400 tap">View →</a>
-          <a href="${mapsUrl(h.name)}" target="_blank" rel="noopener noreferrer" class="text-xs font-600 text-blue-600 dark:text-blue-400 tap">📍 Navigate</a>
-        </div>
-      </div>`).join('')}</div></div>` : '';
-
   return `<div data-day-card data-day="${d.day}" id="day-${d.day}" class="rounded-2xl overflow-hidden shadow-lg">
     <button onclick="toggleDay(${d.day})" class="${phaseBg(d.phase)} text-white p-4 w-full text-left tap">
       <div class="flex justify-between items-center">
@@ -1332,7 +1873,8 @@ function renderCollapsibleDay(d) {
         ${driveRouteHtml}
         ${parkingStrategyHtml}
         ${destsHtml}
-        ${hotelsHtml}
+        ${renderMidwayStops(d)}
+        ${renderAlternatives(d)}
       </div>
     </div>
   </div>`;
