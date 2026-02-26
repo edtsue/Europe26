@@ -1811,6 +1811,24 @@ function renderSettings() {
       </div>
     </div>
 
+    <!-- Cloud Sync -->
+    <div class="glass rounded-2xl p-4 mb-4">
+      <h3 class="font-heading font-700 text-base mb-3">☁️ Cloud Sync</h3>
+      <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Sync your data across all devices using GitHub. Enter your token once — it stays saved on this device.</p>
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs font-600 text-gray-600 dark:text-gray-400 mb-1 block">GitHub Token</label>
+          <input type="password" id="syncToken" class="w-full border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-teal-400" placeholder="ghp_..." value="${escHtml(getSyncToken())}">
+        </div>
+        <div class="flex gap-3">
+          <button onclick="syncToCloud()" class="tap flex-1 py-3 rounded-xl bg-teal-600 text-white font-heading font-600 text-sm hover:bg-teal-700 transition">⬆️ Push to Cloud</button>
+          <button onclick="syncFromCloud()" class="tap flex-1 py-3 rounded-xl bg-indigo-600 text-white font-heading font-600 text-sm hover:bg-indigo-700 transition">⬇️ Pull from Cloud</button>
+        </div>
+        <div id="syncStatus" class="text-xs text-center text-gray-400"></div>
+        ${getSyncGistId() ? '<p class="text-xs text-green-600 dark:text-green-400 text-center">✅ Linked to cloud</p>' : '<p class="text-xs text-gray-400 text-center">Not yet linked — push to create your sync</p>'}
+      </div>
+    </div>
+
     <!-- Data Management -->
     <div class="glass rounded-2xl p-4 mb-4">
       <h3 class="font-heading font-700 text-base mb-3">📦 Data Management</h3>
@@ -1847,6 +1865,127 @@ function clearAllData() {
   renderSettings();
   renderNotes();
   alert('All data has been cleared.');
+}
+
+// ============================================================
+// CLOUD SYNC (GitHub Gist)
+// ============================================================
+const SYNC_TOKEN_KEY = 'TRIP_HUB_SYNC_TOKEN';
+const SYNC_GIST_KEY = 'TRIP_HUB_SYNC_GIST';
+const GIST_FILENAME = 'europe26-trip-data.json';
+
+function getSyncToken() {
+  return localStorage.getItem(SYNC_TOKEN_KEY) || '';
+}
+
+function getSyncGistId() {
+  return localStorage.getItem(SYNC_GIST_KEY) || '';
+}
+
+function saveSyncToken(token) {
+  localStorage.setItem(SYNC_TOKEN_KEY, token);
+}
+
+function setSyncStatus(msg, isError) {
+  const el = document.getElementById('syncStatus');
+  if (el) {
+    el.textContent = msg;
+    el.className = 'text-xs text-center ' + (isError ? 'text-red-500' : 'text-green-600 dark:text-green-400');
+  }
+}
+
+async function syncToCloud() {
+  const token = document.getElementById('syncToken').value.trim();
+  if (!token) { setSyncStatus('Please enter your GitHub token', true); return; }
+  saveSyncToken(token);
+  setSyncStatus('Pushing...', false);
+
+  const body = JSON.stringify(state, null, 2);
+  const gistId = getSyncGistId();
+
+  try {
+    if (gistId) {
+      // Update existing gist
+      const res = await fetch('https://api.github.com/gists/' + gistId, {
+        method: 'PATCH',
+        headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ files: { [GIST_FILENAME]: { content: body } } })
+      });
+      if (!res.ok) throw new Error('Update failed: ' + res.status);
+      setSyncStatus('Pushed! ' + new Date().toLocaleTimeString(), false);
+    } else {
+      // Create new gist
+      const res = await fetch('https://api.github.com/gists', {
+        method: 'POST',
+        headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          description: 'Alps to Tuscany — Trip Hub Data',
+          public: false,
+          files: { [GIST_FILENAME]: { content: body } }
+        })
+      });
+      if (!res.ok) throw new Error('Create failed: ' + res.status);
+      const data = await res.json();
+      localStorage.setItem(SYNC_GIST_KEY, data.id);
+      setSyncStatus('Synced! Cloud storage created.', false);
+    }
+    renderSettings();
+  } catch (e) {
+    setSyncStatus('Error: ' + e.message, true);
+  }
+}
+
+async function syncFromCloud() {
+  const token = document.getElementById('syncToken').value.trim();
+  if (!token) { setSyncStatus('Please enter your GitHub token', true); return; }
+  saveSyncToken(token);
+
+  const gistId = getSyncGistId();
+  if (!gistId) {
+    // Try to find existing gist by searching user's gists
+    setSyncStatus('Searching for existing sync...', false);
+    try {
+      const res = await fetch('https://api.github.com/gists?per_page=100', {
+        headers: { 'Authorization': 'token ' + token }
+      });
+      if (!res.ok) throw new Error('Failed to list gists: ' + res.status);
+      const gists = await res.json();
+      const found = gists.find(g => g.files && g.files[GIST_FILENAME]);
+      if (found) {
+        localStorage.setItem(SYNC_GIST_KEY, found.id);
+        return syncFromCloud(); // retry with found ID
+      } else {
+        setSyncStatus('No cloud data found. Push first to create it.', true);
+        return;
+      }
+    } catch (e) {
+      setSyncStatus('Error: ' + e.message, true);
+      return;
+    }
+  }
+
+  setSyncStatus('Pulling...', false);
+  try {
+    const res = await fetch('https://api.github.com/gists/' + gistId, {
+      headers: { 'Authorization': 'token ' + token }
+    });
+    if (!res.ok) throw new Error('Pull failed: ' + res.status);
+    const data = await res.json();
+    const content = data.files[GIST_FILENAME].content;
+    const cloudState = JSON.parse(content);
+    // Merge cloud state into local
+    state = cloudState;
+    if (!state.packingList) state.packingList = initPackingList();
+    if (state.fontSize === undefined) state.fontSize = 0;
+    if (state.budget === undefined) state.budget = 15000;
+    saveState();
+    applyDarkMode();
+    applyFontSize();
+    setSyncStatus('Pulled! ' + new Date().toLocaleTimeString(), false);
+    switchTab(state.activeTab || 'today');
+  } catch (e) {
+    setSyncStatus('Error: ' + e.message, true);
+  }
 }
 
 // ============================================================
