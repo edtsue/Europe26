@@ -230,6 +230,9 @@ tailwind.config = {
         <p class="text-xs text-gray-500 dark:text-gray-400 font-body">Family Trip Hub</p>
       </div>
       <div class="flex items-center gap-1">
+        <button onclick="quickCloudPush()" id="cloudSyncBtn" class="tap flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="Sync to cloud" title="Push to cloud">
+          <span id="cloudSyncIcon" class="text-lg">☁️</span>
+        </button>
         <button onclick="cycleFontSize()" class="tap flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="Change font size" title="Font size">
           <span id="fontSizeIcon" class="font-heading font-700 text-sm">A</span>
         </button>
@@ -1985,6 +1988,43 @@ async function syncFromCloud() {
     switchTab(state.activeTab || 'today');
   } catch (e) {
     setSyncStatus('Error: ' + e.message, true);
+  }
+}
+
+async function quickCloudPush() {
+  const token = getSyncToken();
+  if (!token) {
+    alert('Set up your GitHub token in Settings → Cloud Sync first.');
+    switchTab('settings');
+    return;
+  }
+  const icon = document.getElementById('cloudSyncIcon');
+  icon.textContent = '⏳';
+  try {
+    const body = JSON.stringify(state, null, 2);
+    const gistId = getSyncGistId();
+    if (gistId) {
+      const res = await fetch('https://api.github.com/gists/' + gistId, {
+        method: 'PATCH',
+        headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ files: { [GIST_FILENAME]: { content: body } } })
+      });
+      if (!res.ok) throw new Error(res.status);
+    } else {
+      const res = await fetch('https://api.github.com/gists', {
+        method: 'POST',
+        headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ description: 'Alps to Tuscany — Trip Hub Data', public: false, files: { [GIST_FILENAME]: { content: body } } })
+      });
+      if (!res.ok) throw new Error(res.status);
+      const data = await res.json();
+      localStorage.setItem(SYNC_GIST_KEY, data.id);
+    }
+    icon.textContent = '✅';
+    setTimeout(() => { icon.textContent = '☁️'; }, 2000);
+  } catch (e) {
+    icon.textContent = '❌';
+    setTimeout(() => { icon.textContent = '☁️'; }, 2000);
   }
 }
 
