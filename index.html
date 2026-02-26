@@ -134,6 +134,61 @@ tailwind.config = {
   .dark .text-gray-500 { color: #94a3b8; }
   .dark .border-gray-200 { border-color: #334155; }
   .dark input, .dark textarea, .dark select { background-color: #1e293b; color: #e2e8f0; border-color: #334155; }
+
+  /* ===== DESKTOP RESPONSIVE (768px+) ===== */
+  @media (min-width: 768px) {
+    /* Widen content container */
+    .max-w-lg { max-width: 56rem; }
+
+    /* Hide bottom tab bar on desktop */
+    .bottom-bar { display: none; }
+
+    /* Show desktop sidebar nav */
+    .desktop-nav { display: flex !important; }
+
+    /* Remove mobile bottom padding */
+    body { padding-bottom: 0 !important; }
+
+    /* App layout: sidebar + content */
+    #app { display: grid; grid-template-columns: 220px 1fr; grid-template-rows: auto 1fr; min-height: 100vh; }
+    #appHeader { grid-column: 1 / -1; }
+
+    /* Tab panels fill content area */
+    .tab-panel.active { display: block; overflow-y: auto; max-height: calc(100vh - 64px); }
+
+    /* Desktop nav in sidebar */
+    .desktop-nav { position: sticky; top: 64px; height: calc(100vh - 64px); flex-direction: column; padding: 1.5rem 1rem; gap: 0.25rem; }
+
+    /* Modal: center on desktop instead of bottom sheet */
+    .modal-overlay { align-items: center; }
+    .modal-content { border-radius: 16px; max-width: 540px; }
+
+    /* Larger tap targets not needed on desktop */
+    .tap { min-height: unset; min-width: unset; }
+
+    /* Wider day cards, 2-col destinations grid */
+    .dest-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+    .hotel-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+
+    /* Header gets more room */
+    #appHeader .max-w-lg { max-width: 100%; }
+
+    /* Settings 2-col */
+    .settings-2col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+
+    /* Larger fonts on desktop */
+    h1.font-heading { font-size: 1.5rem; }
+    .font-heading.text-2xl { font-size: 2rem; }
+  }
+
+  /* Extra wide screens */
+  @media (min-width: 1200px) {
+    #app { grid-template-columns: 260px 1fr; }
+    .max-w-lg { max-width: 64rem; }
+  }
+
+  /* Desktop nav hidden by default (shown via media query) */
+  .desktop-nav { display: none; }
 </style>
 </head>
 <body class="bg-gray-50 text-gray-900 font-body min-h-screen pb-20">
@@ -156,45 +211,68 @@ tailwind.config = {
     </div>
   </header>
 
-  <!-- Tab: Today -->
-  <div id="tab-today" class="tab-panel active">
-    <div class="max-w-lg mx-auto px-4 py-4">
-      <div id="todayContent"></div>
-    </div>
-  </div>
+  <!-- Desktop Sidebar Nav -->
+  <nav class="desktop-nav glass border-r border-gray-200 dark:border-gray-700">
+    <button onclick="switchTab('today')" class="desktop-tab-btn flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-heading font-600 transition hover:bg-gray-100 dark:hover:bg-gray-700 text-left w-full" data-tab="today">
+      <span class="text-lg">📅</span> Today
+    </button>
+    <button onclick="switchTab('days')" class="desktop-tab-btn flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-heading font-600 transition hover:bg-gray-100 dark:hover:bg-gray-700 text-left w-full" data-tab="days">
+      <span class="text-lg">🗺</span> All Days
+    </button>
+    <button onclick="switchTab('notes')" class="desktop-tab-btn flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-heading font-600 transition hover:bg-gray-100 dark:hover:bg-gray-700 text-left w-full" data-tab="notes">
+      <span class="text-lg">📝</span> Notes & Lists
+    </button>
+    <button onclick="switchTab('settings')" class="desktop-tab-btn flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-heading font-600 transition hover:bg-gray-100 dark:hover:bg-gray-700 text-left w-full" data-tab="settings">
+      <span class="text-lg">⚙️</span> Settings
+    </button>
+    <div class="flex-1"></div>
+    <div class="text-xs text-gray-400 dark:text-gray-500 px-4 pb-2">Mar 23 – Apr 2, 2026</div>
+  </nav>
 
-  <!-- Tab: All Days -->
-  <div id="tab-days" class="tab-panel">
-    <div class="max-w-lg mx-auto px-4 pt-2 pb-4">
-      <!-- Day Nav -->
-      <div class="day-nav flex gap-2 py-3 sticky top-14 z-40 bg-gray-50 dark:bg-gray-900" id="dayNav"></div>
-      <!-- Day Cards -->
-      <div id="dayCards" class="flex flex-col gap-4 mt-2"></div>
-    </div>
-  </div>
+  <!-- Main Content Area -->
+  <div id="tabContent">
 
-  <!-- Tab: Notes & Lists -->
-  <div id="tab-notes" class="tab-panel">
-    <div class="max-w-lg mx-auto px-4 py-4">
-      <!-- Sub-nav pills -->
-      <div class="flex gap-2 mb-4 overflow-x-auto">
-        <button onclick="switchNotesTab('journal')" class="notes-pill tap px-4 py-2 rounded-full text-sm font-heading font-600 whitespace-nowrap transition" data-pill="journal">📝 Journal</button>
-        <button onclick="switchNotesTab('checklists')" class="notes-pill tap px-4 py-2 rounded-full text-sm font-heading font-600 whitespace-nowrap transition" data-pill="checklists">✅ Checklists</button>
-        <button onclick="switchNotesTab('expenses')" class="notes-pill tap px-4 py-2 rounded-full text-sm font-heading font-600 whitespace-nowrap transition" data-pill="expenses">💶 Expenses</button>
+    <!-- Tab: Today -->
+    <div id="tab-today" class="tab-panel active">
+      <div class="max-w-lg mx-auto px-4 py-4">
+        <div id="todayContent"></div>
       </div>
-      <!-- Journal -->
-      <div id="notes-journal" class="notes-section"></div>
-      <!-- Checklists -->
-      <div id="notes-checklists" class="notes-section hidden"></div>
-      <!-- Expenses -->
-      <div id="notes-expenses" class="notes-section hidden"></div>
     </div>
-  </div>
 
-  <!-- Tab: Settings -->
-  <div id="tab-settings" class="tab-panel">
-    <div class="max-w-lg mx-auto px-4 py-4" id="settingsContent"></div>
-  </div>
+    <!-- Tab: All Days -->
+    <div id="tab-days" class="tab-panel">
+      <div class="max-w-lg mx-auto px-4 pt-2 pb-4">
+        <!-- Day Nav -->
+        <div class="day-nav flex gap-2 py-3 sticky top-14 z-40 bg-gray-50 dark:bg-gray-900" id="dayNav"></div>
+        <!-- Day Cards -->
+        <div id="dayCards" class="flex flex-col gap-4 mt-2"></div>
+      </div>
+    </div>
+
+    <!-- Tab: Notes & Lists -->
+    <div id="tab-notes" class="tab-panel">
+      <div class="max-w-lg mx-auto px-4 py-4">
+        <!-- Sub-nav pills -->
+        <div class="flex gap-2 mb-4 overflow-x-auto">
+          <button onclick="switchNotesTab('journal')" class="notes-pill tap px-4 py-2 rounded-full text-sm font-heading font-600 whitespace-nowrap transition" data-pill="journal">📝 Journal</button>
+          <button onclick="switchNotesTab('checklists')" class="notes-pill tap px-4 py-2 rounded-full text-sm font-heading font-600 whitespace-nowrap transition" data-pill="checklists">✅ Checklists</button>
+          <button onclick="switchNotesTab('expenses')" class="notes-pill tap px-4 py-2 rounded-full text-sm font-heading font-600 whitespace-nowrap transition" data-pill="expenses">💶 Expenses</button>
+        </div>
+        <!-- Journal -->
+        <div id="notes-journal" class="notes-section"></div>
+        <!-- Checklists -->
+        <div id="notes-checklists" class="notes-section hidden"></div>
+        <!-- Expenses -->
+        <div id="notes-expenses" class="notes-section hidden"></div>
+      </div>
+    </div>
+
+    <!-- Tab: Settings -->
+    <div id="tab-settings" class="tab-panel">
+      <div class="max-w-lg mx-auto px-4 py-4" id="settingsContent"></div>
+    </div>
+
+  </div><!-- /tabContent -->
 
 </div>
 
@@ -618,17 +696,33 @@ function toggleDarkMode() {
 // ============================================================
 // TAB SWITCHING
 // ============================================================
+function isDesktop() {
+  return window.innerWidth >= 768;
+}
+
 function switchTab(tab) {
   state.activeTab = tab;
   saveState();
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
+  // Mobile bottom bar
   document.querySelectorAll('.tab-btn').forEach(b => {
     const isActive = b.dataset.tab === tab;
     b.classList.toggle('bg-teal-50', isActive && !state.darkMode);
     b.classList.toggle('dark:bg-teal-900', isActive && state.darkMode);
     b.style.color = isActive ? phaseColor('austria') : '';
     b.style.fontWeight = isActive ? '700' : '500';
+  });
+  // Desktop sidebar
+  document.querySelectorAll('.desktop-tab-btn').forEach(b => {
+    const isActive = b.dataset.tab === tab;
+    if (isActive) {
+      b.style.background = state.darkMode ? 'rgba(13,148,136,0.15)' : 'rgba(13,148,136,0.1)';
+      b.style.color = phaseColor('austria');
+    } else {
+      b.style.background = '';
+      b.style.color = '';
+    }
   });
   if (tab === 'today') renderToday();
   if (tab === 'days') renderDays();
@@ -700,7 +794,7 @@ function renderDayCardFull(d, isToday) {
 
   const destsHtml = d.destinations && d.destinations.length > 0
     ? `<div class="mb-3"><p class="font-heading font-600 text-sm mb-2">📍 Destinations</p>
-      <div class="space-y-2">${d.destinations.map(dest => `<a href="${dest.url}" target="_blank" rel="noopener noreferrer" class="block glass rounded-xl p-3 hover:shadow-md transition tap">
+      <div class="dest-grid space-y-2">${d.destinations.map(dest => `<a href="${dest.url}" target="_blank" rel="noopener noreferrer" class="block glass rounded-xl p-3 hover:shadow-md transition tap">
         <div class="flex items-start gap-2">
           ${dest.star ? '<span class="text-amber-400 text-sm flex-shrink-0">⭐</span>' : '<span class="text-gray-400 text-sm flex-shrink-0">📍</span>'}
           <div><p class="font-heading font-600 text-sm">${escHtml(dest.name)}</p><p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${escHtml(dest.desc)}</p></div>
@@ -712,7 +806,7 @@ function renderDayCardFull(d, isToday) {
       <button onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.chevron').classList.toggle('open')" class="tap flex items-center gap-2 font-heading font-600 text-sm mb-2 w-full text-left">
         🏨 Hotel Picks <span class="chevron text-xs">▼</span>
       </button>
-      <div class="hidden space-y-2">${d.hotels.map(h => `<div class="glass rounded-xl p-3 hover:shadow-md transition">
+      <div class="hidden hotel-grid space-y-2">${d.hotels.map(h => `<div class="glass rounded-xl p-3 hover:shadow-md transition">
         <div class="flex justify-between items-start mb-1">
           <p class="font-heading font-600 text-sm">${escHtml(h.name)}</p>
           <span class="text-xs text-amber-600 dark:text-amber-400 font-600 flex-shrink-0 ml-2">${h.price}</span>
@@ -830,7 +924,7 @@ function renderCollapsibleDay(d) {
 
   const destsHtml = d.destinations && d.destinations.length > 0
     ? `<div class="mb-3"><p class="font-heading font-600 text-sm mb-2">📍 Destinations</p>
-      <div class="space-y-2">${d.destinations.map(dest => `<a href="${dest.url}" target="_blank" rel="noopener noreferrer" class="block glass rounded-xl p-3 hover:shadow-md transition tap">
+      <div class="dest-grid space-y-2">${d.destinations.map(dest => `<a href="${dest.url}" target="_blank" rel="noopener noreferrer" class="block glass rounded-xl p-3 hover:shadow-md transition tap">
         <div class="flex items-start gap-2">
           ${dest.star ? '<span class="text-amber-400 text-sm flex-shrink-0">⭐</span>' : '<span class="text-gray-400 text-sm flex-shrink-0">📍</span>'}
           <div><p class="font-heading font-600 text-sm">${escHtml(dest.name)}</p><p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${escHtml(dest.desc)}</p></div>
@@ -842,7 +936,7 @@ function renderCollapsibleDay(d) {
       <button onclick="event.stopPropagation();this.nextElementSibling.classList.toggle('hidden');this.querySelector('.chevron').classList.toggle('open')" class="tap flex items-center gap-2 font-heading font-600 text-sm mb-2 w-full text-left">
         🏨 Hotel Picks <span class="chevron text-xs">▼</span>
       </button>
-      <div class="hidden space-y-2">${d.hotels.map(h => `<div class="glass rounded-xl p-3 hover:shadow-md transition">
+      <div class="hidden hotel-grid space-y-2">${d.hotels.map(h => `<div class="glass rounded-xl p-3 hover:shadow-md transition">
         <div class="flex justify-between items-start mb-1">
           <p class="font-heading font-600 text-sm">${escHtml(h.name)}</p>
           <span class="text-xs text-amber-600 dark:text-amber-400 font-600 flex-shrink-0 ml-2">${h.price}</span>
