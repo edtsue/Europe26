@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alps to Tuscany — Family Trip Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      fontFamily: {
+        heading: ['Outfit', 'sans-serif'],
+        body: ['DM Sans', 'sans-serif'],
+      },
+      colors: {
+        austria: { DEFAULT: '#0d9488', light: '#99f6e4', dark: '#134e4a' },
+        transition: { DEFAULT: '#d97706', light: '#fde68a', dark: '#78350f' },
+        italy: { DEFAULT: '#c2410c', light: '#fed7aa', dark: '#7c2d12' },
+        departure: { DEFAULT: '#475569', light: '#cbd5e1', dark: '#1e293b' },
+      }
+    }
+  }
+}
+</script>
+<style>
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; font-display: swap; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+  body { font-family: 'DM Sans', sans-serif; margin: 0; padding: 0; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3, h4, h5, h6 { font-family: 'Outfit', sans-serif; }
+
+  /* Phase gradients */
+  .phase-austria { background: linear-gradient(135deg, #0d9488 0%, #059669 50%, #047857 100%); }
+  .phase-transition { background: linear-gradient(135deg, #d97706 0%, #b45309 50%, #92400e 100%); }
+  .phase-italy { background: linear-gradient(135deg, #c2410c 0%, #b91c1c 50%, #9a3412 100%); }
+  .phase-departure { background: linear-gradient(135deg, #475569 0%, #334155 50%, #1e293b 100%); }
+
+  .phase-austria-light { background: linear-gradient(135deg, #ccfbf1 0%, #a7f3d0 100%); }
+  .phase-transition-light { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); }
+  .phase-italy-light { background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%); }
+  .phase-departure-light { background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%); }
+
+  /* Glassmorphism */
+  .glass { background: rgba(255,255,255,0.75); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.3); }
+  .dark .glass { background: rgba(30,41,59,0.8); border: 1px solid rgba(255,255,255,0.1); }
+
+  /* Animations */
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 3000px; } }
+  @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+  .anim-fade { animation: fadeIn 0.4s ease-out forwards; }
+  .anim-slide { animation: slideDown 0.35s ease-out forwards; overflow: hidden; }
+  .anim-float { animation: float 3s ease-in-out infinite; }
+  .anim-pulse { animation: pulse 2s ease-in-out infinite; }
+
+  /* Tab content */
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* Chevron */
+  .chevron { transition: transform 0.3s ease; }
+  .chevron.open { transform: rotate(180deg); }
+
+  /* Checkbox animation */
+  .check-box { width: 22px; height: 22px; border: 2px solid #94a3b8; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; }
+  .check-box.checked { background: #059669; border-color: #059669; }
+  .check-box.checked::after { content: '✓'; color: white; font-size: 14px; font-weight: 700; }
+
+  /* Bottom tab bar */
+  .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; padding-bottom: env(safe-area-inset-bottom, 0px); }
+
+  /* Day nav */
+  .day-nav { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .day-nav::-webkit-scrollbar { display: none; }
+
+  /* Tap targets */
+  .tap { min-height: 44px; min-width: 44px; }
+
+  /* Progress bar */
+  .progress-track { height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden; }
+  .dark .progress-track { background: #334155; }
+  .progress-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
+
+  /* Family tip */
+  .family-tip { background: linear-gradient(135deg, #fce7f3, #fdf2f8); border-left: 4px solid #ec4899; }
+  .dark .family-tip { background: linear-gradient(135deg, #831843, #4a0e2e); border-left: 4px solid #f472b6; }
+
+  /* ZTL banner */
+  .ztl-banner { background: linear-gradient(135deg, #fef3c7, #fde68a); border-left: 4px solid #f59e0b; }
+  .dark .ztl-banner { background: linear-gradient(135deg, #78350f, #451a03); border-left: 4px solid #fbbf24; }
+  .ztl-danger { background: linear-gradient(135deg, #fee2e2, #fecaca); border-left: 4px solid #ef4444; }
+  .dark .ztl-danger { background: linear-gradient(135deg, #7f1d1d, #450a0a); border-left: 4px solid #f87171; }
+
+  /* Expense category colors */
+  .cat-food { background: #fef3c7; color: #92400e; }
+  .cat-hotel { background: #dbeafe; color: #1e40af; }
+  .cat-gas { background: #d1fae5; color: #065f46; }
+  .cat-tickets { background: #ede9fe; color: #5b21b6; }
+  .cat-shopping { background: #fce7f3; color: #9d174d; }
+  .cat-parking { background: #e0e7ff; color: #3730a3; }
+  .cat-other { background: #f1f5f9; color: #475569; }
+  .dark .cat-food { background: #78350f; color: #fde68a; }
+  .dark .cat-hotel { background: #1e3a5f; color: #93c5fd; }
+  .dark .cat-gas { background: #064e3b; color: #6ee7b7; }
+  .dark .cat-tickets { background: #4c1d95; color: #c4b5fd; }
+  .dark .cat-shopping { background: #831843; color: #f9a8d4; }
+  .dark .cat-parking { background: #312e81; color: #a5b4fc; }
+  .dark .cat-other { background: #334155; color: #94a3b8; }
+
+  /* Modal overlay */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; display: flex; align-items: flex-end; justify-content: center; }
+  .modal-content { width: 100%; max-width: 500px; max-height: 85vh; overflow-y: auto; border-radius: 16px 16px 0 0; padding: 24px; padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)); }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 2px; }
+
+  /* Dark mode overrides */
+  .dark body, .dark .bg-white { background-color: #0f172a; color: #e2e8f0; }
+  .dark .bg-gray-50, .dark .bg-gray-100 { background-color: #1e293b; }
+  .dark .text-gray-900, .dark .text-gray-800 { color: #f1f5f9; }
+  .dark .text-gray-700, .dark .text-gray-600 { color: #cbd5e1; }
+  .dark .text-gray-500 { color: #94a3b8; }
+  .dark .border-gray-200 { border-color: #334155; }
+  .dark input, .dark textarea, .dark select { background-color: #1e293b; color: #e2e8f0; border-color: #334155; }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-900 font-body min-h-screen pb-20">
+
+<!-- App Container -->
+<div id="app">
+
+  <!-- Header -->
+  <header id="appHeader" class="sticky top-0 z-50 glass">
+    <div class="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
+      <div>
+        <h1 class="font-heading font-800 text-xl leading-tight">Alps to Tuscany</h1>
+        <p class="text-xs text-gray-500 dark:text-gray-400 font-body">Family Trip Hub</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="darkToggleHeader" onclick="toggleDarkMode()" class="tap flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="Toggle dark mode">
+          <span id="darkIconHeader" class="text-xl">🌙</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Tab: Today -->
+  <div id="tab-today" class="tab-panel active">
+    <div class="max-w-lg mx-auto px-4 py-4">
+      <div id="todayContent"></div>
+    </div>
+  </div>
+
+  <!-- Tab: All Days -->
+  <div id="tab-days" class="tab-panel">
+    <div class="max-w-lg mx-auto px-4 pt-2 pb-4">
+      <!-- Day Nav -->
+      <div class="day-nav flex gap-2 py-3 sticky top-14 z-40 bg-gray-50 dark:bg-gray-900" id="dayNav"></div>
+      <!-- Day Cards -->
+      <div id="dayCards" class="flex flex-col gap-4 mt-2"></div>
+    </div>
+  </div>
+
+  <!-- Tab: Notes & Lists -->
+  <div id="tab-notes" class="tab-panel">
+    <div class="max-w-lg mx-auto px-4 py-4">
+      <!-- Sub-nav pills -->
+      <div class="flex gap-2 mb-4 overflow-x-auto">
+        <button onclick="switchNotesTab('journal')" class="notes-pill tap px-4 py-2 rounded-full text-sm font-heading font-600 whitespace-nowrap transition" data-pill="journal">📝 Journal</button>
+        <button onclick="switchNotesTab('checklists')" class="notes-pill tap px-4 py-2 rounded-full text-sm font-heading font-600 whitespace-nowrap transition" data-pill="checklists">✅ Checklists</button>
+        <button onclick="switchNotesTab('expenses')" class="notes-pill tap px-4 py-2 rounded-full text-sm font-heading font-600 whitespace-nowrap transition" data-pill="expenses">💶 Expenses</button>
+      </div>
+      <!-- Journal -->
+      <div id="notes-journal" class="notes-section"></div>
+      <!-- Checklists -->
+      <div id="notes-checklists" class="notes-section hidden"></div>
+      <!-- Expenses -->
+      <div id="notes-expenses" class="notes-section hidden"></div>
+    </div>
+  </div>
+
+  <!-- Tab: Settings -->
+  <div id="tab-settings" class="tab-panel">
+    <div class="max-w-lg mx-auto px-4 py-4" id="settingsContent"></div>
+  </div>
+
+</div>
+
+<!-- Bottom Tab Bar -->
+<nav class="bottom-bar glass shadow-lg border-t border-gray-200 dark:border-gray-700">
+  <div class="max-w-lg mx-auto flex justify-around items-center py-2">
+    <button onclick="switchTab('today')" class="tab-btn tap flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition" data-tab="today">
+      <span class="text-xl">📅</span>
+      <span class="text-xs font-heading font-600">Today</span>
+    </button>
+    <button onclick="switchTab('days')" class="tab-btn tap flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition" data-tab="days">
+      <span class="text-xl">🗺</span>
+      <span class="text-xs font-heading font-600">Days</span>
+    </button>
+    <button onclick="switchTab('notes')" class="tab-btn tap flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition" data-tab="notes">
+      <span class="text-xl">📝</span>
+      <span class="text-xs font-heading font-600">Notes</span>
+    </button>
+    <button onclick="switchTab('settings')" class="tab-btn tap flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition" data-tab="settings">
+      <span class="text-xl">⚙️</span>
+      <span class="text-xs font-heading font-600">Settings</span>
+    </button>
+  </div>
+</nav>
+
+<!-- Modal container -->
+<div id="modalContainer"></div>
+
+<script>
+// ============================================================
+// ITINERARY DATA
+// ============================================================
+const TRIP_START = new Date('2026-03-23');
+const TRIP_END = new Date('2026-04-02');
+
+const DAYS = [
+  {
+    day: 1, date: 'Mar 23', weekday: 'Sun', flag: '🇦🇹', phase: 'austria',
+    title: 'Arrival → Salzburg',
+    am: 'Land Munich (11 AM) → Pick up rental car → 1.5 hr scenic drive to Salzburg',
+    pm: 'Salzburg Old Town stroll + early family dinner',
+    sleep: 'Salzburg', sleepIcon: '🏰',
+    parking: '⚠️ Hotel garage required', parkingStatus: 'warn',
+    ztl: '⚠️ Some central areas restricted — confirm hotel access', ztlStatus: 'warn',
+    familyTip: 'Old Town is compact & flat — perfect evening stroll after a long flight. Kids will love the golden sphere sculpture in Kapitelplatz and the funicular up to the fortress!',
+    destinations: [
+      { name: 'Hohensalzburg Fortress', url: 'https://www.salzburg.info/en/sights/top10/hohensalzburg-fortress', desc: 'Largest medieval fortress in Europe! Take the funicular up — kids love the ride. Knight\'s rooms & puppet museum inside.', star: true },
+      { name: 'Getreidegasse', url: 'https://www.salzburg.info/en/sights/top10/getreidegasse', desc: 'Fairy-tale shopping lane with wrought-iron signs. Mozart\'s Birthplace at #9. Get Mozartkugeln (chocolate balls) for the kids!', star: true },
+      { name: 'Mirabell Palace & Gardens', url: 'https://www.salzburg.info/en/sights/top10/mirabell-palace-gardens', desc: 'Sound of Music filming location! Kids can run through the Do-Re-Mi gardens. Dwarf Garden is wonderfully weird.', star: true },
+      { name: 'Salzburg Cathedral', url: 'https://www.salzburg.info/en/sights/top10/salzburg-cathedral', desc: 'Baroque masterpiece where Mozart was baptized. Free to enter.' },
+      { name: 'Residenzplatz', url: 'https://www.salzburg.info/en/sights/top10/residenz', desc: 'Heart of Old Town with Salzburg\'s most beautiful fountain.' }
+    ],
+    hotels: [
+      { name: 'Hotel Sacher Salzburg', url: 'https://www.sacher.com/hotel-sacher-salzburg/', why: 'Grand historic luxury on the Salzach River. Famous Sacher Torte — kids will devour it!', parking: 'Valet available', price: '€€€€', perk: 'Spacious rooms, riverside views' },
+      { name: 'Sheraton Grand Salzburg', url: 'https://www.marriott.com/hotels/travel/szggs-sheraton-grand-salzburg/', why: 'Best for families — large indoor pool, multiple restaurants, rooms with sofa beds.', parking: 'Hotel garage', price: '€€€', perk: 'Indoor pool, kids menu, sofa beds' },
+      { name: 'Hotel Bristol Salzburg', url: 'https://www.bristolsalzburg.at/en/', why: 'Family-run 3 generations, 5-star, steps from Mirabell Palace. Award-winning restaurant.', parking: 'Garage ~300m (~€30/night)', price: '€€€', perk: 'Central location, elegant rooms' }
+    ]
+  },
+  {
+    day: 2, date: 'Mar 24', weekday: 'Mon', flag: '🏔', phase: 'austria',
+    title: 'Grossarl Check-in',
+    am: 'Breakfast in Salzburg → 1 hr drive to Grossarl Valley',
+    pm: 'Check-in at Das Edelweiss → Spa, waterpark & pool time!',
+    sleep: 'Das Edelweiss (1/3)', sleepIcon: '⛷',
+    parking: '✅ Free resort parking', parkingStatus: 'ok',
+    ztl: '✅ No ZTL', ztlStatus: 'ok',
+    familyTip: 'The indoor waterpark has 5 SLIDES and a warm toddler pool. Four age-specific kids clubs mean parents can hit the spa guilt-free!',
+    destinations: [
+      { name: 'Das Edelweiss Resort', url: 'https://www.edelweiss-grossarl.com/en/', desc: '5-star family resort, Michelin 2 Keys. 7,000m² Mountain Spa with family & adults-only zones.', star: true },
+      { name: 'Indoor Waterpark', url: 'https://www.edelweiss-grossarl.com/en/', desc: '5 water slides, toddler pool, lazy river — kids won\'t want to leave!', star: true },
+      { name: 'Mountain Cuisine', url: 'https://www.edelweiss-grossarl.com/en/', desc: 'Steak at Sirloin Grill & Dine, sushi at Sakura, or pizza at Cantina & Pizza Inferno.' }
+    ],
+    hotels: [
+      { name: 'Das Edelweiss Mountain Resort', url: 'https://www.edelweiss-grossarl.com/en/', why: '5-star, 3rd generation family-run. Michelin 2 Keys. Indoor waterpark, 4 kids clubs, mountain spa.', parking: 'Free on-site', price: '€€€€', perk: 'Waterpark, 4 kids clubs by age, pizza restaurant' }
+    ]
+  },
+  {
+    day: 3, date: 'Mar 25', weekday: 'Tue', flag: '🏔', phase: 'austria',
+    title: 'Alpine Adventure Day',
+    am: 'Cable car ride up Panoramabahn → Alpine walk or valley exploration',
+    pm: 'Mountain dinner at the resort + evening swim',
+    sleep: 'Das Edelweiss (2/3)', sleepIcon: '⛷',
+    parking: '✅ Car stays parked', parkingStatus: 'ok',
+    ztl: '✅ No ZTL', ztlStatus: 'ok',
+    familyTip: 'Take the Panoramabahn cable car right from the hotel — stunning views! 40+ traditional mountain huts serve hot chocolate and strudel. Guided family walks available.',
+    destinations: [
+      { name: 'Panoramabahn Cable Car', url: 'https://www.grossarltal.info/en/', desc: 'Steps from hotel! Ride up for panoramic valley views. Spring hiking or snow play.', star: true },
+      { name: 'Grossarl Valley Almen', url: 'https://www.grossarltal.info/en/', desc: '40+ traditional alpine huts — hot chocolate, apple strudel & Kaiserschmarrn (fluffy shredded pancakes!).', star: true }
+    ],
+    hotels: []
+  },
+  {
+    day: 4, date: 'Mar 26', weekday: 'Wed', flag: '🏔', phase: 'austria',
+    title: 'Relax or Explore',
+    am: 'Slow mountain morning OR half-day Salzburg trip',
+    pm: 'Final spa evening — soak it all in',
+    sleep: 'Das Edelweiss (3/3)', sleepIcon: '⛷',
+    parking: '✅ Easy village parking', parkingStatus: 'ok',
+    ztl: '✅ No ZTL', ztlStatus: 'ok',
+    familyTip: 'Option A: Full kids club + spa day for parents. Option B: Hellbrunn Palace has trick water fountains that spray unsuspecting visitors — kids LOVE it (30 min drive).',
+    destinations: [
+      { name: 'Hellbrunn Palace', url: 'https://www.hellbrunn.at/en', desc: '30 min from resort. Trick water fountains — kids will be in hysterics! Sound of Music gazebo too.', star: true },
+      { name: 'Resort Spa Day', url: 'https://www.edelweiss-grossarl.com/en/', desc: 'Last chance for waterpark, infinity pool & mountain views.', star: true }
+    ],
+    hotels: []
+  },
+  {
+    day: 5, date: 'Mar 27', weekday: 'Thu', flag: '🚗', phase: 'transition',
+    title: '"Alps to Tuscany" ⭐ Big Drive Day',
+    am: 'Scenic 5 hr drive south → Coffee stop in Innsbruck + Brenner Pass into Italy',
+    pm: 'Arrive Val d\'Orcia — Tuscan countryside welcome!',
+    sleep: 'Val d\'Orcia (1/3)', sleepIcon: '🌻',
+    parking: '✅ On-site estate parking', parkingStatus: 'ok',
+    ztl: '✅ Stay outside towns — no issues', ztlStatus: 'ok',
+    familyTip: 'Big drive day! Pack snacks, download movies, bring coloring books. Innsbruck coffee stop breaks it up. Brenner Pass is exciting — you\'re crossing the Alps! Let kids spot the Italy border signs.',
+    driveRoute: [
+      'Grossarl → Innsbruck (~2 hrs): Scenic motorway through alpine valleys',
+      'Innsbruck Old Town — Quick coffee & leg stretch. Golden Roof fun to spot.',
+      'Innsbruck → Brenner Pass (~30 min): Cross into Italy!',
+      'Brenner → Val d\'Orcia (~4 hrs): A22 south through Trentino, A1 toward Siena',
+      'Total: ~5 hours driving + stops'
+    ],
+    destinations: [
+      { name: 'Innsbruck Old Town', url: 'https://www.innsbruck.info/en/', desc: 'Quick coffee & leg stretch. Golden Roof (Goldenes Dachl). Mountains tower over the city!', star: true },
+      { name: 'Val d\'Orcia UNESCO Site', url: 'https://www.italia.it/en/tuscany/things-to-do/val-orcia', desc: 'Rolling hills, cypress trees, medieval villages.' }
+    ],
+    hotels: [
+      { name: 'Rosewood Castiglion del Bosco', url: 'https://www.rosewoodhotels.com/en/castiglion-del-bosco', why: 'Ultra-luxury Tuscan resort. Vineyards, spa, golf, stunning suites.', parking: 'Free estate parking', price: '€€€€€', perk: 'Kids programs, pool, cooking classes' },
+      { name: 'Adler Thermae Spa Resort', url: 'https://www.adler-thermae.com/en/', why: 'Luxury thermal spa in Bagno Vignoni. Central Val d\'Orcia.', parking: 'Free on-site', price: '€€€€', perk: 'Thermal pools, kids activities' },
+      { name: 'Tenuta Santo Pietro', url: 'https://www.tenutasantopietro.com/', why: 'Family-friendly luxury agriturismo. Cooking classes, truffle hunting!', parking: 'Free on-site', price: '€€€', perk: 'Cooking classes, farm animals, truffle hunts' },
+      { name: 'Castello Banfi – Il Borgo', url: 'https://www.castellobanfiwineresort.it/en/', why: 'Relais & Chateaux wine estate near Montalcino. Historic castle.', parking: 'Estate parking', price: '€€€€', perk: 'Castle tours, vineyard walks' },
+      { name: 'L\'Olmo', url: 'https://www.olmopienza.it/', why: 'Boutique 4-star just outside Pienza, only 8 rooms. Pool, rolling fields.', parking: 'Free on-site', price: '€€€', perk: 'Intimate, quiet, pool' }
+    ]
+  },
+  {
+    day: 6, date: 'Mar 28', weekday: 'Fri', flag: '🇮🇹', phase: 'italy',
+    title: 'Pienza & Montepulciano',
+    am: 'Pienza — cheese tasting, Renaissance streets, panoramic views',
+    pm: 'Montepulciano — tower climb + vineyard dinner',
+    sleep: 'Val d\'Orcia (2/3)', sleepIcon: '🌻',
+    parking: '⚠️ Park OUTSIDE town walls', parkingStatus: 'warn',
+    ztl: '⚠️ Do NOT drive into historic town centers!', ztlStatus: 'warn',
+    familyTip: 'Pienza\'s pecorino cheese shops have free samples everywhere! In Montepulciano, climb the Palazzo Comunale tower for a 360° view. Streets named \'Love\', \'Kiss\' and \'Good Luck\'!',
+    destinations: [
+      { name: 'Pienza', url: 'https://www.discovertuscany.com/pienza/', desc: 'The "Ideal Renaissance City" — pecorino cheese capital! Walk behind the cathedral for jaw-dropping views.', star: true },
+      { name: 'Montepulciano', url: 'https://www.discovertuscany.com/montepulciano/', desc: 'Medieval hilltop town. Climb Palazzo Comunale tower for 360° views. Caffe Poliziano panoramic terrace.', star: true },
+      { name: 'Ristorante Daria (Monticchiello)', url: 'https://www.discovertuscany.com/montepulciano/', desc: 'Authentic Tuscan dishes. Book ahead!' },
+      { name: 'Il Rossellino (Pienza)', url: 'https://www.discovertuscany.com/pienza/', desc: 'Traditional cooking in charming piazza.' },
+      { name: 'La Bandita Townhouse (Pienza)', url: 'https://www.discovertuscany.com/pienza/', desc: 'Modern Tuscan with international twists.' }
+    ],
+    hotels: []
+  },
+  {
+    day: 7, date: 'Mar 29', weekday: 'Sat', flag: '🇮🇹', phase: 'italy',
+    title: 'Tuscan Slow Day',
+    am: 'Farm visit or countryside drive — gelato stops mandatory',
+    pm: 'Sunset dinner with Val d\'Orcia views',
+    sleep: 'Val d\'Orcia (3/3)', sleepIcon: '🌻',
+    parking: '✅ No driving needed from estate', parkingStatus: 'ok',
+    ztl: '✅ No issues from countryside', ztlStatus: 'ok',
+    familyTip: 'Visit Podere il Casale — kids can meet 1,000+ sheep and watch pecorino cheese being made! Bagno Vignoni has a Roman thermal pool in the town square — surreal.',
+    destinations: [
+      { name: 'Montalcino', url: 'https://www.discovertuscany.com/montalcino/', desc: 'City of Brunello wine. Climb the 14th-century fortress — wine tasting inside (grape juice for kids!).', star: true },
+      { name: 'Vitaleta Chapel', url: 'https://www.discovertuscany.com/valdorcia/', desc: 'THE iconic Tuscan photo — tiny white church on a hill between cypress trees.', star: true },
+      { name: 'Bagno Vignoni', url: 'https://www.discovertuscany.com/valdorcia/', desc: 'Ancient Roman thermal pool in the town square! Steaming water fascinates kids.' },
+      { name: 'Podere il Casale', url: 'https://www.discovertuscany.com/valdorcia/', desc: 'Farm with 1,000+ sheep — watch pecorino being made! Picnic with views.' },
+      { name: 'San Quirico d\'Orcia', url: 'https://www.discovertuscany.com/valdorcia/', desc: 'Romanesque church, Horti Leonini Renaissance gardens.' }
+    ],
+    hotels: []
+  },
+  {
+    day: 8, date: 'Mar 30', weekday: 'Sun', flag: '🇮🇹', phase: 'italy',
+    title: 'Verona — Romeo & Juliet City',
+    am: '2.5-3 hr drive Val d\'Orcia → Verona',
+    pm: 'Arena di Verona (older than the Colosseum!) + Piazza evening stroll',
+    sleep: 'Verona — OUTSIDE ZTL', sleepIcon: '🏛',
+    parking: '⚠️ Hotel garage OUTSIDE old town — critical!', parkingStatus: 'warn',
+    ztl: '⚠️ Stay OUTSIDE ZTL zone — walk into old town', ztlStatus: 'warn',
+    familyTip: 'The Arena held gladiator fights and 30,000 spectators — it\'s like a smaller Colosseum! Under 8s are FREE. Visit Juliet\'s balcony for the photo op. Secret: Roman ruins hide in the Benetton store basement on Via Mazzini!',
+    parkingStrategy: 'Corso Porta Nuova from the south — NOT in ZTL. Park at Parcheggio Cittadella (underground, modern) — 2-3 min walk to Arena, zero ZTL risk.',
+    destinations: [
+      { name: 'Arena di Verona', url: 'https://arenaverona.org/en', desc: '1st century AD — best preserved amphitheater in the world! Adults ~€12, kids under 8 FREE.', star: true },
+      { name: 'Juliet\'s House', url: 'https://www.visitverona.it/en', desc: 'The famous balcony! Touch Juliet\'s statue for luck.', star: true },
+      { name: 'Piazza delle Erbe', url: 'https://www.visitverona.it/en', desc: 'Ancient Roman forum turned lively market. Gelato & frescoed buildings.', star: true },
+      { name: 'Piazza Bra', url: 'https://www.arena.it/en/arena-verona-opera-festival/get-ready-for-the-opera/visiting-verona/', desc: 'Grand main square, cafes along the "Liston" promenade.' },
+      { name: 'Lamberti Tower', url: 'https://www.visitverona.it/en', desc: 'Tallest in Verona — amazing views. Kids love the climb.' }
+    ],
+    hotels: [
+      { name: 'Hotel Indigo Verona', url: 'https://www.ihg.com/hotelindigo/hotels/us/en/verona/vrnin/hoteldetail', why: 'Elegant 1920s Liberty-style. 10-min walk to Arena.', parking: 'Available, outside ZTL', price: '€€€', perk: 'Walkable, stylish rooms' },
+      { name: 'Best Western CTC Verona', url: 'https://www.bwctchotelverona.it/en/', why: 'Spacious rooms, free shuttle to center. Ample parking.', parking: 'Free ample parking', price: '€€€', perk: 'Free shuttle, restaurant' },
+      { name: 'Relais Villa dei Gelsi & Spa', url: 'https://www.villadeigelsi.com/', why: 'Luxury farmstay with pool, spa, indoor pool. 1.5 km from center.', parking: 'Free private parking', price: '€€€', perk: 'Pool, spa, family rooms' }
+    ]
+  },
+  {
+    day: 9, date: 'Mar 31', weekday: 'Mon', flag: '🇮🇹', phase: 'italy',
+    title: 'Verona → Florence Area',
+    am: 'Morning Verona stroll — last gelato!',
+    pm: '2.5 hr drive to Florence airport area',
+    sleep: 'Florence Airport Hotel', sleepIcon: '✈️',
+    parking: '✅ Airport hotel parking', parkingStatus: 'ok',
+    ztl: '✅ No ZTL near airport', ztlStatus: 'ok',
+    familyTip: 'Let the kids pick one last Verona treat (gelato, obviously). Highway drive = good nap time. DON\'T go into Florence city center with the car!',
+    destinations: [],
+    hotels: [
+      { name: 'Hilton Garden Inn Florence Novoli', url: 'https://www.hilton.com/en/hotels/flrfigi-hilton-garden-inn-florence-novoli/', why: 'Modern, near airport. Tram to Florence center.', parking: 'Free self-parking', price: '€€', perk: 'Restaurant, tram to city' },
+      { name: 'Villa Campestri Olive Oil Resort', url: 'https://www.villacampestri.com/en/', why: 'Final splurge! 5-star olive oil estate. Pool, spa, incredible breakfast.', parking: 'Free on-site', price: '€€€€', perk: 'Pool, farm, stunning grounds' },
+      { name: 'Starhotels Tuscany', url: 'https://www.starhotels.com/en/our-hotels/tuscany-florence/', why: '4-star, tram stop right in front — direct to city center.', parking: 'Self-parking', price: '€€€', perk: 'Tram access, restaurant' }
+    ]
+  },
+  {
+    day: 10, date: 'Apr 1', weekday: 'Tue', flag: '📦', phase: 'italy',
+    title: 'Buffer Day — Relax & Pack',
+    am: 'Sleep in! Buffer morning. Kids play at hotel.',
+    pm: 'Relaxed final Italian dinner — no rush',
+    sleep: 'Florence Airport Hotel', sleepIcon: '✈️',
+    parking: '✅ Hotel parking', parkingStatus: 'ok',
+    ztl: '✅ No ZTL', ztlStatus: 'ok',
+    familyTip: 'This is YOUR day. Let kids swim, do laundry, pack calmly. One last pizza. Set out tomorrow\'s travel clothes tonight!',
+    destinations: [],
+    hotels: []
+  },
+  {
+    day: 11, date: 'Apr 2', weekday: 'Wed', flag: '✈️', phase: 'departure',
+    title: 'Fly Home!',
+    am: 'Early departure — 6:30 AM flight. Return rental car at Florence Airport.',
+    pm: '—',
+    sleep: 'Home sweet home', sleepIcon: '🏠',
+    parking: '✅ Return car at airport', parkingStatus: 'ok',
+    ztl: '—', ztlStatus: 'ok',
+    familyTip: 'Pack a small activity bag in carry-on for the flight. Download shows the night before. Airport snack haul is a fun tradition to start!',
+    destinations: [],
+    hotels: []
+  }
+];
+
+const CATEGORIES = [
+  { id: 'food', label: '🍽 Food', color: 'cat-food' },
+  { id: 'hotel', label: '🏨 Hotel', color: 'cat-hotel' },
+  { id: 'gas', label: '⛽ Gas', color: 'cat-gas' },
+  { id: 'tickets', label: '🎫 Tickets', color: 'cat-tickets' },
+  { id: 'shopping', label: '🛍 Shopping', color: 'cat-shopping' },
+  { id: 'parking', label: '🚗 Parking', color: 'cat-parking' },
+  { id: 'other', label: '📱 Other', color: 'cat-other' }
+];
+
+const DEFAULT_CHECKLISTS = {
+  packing: {
+    title: '🧳 Packing List',
+    items: [
+      { text: 'Passports (all family members)', checked: false },
+      { text: 'EU power adapters (2x)', checked: false },
+      { text: 'Car phone mount', checked: false },
+      { text: 'Kids\' tablets + headphones', checked: false },
+      { text: 'Download offline Google Maps (Austria + Italy)', checked: false },
+      { text: 'Snacks for Day 5 big drive', checked: false },
+      { text: 'Comfort items for kids (stuffed animals, blankets)', checked: false },
+      { text: 'Sunscreen + hats', checked: false },
+      { text: 'Comfortable walking shoes (everyone)', checked: false },
+      { text: 'Rain jackets (March weather!)', checked: false },
+      { text: 'Camera / phone charger / portable battery', checked: false },
+      { text: 'Printed hotel confirmations (backup)', checked: false },
+      { text: 'International driving permit (if needed)', checked: false },
+      { text: 'Travel insurance docs', checked: false },
+      { text: 'Kids\' activity bag for flights', checked: false }
+    ]
+  },
+  pretip: {
+    title: '📋 Pre-Trip To-Do',
+    items: [
+      { text: 'Book Salzburg hotel', checked: false },
+      { text: 'Book Val d\'Orcia hotel', checked: false },
+      { text: 'Book Verona hotel', checked: false },
+      { text: 'Book Florence airport hotel', checked: false },
+      { text: 'Reserve rental car (Munich pickup → Florence drop-off)', checked: false },
+      { text: 'Buy Austria Vignette (motorway sticker) online', checked: false },
+      { text: 'Download offline maps', checked: false },
+      { text: 'Notify bank of travel dates', checked: false },
+      { text: 'Check Arena di Verona hours (March closures?)', checked: false },
+      { text: 'Pack kids\' entertainment for flights + drives', checked: false },
+      { text: 'Confirm Das Edelweiss reservation', checked: false }
+    ]
+  },
+  ztl: {
+    title: '🇮🇹 ZTL Survival Checklist',
+    items: [
+      { text: 'Read ZTL rules before entering Italy', checked: false },
+      { text: 'Download ZTL map for Florence', checked: false },
+      { text: 'Confirm Verona hotel is OUTSIDE ZTL', checked: false },
+      { text: 'Confirm Florence hotel is OUTSIDE ZTL', checked: false },
+      { text: 'Set GPS to "avoid city centers" in Italy', checked: false },
+      { text: 'Save Parcheggio Cittadella (Verona) address in Maps', checked: false },
+      { text: 'DO NOT follow GPS into walled Tuscan towns', checked: false }
+    ]
+  }
+};
+
+const DEFAULT_NOTE = {
+  id: 'default-1',
+  text: '✈️ Trip starts Mar 23! Don\'t forget to download offline maps for Austria & Italy.',
+  day: 'general',
+  timestamp: new Date('2026-02-25T10:00:00').toISOString()
+};
+
+// ============================================================
+// STATE MANAGEMENT
+// ============================================================
+const STORAGE_KEY = 'TRIP_HUB_DATA';
+let state = null;
+let saveTimeout = null;
+
+function getDefaultState() {
+  return {
+    version: 1,
+    darkMode: false,
+    notes: [{ ...DEFAULT_NOTE }],
+    checklists: JSON.parse(JSON.stringify(DEFAULT_CHECKLISTS)),
+    expenses: [],
+    expandedDays: [],
+    activeTab: 'today',
+    activeNotesTab: 'journal'
+  };
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      state = JSON.parse(raw);
+      // Ensure all keys exist (merge with defaults)
+      const def = getDefaultState();
+      if (!state.notes) state.notes = def.notes;
+      if (!state.checklists) state.checklists = def.checklists;
+      if (!state.expenses) state.expenses = def.expenses;
+      if (!state.expandedDays) state.expandedDays = def.expandedDays;
+      if (state.activeTab === undefined) state.activeTab = 'today';
+      if (state.activeNotesTab === undefined) state.activeNotesTab = 'journal';
+    } else {
+      state = getDefaultState();
+    }
+  } catch (e) {
+    state = getDefaultState();
+  }
+}
+
+function saveState() {
+  clearTimeout(saveTimeout);
+  saveTimeout = setTimeout(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (e) { /* quota exceeded fallback */ }
+  }, 200);
+}
+
+// ============================================================
+// UTILITIES
+// ============================================================
+function getTripDay() {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const start = new Date(TRIP_START);
+  const diff = Math.floor((today - start) / (1000 * 60 * 60 * 24));
+  if (diff < 0) return { dayNum: 1, status: 'before', daysUntil: Math.abs(diff) };
+  if (diff > 10) return { dayNum: 11, status: 'after' };
+  return { dayNum: diff + 1, status: 'during' };
+}
+
+function phaseColor(phase) {
+  const map = { austria: '#0d9488', transition: '#d97706', italy: '#c2410c', departure: '#475569' };
+  return map[phase] || '#475569';
+}
+
+function phaseBg(phase) {
+  return `phase-${phase}`;
+}
+
+function phaseBgLight(phase) {
+  return `phase-${phase}-light`;
+}
+
+function genId() {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+}
+
+function formatTimestamp(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+}
+
+function escHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+// ============================================================
+// DARK MODE
+// ============================================================
+function applyDarkMode() {
+  if (state.darkMode) {
+    document.documentElement.classList.add('dark');
+    document.body.classList.add('dark');
+    document.body.classList.remove('bg-gray-50');
+    document.body.classList.add('bg-gray-900');
+  } else {
+    document.documentElement.classList.remove('dark');
+    document.body.classList.remove('dark');
+    document.body.classList.remove('bg-gray-900');
+    document.body.classList.add('bg-gray-50');
+  }
+  const icon = document.getElementById('darkIconHeader');
+  if (icon) icon.textContent = state.darkMode ? '☀️' : '🌙';
+}
+
+function toggleDarkMode() {
+  state.darkMode = !state.darkMode;
+  applyDarkMode();
+  saveState();
+  renderSettings();
+}
+
+// ============================================================
+// TAB SWITCHING
+// ============================================================
+function switchTab(tab) {
+  state.activeTab = tab;
+  saveState();
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    const isActive = b.dataset.tab === tab;
+    b.classList.toggle('bg-teal-50', isActive && !state.darkMode);
+    b.classList.toggle('dark:bg-teal-900', isActive && state.darkMode);
+    b.style.color = isActive ? phaseColor('austria') : '';
+    b.style.fontWeight = isActive ? '700' : '500';
+  });
+  if (tab === 'today') renderToday();
+  if (tab === 'days') renderDays();
+  if (tab === 'notes') renderNotes();
+  if (tab === 'settings') renderSettings();
+}
+
+// ============================================================
+// NOTES TAB SWITCHING
+// ============================================================
+function switchNotesTab(sub) {
+  state.activeNotesTab = sub;
+  saveState();
+  document.querySelectorAll('.notes-section').forEach(s => s.classList.add('hidden'));
+  document.getElementById('notes-' + sub).classList.remove('hidden');
+  document.querySelectorAll('.notes-pill').forEach(p => {
+    const isActive = p.dataset.pill === sub;
+    if (isActive) {
+      p.classList.add('bg-teal-600', 'text-white');
+      p.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+    } else {
+      p.classList.remove('bg-teal-600', 'text-white');
+      p.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+    }
+  });
+}
+
+// ============================================================
+// RENDER: TODAY
+// ============================================================
+function renderToday() {
+  const trip = getTripDay();
+  const dayData = DAYS[trip.dayNum - 1];
+  const container = document.getElementById('todayContent');
+  let countdownHtml = '';
+  if (trip.status === 'before') {
+    countdownHtml = `<div class="glass rounded-2xl p-4 mb-4 text-center anim-fade">
+      <div class="anim-float text-4xl mb-2">🏔 → 🌻 → 🏛 → ✈️</div>
+      <p class="font-heading font-700 text-2xl">${trip.daysUntil} days to go!</p>
+      <p class="text-sm text-gray-500 dark:text-gray-400">Mar 23 – Apr 2 · 11 Days · 5 Hotels · 2 Countries</p>
+    </div>`;
+  } else if (trip.status === 'after') {
+    countdownHtml = `<div class="glass rounded-2xl p-4 mb-4 text-center anim-fade">
+      <div class="text-4xl mb-2">🏠</div>
+      <p class="font-heading font-700 text-2xl">Trip Complete!</p>
+      <p class="text-sm text-gray-500 dark:text-gray-400">What an incredible adventure.</p>
+    </div>`;
+  }
+
+  container.innerHTML = countdownHtml + renderDayCardFull(dayData, true);
+}
+
+// ============================================================
+// RENDER: FULL DAY CARD (for Today tab)
+// ============================================================
+function renderDayCardFull(d, isToday) {
+  const ztlBanner = (d.phase === 'italy' || d.phase === 'transition') && d.ztlStatus === 'warn'
+    ? `<div class="ztl-banner rounded-xl p-3 mb-3"><p class="font-heading font-600 text-sm">🚦 ZTL Warning: ${escHtml(d.ztl)}</p></div>` : '';
+
+  const driveRouteHtml = d.driveRoute ? `<div class="bg-amber-50 dark:bg-amber-900/30 rounded-xl p-3 mb-3">
+    <p class="font-heading font-600 text-sm mb-2">🚗 Drive Route</p>
+    <ul class="text-sm space-y-1">${d.driveRoute.map(r => `<li class="flex gap-2"><span class="text-amber-500">→</span><span>${escHtml(r)}</span></li>`).join('')}</ul>
+  </div>` : '';
+
+  const parkingStrategyHtml = d.parkingStrategy ? `<div class="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-3 mb-3">
+    <p class="font-heading font-600 text-sm">🅿️ Parking Strategy</p>
+    <p class="text-sm mt-1">${escHtml(d.parkingStrategy)}</p>
+  </div>` : '';
+
+  const destsHtml = d.destinations && d.destinations.length > 0
+    ? `<div class="mb-3"><p class="font-heading font-600 text-sm mb-2">📍 Destinations</p>
+      <div class="space-y-2">${d.destinations.map(dest => `<a href="${dest.url}" target="_blank" rel="noopener noreferrer" class="block glass rounded-xl p-3 hover:shadow-md transition tap">
+        <div class="flex items-start gap-2">
+          ${dest.star ? '<span class="text-amber-400 text-sm flex-shrink-0">⭐</span>' : '<span class="text-gray-400 text-sm flex-shrink-0">📍</span>'}
+          <div><p class="font-heading font-600 text-sm">${escHtml(dest.name)}</p><p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${escHtml(dest.desc)}</p></div>
+        </div>
+      </a>`).join('')}</div></div>` : '';
+
+  const hotelsHtml = d.hotels && d.hotels.length > 0
+    ? `<div class="mb-3">
+      <button onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.chevron').classList.toggle('open')" class="tap flex items-center gap-2 font-heading font-600 text-sm mb-2 w-full text-left">
+        🏨 Hotel Picks <span class="chevron text-xs">▼</span>
+      </button>
+      <div class="hidden space-y-2">${d.hotels.map(h => `<div class="glass rounded-xl p-3 hover:shadow-md transition">
+        <div class="flex justify-between items-start mb-1">
+          <p class="font-heading font-600 text-sm">${escHtml(h.name)}</p>
+          <span class="text-xs text-amber-600 dark:text-amber-400 font-600 flex-shrink-0 ml-2">${h.price}</span>
+        </div>
+        <p class="text-xs text-gray-500 dark:text-gray-400">${escHtml(h.why)}</p>
+        <div class="flex flex-wrap gap-2 mt-2 text-xs">
+          <span class="px-2 py-0.5 bg-blue-50 dark:bg-blue-900/30 rounded-full">🚗 ${escHtml(h.parking)}</span>
+          <span class="px-2 py-0.5 bg-pink-50 dark:bg-pink-900/30 rounded-full">👨‍👩‍👧‍👦 ${escHtml(h.perk)}</span>
+        </div>
+        <a href="${h.url}" target="_blank" rel="noopener noreferrer" class="inline-block mt-2 text-xs font-600 text-teal-600 dark:text-teal-400 tap">View →</a>
+      </div>`).join('')}</div></div>` : '';
+
+  // Today's Notes
+  const todayNotesHtml = isToday ? `<div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+    <p class="font-heading font-600 text-sm mb-2">📝 Today's Notes</p>
+    <textarea id="todayNoteArea" class="w-full rounded-xl border border-gray-200 dark:border-gray-700 p-3 text-sm resize-none h-24 focus:ring-2 focus:ring-teal-400 outline-none" placeholder="Jot down a note for today..." oninput="saveTodayNote(${d.day}, this.value)">${escHtml(getTodayNote(d.day))}</textarea>
+  </div>` : '';
+
+  return `<div class="rounded-2xl overflow-hidden shadow-lg anim-fade mb-4">
+    <div class="${phaseBg(d.phase)} text-white p-4">
+      <div class="flex justify-between items-start">
+        <div>
+          <p class="text-xs opacity-80 font-body">${d.date} (${d.weekday})</p>
+          <h2 class="font-heading font-700 text-xl mt-1">${d.flag} Day ${d.day} — ${escHtml(d.title)}</h2>
+        </div>
+        <span class="text-3xl">${d.sleepIcon}</span>
+      </div>
+    </div>
+    <div class="bg-white dark:bg-gray-800 p-4">
+      <div class="grid grid-cols-1 gap-2 mb-3">
+        <div class="flex gap-2 items-start"><span class="text-amber-400 flex-shrink-0">☀️</span><p class="text-sm"><strong>AM:</strong> ${escHtml(d.am)}</p></div>
+        <div class="flex gap-2 items-start"><span class="flex-shrink-0">🌙</span><p class="text-sm"><strong>PM:</strong> ${escHtml(d.pm)}</p></div>
+      </div>
+      <div class="flex flex-wrap gap-2 mb-3 text-xs">
+        <span class="px-2 py-1 rounded-full ${d.sleepIcon === '🏠' ? 'bg-gray-100 dark:bg-gray-700' : 'bg-indigo-50 dark:bg-indigo-900/30'}">🛏 ${escHtml(d.sleep)} ${d.sleepIcon}</span>
+        <span class="px-2 py-1 rounded-full ${d.parkingStatus === 'warn' ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300' : 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300'}">${escHtml(d.parking)}</span>
+        ${d.ztl !== '—' ? `<span class="px-2 py-1 rounded-full ${d.ztlStatus === 'warn' ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300' : 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300'}">${escHtml(d.ztl)}</span>` : ''}
+      </div>
+      ${ztlBanner}
+      <div class="family-tip rounded-xl p-3 mb-3">
+        <p class="font-heading font-600 text-sm mb-1">👨‍👩‍👧‍👦 Family Tip</p>
+        <p class="text-sm">${escHtml(d.familyTip)}</p>
+      </div>
+      ${driveRouteHtml}
+      ${parkingStrategyHtml}
+      ${destsHtml}
+      ${hotelsHtml}
+      ${todayNotesHtml}
+    </div>
+  </div>`;
+}
+
+function getTodayNote(dayNum) {
+  const note = state.notes.find(n => n.day === dayNum && n.id && n.id.startsWith('today-'));
+  return note ? note.text : '';
+}
+
+function saveTodayNote(dayNum, text) {
+  const existingIdx = state.notes.findIndex(n => n.day === dayNum && n.id && n.id.startsWith('today-'));
+  if (existingIdx >= 0) {
+    if (text.trim() === '') {
+      state.notes.splice(existingIdx, 1);
+    } else {
+      state.notes[existingIdx].text = text;
+      state.notes[existingIdx].timestamp = new Date().toISOString();
+    }
+  } else if (text.trim() !== '') {
+    state.notes.push({ id: 'today-' + dayNum, text, day: dayNum, timestamp: new Date().toISOString() });
+  }
+  saveState();
+}
+
+// ============================================================
+// RENDER: ALL DAYS
+// ============================================================
+let dayObserver = null;
+
+function renderDays() {
+  // Day nav
+  const nav = document.getElementById('dayNav');
+  nav.innerHTML = DAYS.map(d => `<button onclick="scrollToDay(${d.day})" class="day-nav-btn tap flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-heading font-600 transition whitespace-nowrap" data-day="${d.day}" style="background:${phaseColor(d.phase)}20;color:${phaseColor(d.phase)}">${d.flag} ${d.day}</button>`).join('');
+
+  // Day cards
+  const cards = document.getElementById('dayCards');
+  cards.innerHTML = DAYS.map(d => renderCollapsibleDay(d)).join('');
+
+  // IntersectionObserver
+  if (dayObserver) dayObserver.disconnect();
+  dayObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const dayNum = parseInt(entry.target.dataset.day);
+        highlightDayNav(dayNum);
+      }
+    });
+  }, { threshold: 0.3, rootMargin: '-60px 0px -40% 0px' });
+
+  document.querySelectorAll('[data-day-card]').forEach(el => dayObserver.observe(el));
+}
+
+function renderCollapsibleDay(d) {
+  const isExpanded = state.expandedDays.includes(d.day);
+  const ztlBanner = (d.phase === 'italy' || d.phase === 'transition') && d.ztlStatus === 'warn'
+    ? `<div class="ztl-banner rounded-xl p-3 mb-3"><p class="font-heading font-600 text-sm">🚦 ZTL Warning: ${escHtml(d.ztl)}</p></div>` : '';
+
+  const driveRouteHtml = d.driveRoute ? `<div class="bg-amber-50 dark:bg-amber-900/30 rounded-xl p-3 mb-3">
+    <p class="font-heading font-600 text-sm mb-2">🚗 Drive Route</p>
+    <ul class="text-sm space-y-1">${d.driveRoute.map(r => `<li class="flex gap-2"><span class="text-amber-500">→</span><span>${escHtml(r)}</span></li>`).join('')}</ul>
+  </div>` : '';
+
+  const parkingStrategyHtml = d.parkingStrategy ? `<div class="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-3 mb-3">
+    <p class="font-heading font-600 text-sm">🅿️ Parking Strategy</p>
+    <p class="text-sm mt-1">${escHtml(d.parkingStrategy)}</p>
+  </div>` : '';
+
+  const destsHtml = d.destinations && d.destinations.length > 0
+    ? `<div class="mb-3"><p class="font-heading font-600 text-sm mb-2">📍 Destinations</p>
+      <div class="space-y-2">${d.destinations.map(dest => `<a href="${dest.url}" target="_blank" rel="noopener noreferrer" class="block glass rounded-xl p-3 hover:shadow-md transition tap">
+        <div class="flex items-start gap-2">
+          ${dest.star ? '<span class="text-amber-400 text-sm flex-shrink-0">⭐</span>' : '<span class="text-gray-400 text-sm flex-shrink-0">📍</span>'}
+          <div><p class="font-heading font-600 text-sm">${escHtml(dest.name)}</p><p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${escHtml(dest.desc)}</p></div>
+        </div>
+      </a>`).join('')}</div></div>` : '';
+
+  const hotelsHtml = d.hotels && d.hotels.length > 0
+    ? `<div class="mb-3">
+      <button onclick="event.stopPropagation();this.nextElementSibling.classList.toggle('hidden');this.querySelector('.chevron').classList.toggle('open')" class="tap flex items-center gap-2 font-heading font-600 text-sm mb-2 w-full text-left">
+        🏨 Hotel Picks <span class="chevron text-xs">▼</span>
+      </button>
+      <div class="hidden space-y-2">${d.hotels.map(h => `<div class="glass rounded-xl p-3 hover:shadow-md transition">
+        <div class="flex justify-between items-start mb-1">
+          <p class="font-heading font-600 text-sm">${escHtml(h.name)}</p>
+          <span class="text-xs text-amber-600 dark:text-amber-400 font-600 flex-shrink-0 ml-2">${h.price}</span>
+        </div>
+        <p class="text-xs text-gray-500 dark:text-gray-400">${escHtml(h.why)}</p>
+        <div class="flex flex-wrap gap-2 mt-2 text-xs">
+          <span class="px-2 py-0.5 bg-blue-50 dark:bg-blue-900/30 rounded-full">🚗 ${escHtml(h.parking)}</span>
+          <span class="px-2 py-0.5 bg-pink-50 dark:bg-pink-900/30 rounded-full">👨‍👩‍👧‍👦 ${escHtml(h.perk)}</span>
+        </div>
+        <a href="${h.url}" target="_blank" rel="noopener noreferrer" class="inline-block mt-2 text-xs font-600 text-teal-600 dark:text-teal-400 tap">View →</a>
+      </div>`).join('')}</div></div>` : '';
+
+  return `<div data-day-card data-day="${d.day}" id="day-${d.day}" class="rounded-2xl overflow-hidden shadow-lg">
+    <button onclick="toggleDay(${d.day})" class="${phaseBg(d.phase)} text-white p-4 w-full text-left tap">
+      <div class="flex justify-between items-center">
+        <div>
+          <p class="text-xs opacity-80 font-body">${d.date} (${d.weekday})</p>
+          <h3 class="font-heading font-700 text-lg mt-0.5">${d.flag} Day ${d.day} — ${escHtml(d.title)}</h3>
+        </div>
+        <span class="chevron text-white text-lg ${isExpanded ? 'open' : ''}" id="chev-${d.day}">▼</span>
+      </div>
+      <div class="flex flex-wrap gap-2 mt-2 text-xs opacity-90">
+        <span>☀️ ${escHtml(d.am.substring(0, 40))}${d.am.length > 40 ? '...' : ''}</span>
+      </div>
+      <div class="mt-1 text-xs opacity-80">🛏 ${escHtml(d.sleep)} ${d.sleepIcon}</div>
+    </button>
+    <div id="dayBody-${d.day}" class="bg-white dark:bg-gray-800 ${isExpanded ? '' : 'hidden'}">
+      <div class="p-4 ${isExpanded ? 'anim-slide' : ''}">
+        <div class="grid grid-cols-1 gap-2 mb-3">
+          <div class="flex gap-2 items-start"><span class="text-amber-400 flex-shrink-0">☀️</span><p class="text-sm"><strong>AM:</strong> ${escHtml(d.am)}</p></div>
+          <div class="flex gap-2 items-start"><span class="flex-shrink-0">🌙</span><p class="text-sm"><strong>PM:</strong> ${escHtml(d.pm)}</p></div>
+        </div>
+        <div class="flex flex-wrap gap-2 mb-3 text-xs">
+          <span class="px-2 py-1 rounded-full bg-indigo-50 dark:bg-indigo-900/30">🛏 ${escHtml(d.sleep)} ${d.sleepIcon}</span>
+          <span class="px-2 py-1 rounded-full ${d.parkingStatus === 'warn' ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300' : 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300'}">${escHtml(d.parking)}</span>
+          ${d.ztl !== '—' ? `<span class="px-2 py-1 rounded-full ${d.ztlStatus === 'warn' ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300' : 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300'}">${escHtml(d.ztl)}</span>` : ''}
+        </div>
+        ${ztlBanner}
+        <div class="family-tip rounded-xl p-3 mb-3">
+          <p class="font-heading font-600 text-sm mb-1">👨‍👩‍👧‍👦 Family Tip</p>
+          <p class="text-sm">${escHtml(d.familyTip)}</p>
+        </div>
+        ${driveRouteHtml}
+        ${parkingStrategyHtml}
+        ${destsHtml}
+        ${hotelsHtml}
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleDay(dayNum) {
+  const idx = state.expandedDays.indexOf(dayNum);
+  if (idx >= 0) {
+    state.expandedDays.splice(idx, 1);
+  } else {
+    state.expandedDays.push(dayNum);
+  }
+  saveState();
+  const body = document.getElementById('dayBody-' + dayNum);
+  const chev = document.getElementById('chev-' + dayNum);
+  if (body) {
+    body.classList.toggle('hidden');
+    if (!body.classList.contains('hidden')) {
+      body.querySelector('div').classList.add('anim-slide');
+    }
+  }
+  if (chev) chev.classList.toggle('open');
+}
+
+function scrollToDay(dayNum) {
+  const el = document.getElementById('day-' + dayNum);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function highlightDayNav(dayNum) {
+  document.querySelectorAll('.day-nav-btn').forEach(btn => {
+    const d = parseInt(btn.dataset.day);
+    const dayData = DAYS[d - 1];
+    if (d === dayNum) {
+      btn.style.background = phaseColor(dayData.phase);
+      btn.style.color = '#fff';
+    } else {
+      btn.style.background = phaseColor(dayData.phase) + '20';
+      btn.style.color = phaseColor(dayData.phase);
+    }
+  });
+}
+
+// ============================================================
+// RENDER: NOTES & LISTS
+// ============================================================
+function renderNotes() {
+  renderJournal();
+  renderChecklists();
+  renderExpenses();
+  switchNotesTab(state.activeNotesTab || 'journal');
+}
+
+// ---- Journal ----
+function renderJournal() {
+  const el = document.getElementById('notes-journal');
+  const notes = state.notes.filter(n => !n.id.startsWith('today-')).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  el.innerHTML = `
+    <button onclick="showAddNoteModal()" class="tap w-full bg-teal-600 hover:bg-teal-700 text-white font-heading font-600 py-3 px-4 rounded-xl mb-4 transition text-sm">+ Add Note</button>
+    ${notes.length === 0 ? '<p class="text-center text-gray-400 py-8 text-sm">No notes yet. Tap "Add Note" to start your journal!</p>' : ''}
+    <div class="space-y-3">${notes.map(n => `<div class="glass rounded-xl p-3 anim-fade">
+      <div class="flex justify-between items-start">
+        <div class="flex-1">
+          <p class="text-sm whitespace-pre-wrap">${escHtml(n.text)}</p>
+          <div class="flex items-center gap-2 mt-2">
+            <span class="text-xs text-gray-400">${formatTimestamp(n.timestamp)}</span>
+            ${n.day !== 'general' ? `<span class="text-xs px-2 py-0.5 rounded-full bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300">Day ${n.day}</span>` : '<span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-500">General</span>'}
+          </div>
+        </div>
+        <button onclick="deleteNote('${n.id}')" class="tap text-red-400 hover:text-red-600 ml-2 text-lg transition p-1" aria-label="Delete note">🗑</button>
+      </div>
+    </div>`).join('')}</div>`;
+}
+
+function showAddNoteModal() {
+  const modal = document.getElementById('modalContainer');
+  modal.innerHTML = `<div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal-content bg-white dark:bg-gray-800 anim-fade">
+      <h3 class="font-heading font-700 text-lg mb-3">📝 Add Note</h3>
+      <textarea id="noteText" class="w-full border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm resize-none h-28 focus:ring-2 focus:ring-teal-400 outline-none mb-3" placeholder="What's on your mind?" autofocus></textarea>
+      <select id="noteDay" class="w-full border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm mb-4 outline-none focus:ring-2 focus:ring-teal-400">
+        <option value="general">General</option>
+        ${DAYS.map(d => `<option value="${d.day}">Day ${d.day} — ${d.title}</option>`).join('')}
+      </select>
+      <div class="flex gap-3">
+        <button onclick="closeModal()" class="tap flex-1 py-3 rounded-xl border border-gray-200 dark:border-gray-700 font-heading font-600 text-sm transition">Cancel</button>
+        <button onclick="addNote()" class="tap flex-1 py-3 rounded-xl bg-teal-600 text-white font-heading font-600 text-sm hover:bg-teal-700 transition">Save</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function addNote() {
+  const text = document.getElementById('noteText').value.trim();
+  if (!text) return;
+  const dayVal = document.getElementById('noteDay').value;
+  state.notes.push({
+    id: genId(),
+    text,
+    day: dayVal === 'general' ? 'general' : parseInt(dayVal),
+    timestamp: new Date().toISOString()
+  });
+  saveState();
+  closeModal();
+  renderJournal();
+}
+
+function deleteNote(id) {
+  if (!confirm('Delete this note?')) return;
+  state.notes = state.notes.filter(n => n.id !== id);
+  saveState();
+  renderJournal();
+}
+
+function closeModal() {
+  document.getElementById('modalContainer').innerHTML = '';
+}
+
+// ---- Checklists ----
+function renderChecklists() {
+  const el = document.getElementById('notes-checklists');
+  const keys = Object.keys(state.checklists);
+  el.innerHTML = `
+    <button onclick="showNewChecklistModal()" class="tap w-full bg-teal-600 hover:bg-teal-700 text-white font-heading font-600 py-3 px-4 rounded-xl mb-4 transition text-sm">+ New Checklist</button>
+    <div class="space-y-4">${keys.map(k => renderChecklist(k, state.checklists[k])).join('')}</div>`;
+}
+
+function renderChecklist(key, cl) {
+  const total = cl.items.length;
+  const checked = cl.items.filter(i => i.checked).length;
+  const pct = total > 0 ? Math.round((checked / total) * 100) : 0;
+  return `<div class="glass rounded-2xl p-4">
+    <div class="flex justify-between items-center mb-2">
+      <h4 class="font-heading font-700 text-base">${escHtml(cl.title)}</h4>
+      <span class="text-xs text-gray-400">${checked}/${total}</span>
+    </div>
+    <div class="progress-track mb-3"><div class="progress-fill bg-teal-500" style="width:${pct}%"></div></div>
+    <div class="space-y-2">${cl.items.map((item, i) => `<div class="flex items-center gap-3 tap" onclick="toggleCheckItem('${key}',${i})">
+      <div class="check-box ${item.checked ? 'checked' : ''}"></div>
+      <span class="text-sm ${item.checked ? 'line-through text-gray-400' : ''} flex-1">${escHtml(item.text)}</span>
+      <button onclick="event.stopPropagation();removeCheckItem('${key}',${i})" class="text-red-300 hover:text-red-500 text-xs p-1 transition" aria-label="Remove item">✕</button>
+    </div>`).join('')}</div>
+    <div class="flex gap-2 mt-3">
+      <input type="text" id="newItem-${key}" class="flex-1 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-400" placeholder="Add item..." onkeydown="if(event.key==='Enter')addCheckItem('${key}')">
+      <button onclick="addCheckItem('${key}')" class="tap px-4 py-2 bg-teal-600 text-white rounded-lg text-sm font-600 hover:bg-teal-700 transition">Add</button>
+    </div>
+  </div>`;
+}
+
+function toggleCheckItem(key, idx) {
+  state.checklists[key].items[idx].checked = !state.checklists[key].items[idx].checked;
+  saveState();
+  renderChecklists();
+}
+
+function removeCheckItem(key, idx) {
+  state.checklists[key].items.splice(idx, 1);
+  saveState();
+  renderChecklists();
+}
+
+function addCheckItem(key) {
+  const input = document.getElementById('newItem-' + key);
+  const text = input.value.trim();
+  if (!text) return;
+  state.checklists[key].items.push({ text, checked: false });
+  input.value = '';
+  saveState();
+  renderChecklists();
+}
+
+function showNewChecklistModal() {
+  const modal = document.getElementById('modalContainer');
+  modal.innerHTML = `<div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal-content bg-white dark:bg-gray-800 anim-fade">
+      <h3 class="font-heading font-700 text-lg mb-3">✅ New Checklist</h3>
+      <input type="text" id="newClTitle" class="w-full border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm mb-4 outline-none focus:ring-2 focus:ring-teal-400" placeholder="Checklist name (e.g., Shopping List)" autofocus>
+      <div class="flex gap-3">
+        <button onclick="closeModal()" class="tap flex-1 py-3 rounded-xl border border-gray-200 dark:border-gray-700 font-heading font-600 text-sm transition">Cancel</button>
+        <button onclick="createChecklist()" class="tap flex-1 py-3 rounded-xl bg-teal-600 text-white font-heading font-600 text-sm hover:bg-teal-700 transition">Create</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function createChecklist() {
+  const title = document.getElementById('newClTitle').value.trim();
+  if (!title) return;
+  const key = 'custom_' + genId();
+  state.checklists[key] = { title, items: [] };
+  saveState();
+  closeModal();
+  renderChecklists();
+}
+
+// ---- Expenses ----
+function renderExpenses() {
+  const el = document.getElementById('notes-expenses');
+  const expenses = state.expenses;
+  const total = expenses.reduce((s, e) => s + e.amount, 0);
+  const byCategory = {};
+  CATEGORIES.forEach(c => { byCategory[c.id] = 0; });
+  expenses.forEach(e => { byCategory[e.category] = (byCategory[e.category] || 0) + e.amount; });
+  const tripDay = getTripDay();
+  const daysElapsed = tripDay.status === 'during' ? tripDay.dayNum : tripDay.status === 'after' ? 11 : 1;
+  const perDay = daysElapsed > 0 ? (total / daysElapsed) : 0;
+
+  const summaryHtml = expenses.length > 0 ? `<div class="glass rounded-2xl p-4 mb-4">
+    <div class="flex justify-between items-center mb-3">
+      <h4 class="font-heading font-700 text-base">💶 Summary</h4>
+      <button onclick="exportExpenses()" class="tap text-xs px-3 py-1 bg-teal-600 text-white rounded-full font-600 hover:bg-teal-700 transition">📋 Export</button>
+    </div>
+    <div class="grid grid-cols-2 gap-3 mb-3">
+      <div class="bg-teal-50 dark:bg-teal-900/30 rounded-xl p-3 text-center">
+        <p class="text-xs text-gray-500 dark:text-gray-400">Total</p>
+        <p class="font-heading font-700 text-xl text-teal-700 dark:text-teal-300">€${total.toFixed(2)}</p>
+      </div>
+      <div class="bg-indigo-50 dark:bg-indigo-900/30 rounded-xl p-3 text-center">
+        <p class="text-xs text-gray-500 dark:text-gray-400">Per Day</p>
+        <p class="font-heading font-700 text-xl text-indigo-700 dark:text-indigo-300">€${perDay.toFixed(2)}</p>
+      </div>
+    </div>
+    <div class="flex flex-wrap gap-2">${CATEGORIES.filter(c => byCategory[c.id] > 0).map(c => `<span class="px-2 py-1 rounded-full text-xs font-600 ${c.color}">${c.label} €${byCategory[c.id].toFixed(2)}</span>`).join('')}</div>
+  </div>` : '';
+
+  el.innerHTML = `
+    ${summaryHtml}
+    <button onclick="showAddExpenseModal()" class="tap w-full bg-teal-600 hover:bg-teal-700 text-white font-heading font-600 py-3 px-4 rounded-xl mb-4 transition text-sm">+ Add Expense</button>
+    ${expenses.length === 0 ? '<p class="text-center text-gray-400 py-8 text-sm">No expenses logged yet.</p>' : ''}
+    <div class="space-y-2">${expenses.slice().reverse().map(e => {
+      const cat = CATEGORIES.find(c => c.id === e.category) || CATEGORIES[6];
+      return `<div class="glass rounded-xl p-3 flex items-center gap-3" onclick="showEditExpenseModal('${e.id}')">
+        <span class="text-lg">${cat.label.split(' ')[0]}</span>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-600 truncate">${e.note ? escHtml(e.note) : cat.label}</p>
+          <p class="text-xs text-gray-400">Day ${e.day} · ${formatTimestamp(e.timestamp)}</p>
+        </div>
+        <span class="font-heading font-700 text-sm text-teal-700 dark:text-teal-300 flex-shrink-0">€${e.amount.toFixed(2)}</span>
+      </div>`;
+    }).join('')}</div>`;
+}
+
+function showAddExpenseModal(editId) {
+  const existing = editId ? state.expenses.find(e => e.id === editId) : null;
+  const trip = getTripDay();
+  const defaultDay = existing ? existing.day : (trip.status === 'during' ? trip.dayNum : 1);
+  const modal = document.getElementById('modalContainer');
+  modal.innerHTML = `<div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal-content bg-white dark:bg-gray-800 anim-fade">
+      <h3 class="font-heading font-700 text-lg mb-3">💶 ${existing ? 'Edit' : 'Add'} Expense</h3>
+      <div class="flex items-center gap-2 mb-3">
+        <span class="text-lg">€</span>
+        <input type="number" id="expAmount" step="0.01" min="0" class="flex-1 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-teal-400" placeholder="0.00" value="${existing ? existing.amount : ''}" inputmode="decimal" autofocus>
+      </div>
+      <select id="expCategory" class="w-full border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm mb-3 outline-none focus:ring-2 focus:ring-teal-400">
+        ${CATEGORIES.map(c => `<option value="${c.id}" ${existing && existing.category === c.id ? 'selected' : ''}>${c.label}</option>`).join('')}
+      </select>
+      <input type="text" id="expNote" class="w-full border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm mb-3 outline-none focus:ring-2 focus:ring-teal-400" placeholder="Note (optional)" value="${existing ? escHtml(existing.note || '') : ''}">
+      <select id="expDay" class="w-full border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm mb-4 outline-none focus:ring-2 focus:ring-teal-400">
+        ${DAYS.map(d => `<option value="${d.day}" ${d.day === defaultDay ? 'selected' : ''}>Day ${d.day} — ${d.title}</option>`).join('')}
+      </select>
+      <div class="flex gap-3">
+        ${existing ? `<button onclick="deleteExpense('${existing.id}')" class="tap py-3 px-4 rounded-xl bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 font-heading font-600 text-sm transition">Delete</button>` : ''}
+        <button onclick="closeModal()" class="tap flex-1 py-3 rounded-xl border border-gray-200 dark:border-gray-700 font-heading font-600 text-sm transition">Cancel</button>
+        <button onclick="saveExpense('${editId || ''}')" class="tap flex-1 py-3 rounded-xl bg-teal-600 text-white font-heading font-600 text-sm hover:bg-teal-700 transition">Save</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function showEditExpenseModal(id) {
+  showAddExpenseModal(id);
+}
+
+function saveExpense(editId) {
+  const amount = parseFloat(document.getElementById('expAmount').value);
+  if (isNaN(amount) || amount <= 0) return;
+  const category = document.getElementById('expCategory').value;
+  const note = document.getElementById('expNote').value.trim();
+  const day = parseInt(document.getElementById('expDay').value);
+  if (editId) {
+    const exp = state.expenses.find(e => e.id === editId);
+    if (exp) {
+      exp.amount = amount;
+      exp.category = category;
+      exp.note = note;
+      exp.day = day;
+    }
+  } else {
+    state.expenses.push({ id: genId(), amount, category, note, day, timestamp: new Date().toISOString() });
+  }
+  saveState();
+  closeModal();
+  renderExpenses();
+}
+
+function deleteExpense(id) {
+  if (!confirm('Delete this expense?')) return;
+  state.expenses = state.expenses.filter(e => e.id !== id);
+  saveState();
+  closeModal();
+  renderExpenses();
+}
+
+function exportExpenses() {
+  const expenses = state.expenses;
+  if (expenses.length === 0) { alert('No expenses to export.'); return; }
+  const total = expenses.reduce((s, e) => s + e.amount, 0);
+  let text = 'Alps to Tuscany — Expense Report\n';
+  text += '================================\n\n';
+  expenses.forEach(e => {
+    const cat = CATEGORIES.find(c => c.id === e.category) || CATEGORIES[6];
+    text += `Day ${e.day} | ${cat.label} | €${e.amount.toFixed(2)}${e.note ? ' | ' + e.note : ''}\n`;
+  });
+  text += `\n================================\nTotal: €${total.toFixed(2)}\n`;
+  const byCategory = {};
+  expenses.forEach(e => { byCategory[e.category] = (byCategory[e.category] || 0) + e.amount; });
+  text += '\nBy Category:\n';
+  CATEGORIES.forEach(c => {
+    if (byCategory[c.id]) text += `  ${c.label}: €${byCategory[c.id].toFixed(2)}\n`;
+  });
+  navigator.clipboard.writeText(text).then(() => {
+    alert('Expense report copied to clipboard!');
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+    alert('Expense report copied to clipboard!');
+  });
+}
+
+// ============================================================
+// RENDER: SETTINGS
+// ============================================================
+function renderSettings() {
+  const el = document.getElementById('settingsContent');
+  const totalNotes = state.notes.filter(n => !n.id.startsWith('today-')).length;
+  const totalExpenses = state.expenses.length;
+  const totalSpent = state.expenses.reduce((s, e) => s + e.amount, 0);
+  const checklistItems = Object.values(state.checklists).reduce((s, cl) => s + cl.items.length, 0);
+  const checkedItems = Object.values(state.checklists).reduce((s, cl) => s + cl.items.filter(i => i.checked).length, 0);
+
+  el.innerHTML = `
+    <h2 class="font-heading font-700 text-xl mb-4">⚙️ Settings</h2>
+
+    <!-- Dark Mode -->
+    <div class="glass rounded-2xl p-4 mb-4 flex items-center justify-between">
+      <div>
+        <p class="font-heading font-600 text-sm">🌙 Dark Mode</p>
+        <p class="text-xs text-gray-400">Essential for nighttime hotel use</p>
+      </div>
+      <button onclick="toggleDarkMode()" class="tap w-14 h-8 rounded-full transition ${state.darkMode ? 'bg-teal-600' : 'bg-gray-300'} relative">
+        <span class="absolute top-1 ${state.darkMode ? 'right-1' : 'left-1'} w-6 h-6 bg-white rounded-full shadow transition-all"></span>
+      </button>
+    </div>
+
+    <!-- Trip Stats -->
+    <div class="glass rounded-2xl p-4 mb-4">
+      <h3 class="font-heading font-700 text-base mb-3">📊 Trip Stats</h3>
+      <div class="grid grid-cols-3 gap-3">
+        <div class="text-center"><p class="font-heading font-700 text-xl text-teal-600 dark:text-teal-400">11</p><p class="text-xs text-gray-400">Days</p></div>
+        <div class="text-center"><p class="font-heading font-700 text-xl text-teal-600 dark:text-teal-400">5</p><p class="text-xs text-gray-400">Hotels</p></div>
+        <div class="text-center"><p class="font-heading font-700 text-xl text-teal-600 dark:text-teal-400">2</p><p class="text-xs text-gray-400">Countries</p></div>
+      </div>
+      <div class="border-t border-gray-200 dark:border-gray-700 mt-3 pt-3 grid grid-cols-2 gap-3 text-center">
+        <div><p class="font-heading font-600 text-sm">${totalNotes}</p><p class="text-xs text-gray-400">Journal Notes</p></div>
+        <div><p class="font-heading font-600 text-sm">€${totalSpent.toFixed(2)}</p><p class="text-xs text-gray-400">Total Spent</p></div>
+        <div><p class="font-heading font-600 text-sm">${totalExpenses}</p><p class="text-xs text-gray-400">Expenses</p></div>
+        <div><p class="font-heading font-600 text-sm">${checkedItems}/${checklistItems}</p><p class="text-xs text-gray-400">Items Checked</p></div>
+      </div>
+    </div>
+
+    <!-- ZTL Quick Reference -->
+    <div class="glass rounded-2xl p-4 mb-4">
+      <h3 class="font-heading font-700 text-base mb-3">🚦 ZTL Quick Reference</h3>
+      <div class="space-y-2">
+        <div class="flex items-center gap-3 p-2 bg-green-50 dark:bg-green-900/20 rounded-xl">
+          <span class="text-lg">🇦🇹</span>
+          <div class="flex-1"><p class="text-sm font-600">Austria</p><p class="text-xs text-gray-500 dark:text-gray-400">No ZTL — drive freely</p></div>
+          <span class="text-green-500">✅</span>
+        </div>
+        <div class="flex items-center gap-3 p-2 bg-amber-50 dark:bg-amber-900/20 rounded-xl">
+          <span class="text-lg">🇮🇹</span>
+          <div class="flex-1"><p class="text-sm font-600">Tuscany Towns</p><p class="text-xs text-gray-500 dark:text-gray-400">NEVER drive inside walled town centers</p></div>
+          <span class="text-amber-500">⚠️</span>
+        </div>
+        <div class="flex items-center gap-3 p-2 bg-amber-50 dark:bg-amber-900/20 rounded-xl">
+          <span class="text-lg">🇮🇹</span>
+          <div class="flex-1"><p class="text-sm font-600">Verona</p><p class="text-xs text-gray-500 dark:text-gray-400">Stay outside old town. Park at Cittadella garage.</p></div>
+          <span class="text-amber-500">⚠️</span>
+        </div>
+        <div class="flex items-center gap-3 p-2 bg-red-50 dark:bg-red-900/20 rounded-xl">
+          <span class="text-lg">🇮🇹</span>
+          <div class="flex-1"><p class="text-sm font-600">Florence</p><p class="text-xs text-gray-500 dark:text-gray-400">DO NOT enter city center. Airport area only!</p></div>
+          <span class="text-red-500">🛑</span>
+        </div>
+      </div>
+      <div class="ztl-danger rounded-xl p-3 mt-3">
+        <p class="font-heading font-700 text-sm mb-1">💸 Fine Alert</p>
+        <p class="text-sm">€80–€335 PER camera entry + €45 rental car admin fee. Cameras automatic. Fines arrive 6-12 months later. GPS does NOT warn you!</p>
+      </div>
+      <div class="flex flex-wrap gap-2 mt-3">
+        <a href="https://www.visitflorence.com/tourist-info/driving-in-florence-ztl-zone.html" target="_blank" rel="noopener noreferrer" class="tap text-xs px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full font-600 transition">Florence ZTL Map →</a>
+        <a href="https://mominitaly.com/ztl-in-italy/" target="_blank" rel="noopener noreferrer" class="tap text-xs px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full font-600 transition">Italy ZTL Guide →</a>
+        <a href="https://www.autoeurope.com/italy-ztl-zones/" target="_blank" rel="noopener noreferrer" class="tap text-xs px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full font-600 transition">Auto Europe ZTL Maps →</a>
+      </div>
+    </div>
+
+    <!-- Data Management -->
+    <div class="glass rounded-2xl p-4 mb-4">
+      <h3 class="font-heading font-700 text-base mb-3">📦 Data Management</h3>
+      <div class="space-y-3">
+        <button onclick="exportAllData()" class="tap w-full py-3 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-xl font-heading font-600 text-sm hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition">📋 Export All Data (Clipboard)</button>
+        <button onclick="clearAllData()" class="tap w-full py-3 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-xl font-heading font-600 text-sm hover:bg-red-100 dark:hover:bg-red-900/50 transition">🗑 Clear All Data</button>
+      </div>
+    </div>
+
+    <p class="text-center text-xs text-gray-400 mt-6 mb-4">Alps to Tuscany Family Trip Hub · Mar 23 – Apr 2, 2026</p>
+  `;
+}
+
+function exportAllData() {
+  const json = JSON.stringify(state, null, 2);
+  navigator.clipboard.writeText(json).then(() => {
+    alert('All data copied to clipboard as JSON!');
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = json; document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+    alert('All data copied to clipboard as JSON!');
+  });
+}
+
+function clearAllData() {
+  if (!confirm('Are you sure you want to clear ALL data? This will reset notes, expenses, and checklists. This cannot be undone!')) return;
+  if (!confirm('Really clear everything? Last chance!')) return;
+  state.notes = [{ ...DEFAULT_NOTE }];
+  state.checklists = JSON.parse(JSON.stringify(DEFAULT_CHECKLISTS));
+  state.expenses = [];
+  state.expandedDays = [];
+  saveState();
+  renderSettings();
+  renderNotes();
+  alert('All data has been cleared.');
+}
+
+// ============================================================
+// INITIALIZATION
+// ============================================================
+function init() {
+  loadState();
+  applyDarkMode();
+  switchTab(state.activeTab || 'today');
+}
+
+// Start the app
+init();
+</script>
+</body>
+</html>
