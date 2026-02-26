@@ -159,6 +159,9 @@ tailwind.config = {
     /* Desktop nav in sidebar */
     .desktop-nav { position: sticky; top: 64px; height: calc(100vh - 64px); flex-direction: column; padding: 1.5rem 1rem; gap: 0.25rem; }
 
+    /* On desktop, sticky day nav is inside a scrollable panel, so top:0 */
+    .md-sticky-top { top: 0 !important; }
+
     /* Content padding */
     #tabContent .max-w-lg { padding-left: 2rem; padding-right: 2rem; }
 
@@ -261,9 +264,9 @@ tailwind.config = {
     <div id="tab-days" class="tab-panel">
       <div class="max-w-lg mx-auto px-4 pt-2 pb-4">
         <!-- Day Nav -->
-        <div class="day-nav flex gap-2 py-3 sticky top-14 z-40 bg-gray-50 dark:bg-gray-900" id="dayNav"></div>
+        <div class="day-nav flex gap-2 py-3 pb-4 sticky top-12 z-40 bg-gray-50 dark:bg-gray-900 md-sticky-top" id="dayNav"></div>
         <!-- Day Cards -->
-        <div id="dayCards" class="flex flex-col gap-4 mt-2"></div>
+        <div id="dayCards" class="flex flex-col gap-4 mt-1"></div>
       </div>
     </div>
 
@@ -840,10 +843,13 @@ function renderDayCardFull(d, isToday) {
         <a href="${h.url}" target="_blank" rel="noopener noreferrer" class="inline-block mt-2 text-xs font-600 text-teal-600 dark:text-teal-400 tap">View →</a>
       </div>`).join('')}</div></div>` : '';
 
-  // Today's Notes
+  // Today's Notes + Expenses
   const todayNotesHtml = isToday ? `<div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
     <p class="font-heading font-600 text-sm mb-2">📝 Today's Notes</p>
     <textarea id="todayNoteArea" class="w-full rounded-xl border border-gray-200 dark:border-gray-700 p-3 text-sm resize-none h-24 focus:ring-2 focus:ring-teal-400 outline-none" placeholder="Jot down a note for today..." oninput="saveTodayNote(${d.day}, this.value)">${escHtml(getTodayNote(d.day))}</textarea>
+  </div>
+  <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+    <div id="dayExpenses-${d.day}">${renderDayExpenses(d.day)}</div>
   </div>` : '';
 
   return `<div class="rounded-2xl overflow-hidden shadow-lg anim-fade mb-4">
@@ -898,6 +904,83 @@ function saveTodayNote(dayNum, text) {
     state.notes.push({ id: 'today-' + dayNum, text, day: dayNum, timestamp: new Date().toISOString() });
   }
   saveState();
+}
+
+// ============================================================
+// RENDER: DAY EXPENSES (inline in day cards)
+// ============================================================
+function renderDayExpenses(dayNum) {
+  const dayExps = state.expenses.filter(e => e.day === dayNum);
+  const dayTotal = dayExps.reduce((s, e) => s + e.amount, 0);
+  const tripTotal = state.expenses.reduce((s, e) => s + e.amount, 0);
+  const budget = state.budget || 15000;
+  const remaining = budget - tripTotal;
+  const budgetPct = Math.min(100, Math.round((tripTotal / budget) * 100));
+  const isOverBudget = tripTotal > budget;
+  const barColor = isOverBudget ? 'bg-red-500' : budgetPct > 80 ? 'bg-amber-500' : 'bg-teal-500';
+
+  const expListHtml = dayExps.length > 0 ? dayExps.map(e => {
+    const cat = CATEGORIES.find(c => c.id === e.category) || CATEGORIES[7];
+    return `<div class="flex items-center gap-2 py-1.5">
+      <span class="text-sm">${cat.label.split(' ')[0]}</span>
+      <span class="text-sm flex-1 truncate">${e.note ? escHtml(e.note) : cat.label.split(' ').slice(1).join(' ')}</span>
+      <span class="font-heading font-700 text-sm text-teal-700 dark:text-teal-300 flex-shrink-0">$${e.amount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+      <button onclick="removeDayExpense('${e.id}', ${dayNum})" class="text-red-300 hover:text-red-500 text-xs p-1 transition flex-shrink-0" aria-label="Delete">✕</button>
+    </div>`;
+  }).join('') : '<p class="text-xs text-gray-400 py-2">No expenses yet today.</p>';
+
+  return `<div class="flex justify-between items-center mb-2">
+    <p class="font-heading font-600 text-sm">💰 Today's Expenses</p>
+    <span class="font-heading font-700 text-sm text-teal-700 dark:text-teal-300">$${dayTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+  </div>
+  <div class="mb-3">${expListHtml}</div>
+  <!-- Quick add -->
+  <div class="flex gap-2 mb-3">
+    <span class="text-sm font-700 leading-9">$</span>
+    <input type="number" id="quickExpAmt-${dayNum}" step="0.01" min="0" class="w-20 border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1.5 text-sm outline-none focus:ring-2 focus:ring-teal-400" placeholder="0.00" inputmode="decimal">
+    <select id="quickExpCat-${dayNum}" class="flex-1 border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1.5 text-sm outline-none focus:ring-2 focus:ring-teal-400">
+      ${CATEGORIES.map(c => `<option value="${c.id}">${c.label}</option>`).join('')}
+    </select>
+    <button onclick="quickAddExpense(${dayNum})" class="tap px-3 py-1.5 bg-teal-600 text-white rounded-lg text-sm font-600 hover:bg-teal-700 transition flex-shrink-0">Add</button>
+  </div>
+  <input type="text" id="quickExpNote-${dayNum}" class="w-full border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-teal-400 mb-3" placeholder="Note (optional)">
+  <!-- Budget bar -->
+  <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-3">
+    <div class="flex justify-between text-xs mb-1.5">
+      <span class="font-600 ${isOverBudget ? 'text-red-600 dark:text-red-400' : 'text-gray-700 dark:text-gray-300'}">Trip total: $${tripTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+      <span class="${isOverBudget ? 'text-red-600 dark:text-red-400' : remaining < 2000 ? 'text-amber-600 dark:text-amber-400' : 'text-green-600 dark:text-green-400'}">${isOverBudget ? 'Over by' : 'Left:'} $${Math.abs(remaining).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill ${barColor}" style="width:${budgetPct}%"></div></div>
+    <p class="text-xs text-gray-400 mt-1 text-right">${budgetPct}% of $${budget.toLocaleString('en-US')} budget</p>
+  </div>`;
+}
+
+function quickAddExpense(dayNum) {
+  const amtInput = document.getElementById('quickExpAmt-' + dayNum);
+  const catSelect = document.getElementById('quickExpCat-' + dayNum);
+  const noteInput = document.getElementById('quickExpNote-' + dayNum);
+  const amount = parseFloat(amtInput.value);
+  if (isNaN(amount) || amount <= 0) return;
+  state.expenses.push({
+    id: genId(),
+    amount,
+    category: catSelect.value,
+    note: noteInput.value.trim(),
+    day: dayNum,
+    timestamp: new Date().toISOString()
+  });
+  saveState();
+  amtInput.value = '';
+  noteInput.value = '';
+  const container = document.getElementById('dayExpenses-' + dayNum);
+  if (container) container.innerHTML = renderDayExpenses(dayNum);
+}
+
+function removeDayExpense(id, dayNum) {
+  state.expenses = state.expenses.filter(e => e.id !== id);
+  saveState();
+  const container = document.getElementById('dayExpenses-' + dayNum);
+  if (container) container.innerHTML = renderDayExpenses(dayNum);
 }
 
 // ============================================================
