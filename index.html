@@ -3,6 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://api.github.com; img-src 'self' data:; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
 <title>Tsue Family Europe 2026</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏔️</text></svg>">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -1117,9 +1122,42 @@ function formatTimestamp(iso) {
 }
 
 function escHtml(str) {
+  if (typeof str !== 'string') return '';
   const d = document.createElement('div');
   d.textContent = str;
   return d.innerHTML;
+}
+
+function sanitizeAmount(val) {
+  const n = parseFloat(val);
+  if (isNaN(n) || !isFinite(n) || n < 0 || n > 999999) return 0;
+  return Math.round(n * 100) / 100;
+}
+
+function sanitizeState(s) {
+  if (!s || typeof s !== 'object') return getDefaultState();
+  // Validate critical fields to prevent poisoned state from cloud
+  if (typeof s.darkMode !== 'boolean') s.darkMode = true;
+  if (!Array.isArray(s.notes)) s.notes = [{ ...DEFAULT_NOTE }];
+  if (!Array.isArray(s.expenses)) s.expenses = [];
+  if (!Array.isArray(s.expandedDays)) s.expandedDays = [];
+  if (typeof s.budget !== 'number' || s.budget < 0 || s.budget > 9999999) s.budget = 15000;
+  if (!['EUR','USD'].includes(s.currency)) s.currency = 'EUR';
+  if (typeof s.fontSize !== 'number' || s.fontSize < 0 || s.fontSize > 2) s.fontSize = 0;
+  // Sanitize expense amounts
+  s.expenses = s.expenses.filter(e => e && typeof e === 'object').map(e => ({
+    ...e,
+    amount: sanitizeAmount(e.amount),
+    note: typeof e.note === 'string' ? e.note.substring(0, 500) : '',
+    category: typeof e.category === 'string' ? e.category : 'other',
+    day: typeof e.day === 'number' && e.day >= 1 && e.day <= 11 ? e.day : 1
+  }));
+  // Sanitize notes length
+  s.notes = s.notes.filter(n => n && typeof n === 'object').map(n => ({
+    ...n,
+    text: typeof n.text === 'string' ? n.text.substring(0, 10000) : ''
+  }));
+  return s;
 }
 
 function mapsUrl(name) {
@@ -1836,8 +1874,8 @@ function quickAddExpense(dayNum) {
   const amtInput = document.getElementById('quickExpAmt-' + dayNum);
   const catSelect = document.getElementById('quickExpCat-' + dayNum);
   const noteInput = document.getElementById('quickExpNote-' + dayNum);
-  const amount = parseFloat(amtInput.value);
-  if (isNaN(amount) || amount <= 0) return;
+  const amount = sanitizeAmount(amtInput.value);
+  if (amount <= 0) return;
   state.expenses.push({
     id: genId(),
     amount,
@@ -2288,8 +2326,8 @@ function showEditExpenseModal(id) {
 }
 
 function saveExpense(editId) {
-  const amount = parseFloat(document.getElementById('expAmount').value);
-  if (isNaN(amount) || amount <= 0) return;
+  const amount = sanitizeAmount(document.getElementById('expAmount').value);
+  if (amount <= 0) return;
   const category = document.getElementById('expCategory').value;
   const note = document.getElementById('expNote').value.trim();
   const day = parseInt(document.getElementById('expDay').value);
@@ -2516,7 +2554,7 @@ function renderSettings() {
       <div class="space-y-3">
         <div>
           <label class="text-xs font-600 text-gray-600 dark:text-gray-400 mb-1 block">GitHub Token</label>
-          <input type="password" id="syncToken" class="w-full border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-teal-400" placeholder="ghp_..." value="${escHtml(getSyncToken())}">
+          <input type="password" id="syncToken" autocomplete="off" class="w-full border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-teal-400" placeholder="ghp_..." value="${escHtml(getSyncToken())}">
         </div>
         <div class="flex gap-3">
           <button onclick="syncToCloud()" class="tap flex-1 py-3 rounded-xl bg-teal-600 text-white font-heading font-600 text-sm hover:bg-teal-700 transition">⬆️ Push to Cloud</button>
@@ -2671,12 +2709,9 @@ async function syncFromCloud() {
     const data = await res.json();
     const content = data.files[GIST_FILENAME].content;
     const cloudState = JSON.parse(content);
-    // Merge cloud state into local
-    state = cloudState;
+    // Sanitize and merge cloud state into local
+    state = sanitizeState(cloudState);
     if (!state.packingList) state.packingList = initPackingList();
-    if (state.fontSize === undefined) state.fontSize = 0;
-    if (state.budget === undefined) state.budget = 15000;
-    if (state.currency === undefined) state.currency = 'EUR';
     saveState();
     applyDarkMode();
     applyFontSize();
