@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tsue Family Europe Trip 2026</title>
+<title>Tsue Family Europe 2026</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏔️</text></svg>">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Tsue Family Europe Trip 2026">
+<meta name="apple-mobile-web-app-title" content="Tsue Family Europe 2026">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -257,7 +257,7 @@ tailwind.config = {
   <header id="appHeader" class="sticky top-0 z-50 glass">
     <div class="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
       <div>
-        <h1 class="font-heading font-800 text-xl leading-tight">Tsue Family Europe Trip 2026</h1>
+        <h1 class="font-heading font-800 text-xl leading-tight">Tsue Family Europe 2026</h1>
         <p class="text-xs text-gray-500 dark:text-gray-400 font-body">Mar 23 – Apr 2, 2026</p>
       </div>
       <div class="flex items-center gap-1">
@@ -470,7 +470,7 @@ const DAYS = [
   },
   {
     day: 5, date: 'Mar 27', weekday: 'Thu', flag: '🚗', phase: 'transition',
-    title: '"Tsue Family Europe Trip 2026" ⭐ Big Drive Day',
+    title: '"Tsue Family Europe 2026" ⭐ Big Drive Day',
     am: 'Scenic 5 hr drive south → Coffee stop in Innsbruck + Brenner Pass into Italy',
     pm: 'Arrive Val d\'Orcia — Tuscan countryside welcome!',
     sleep: 'Val d\'Orcia (1/3)', sleepIcon: '🌻',
@@ -2261,7 +2261,7 @@ function exportExpenses() {
   if (expenses.length === 0) { alert('No expenses to export.'); return; }
   const total = expenses.reduce((s, e) => s + e.amount, 0);
   const budget = state.budget || 15000;
-  let text = 'Tsue Family Europe Trip 2026 — Expense Report\n';
+  let text = 'Tsue Family Europe 2026 — Expense Report\n';
   text += '================================\n\n';
   text += `Budget: $${budget.toLocaleString()}\n`;
   text += `Spent:  $${total.toFixed(2)}\n`;
@@ -2403,7 +2403,7 @@ function renderSettings() {
       </div>
     </div>
 
-    <p class="text-center text-xs text-gray-400 mt-6 mb-4">Tsue Family Europe Trip 2026 · Mar 23 – Apr 2, 2026</p>
+    <p class="text-center text-xs text-gray-400 mt-6 mb-4">Tsue Family Europe 2026 · Mar 23 – Apr 2, 2026</p>
   `;
 }
 
@@ -2484,7 +2484,7 @@ async function syncToCloud() {
         method: 'POST',
         headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          description: 'Tsue Family Europe Trip 2026 — Trip Hub Data',
+          description: 'Tsue Family Europe 2026 — Trip Hub Data',
           public: false,
           files: { [GIST_FILENAME]: { content: body } }
         })
@@ -2576,7 +2576,7 @@ async function quickCloudPush() {
       const res = await fetch('https://api.github.com/gists', {
         method: 'POST',
         headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ description: 'Tsue Family Europe Trip 2026 — Trip Hub Data', public: false, files: { [GIST_FILENAME]: { content: body } } })
+        body: JSON.stringify({ description: 'Tsue Family Europe 2026 — Trip Hub Data', public: false, files: { [GIST_FILENAME]: { content: body } } })
       });
       if (!res.ok) throw new Error(res.status);
       const data = await res.json();
