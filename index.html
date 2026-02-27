@@ -453,7 +453,12 @@ const DAYS = [
     day: 1, date: 'Mar 23', weekday: 'Sun', flag: '🇦🇹', phase: 'austria',
     title: 'Arrival → Salzburg',
     cityDesc: 'Mozart\'s birthplace and a baroque masterpiece. Famous for its hilltop fortress, Sound of Music locations, golden Getreidegasse shopping lane, and apple strudel with a view of the Alps.',
-    reminder: { text: 'Buy Austrian digital vignette (10-day) before driving! Valid immediately after purchase.', url: 'https://shop.asfinag.at/en/toll-products/digital-vignette/10-day-vignette-car/', label: '🛒 Buy at ASFINAG Shop' },
+    reminders: [
+      { text: 'Buy Austrian 10-day digital vignette (€12.80) BEFORE driving Munich → Salzburg. Tied to license plate. Fine without: €300+.', url: 'https://shop.asfinag.at/en/toll-products/digital-vignette/10-day-vignette-car/', label: '🛒 Buy at ASFINAG Shop' },
+      { text: 'Get International Driving Permit from AAA ($20) before trip. Required in Austria, strongly recommended in Italy. Carry with US license at all times.', url: 'https://www.aaa.com/vacation/idpf.html', label: '📋 AAA IDP Info' },
+      { text: 'At rental pickup: Verify car has winter tires (mandatory until Apr 15, fine up to €5,000), reflective vest in cabin (not trunk), warning triangle, and first aid kit.' },
+      { text: 'No right turn on red — illegal everywhere in Europe. Wait for green signal.' }
+    ],
     am: 'Land Munich (11 AM) → Pick up rental car → 1.5 hr scenic drive to Salzburg',
     pm: 'Salzburg Old Town stroll + early family dinner',
     sleep: 'Salzburg', sleepIcon: '🏰',
@@ -531,6 +536,12 @@ const DAYS = [
     day: 5, date: 'Mar 27', weekday: 'Thu', flag: '🚗', phase: 'transition',
     title: 'Big Drive Day ⭐ Alps to Tuscany',
     cityDesc: 'An epic road trip across the Alps into Italy. You\'ll cross the dramatic Brenner Pass, stop in Innsbruck under its golden roof, and descend into Tuscany\'s UNESCO Val d\'Orcia — rolling hills, cypress trees, and golden light.',
+    reminders: [
+      { text: 'Brenner Pass A13 section toll = €12.50 one-way (separate from vignette). Buy digital or pay at toll booth.', url: 'https://shop.asfinag.at/en/products/digital-section-toll/a-13-brenner-motorway/', label: '🛒 Buy Brenner Toll' },
+      { text: 'Italian tolls: Take ticket on entry, pay on exit. Use WHITE (cash/card) or BLUE (card) lanes only. NEVER enter YELLOW Telepass lanes — you\'ll get stuck.' },
+      { text: 'Italian fuel: "Benzina" = gasoline. "Gasolio" = DIESEL (sounds like gasoline but is NOT!). Use "Fai da Te" self-service pumps — "Servito" costs €6-12 extra per tank.' },
+      { text: 'Italy speed cameras ("Tutor") measure AVERAGE speed over 10-25 km. Can\'t brake at cameras to cheat. 130 km/h autostrada, drops to 110 in rain. Fines arrive months later via rental company.' }
+    ],
     am: 'Scenic 5 hr drive south → Coffee stop in Innsbruck + Brenner Pass into Italy',
     pm: 'Arrive Val d\'Orcia — Tuscan countryside welcome!',
     sleep: 'Val d\'Orcia (1/3)', sleepIcon: '🌻',
@@ -666,6 +677,11 @@ const DAYS = [
     day: 6, date: 'Mar 28', weekday: 'Fri', flag: '🇮🇹', phase: 'italy',
     title: 'Pienza & Montepulciano',
     cityDesc: 'Two jewel-box hilltop towns perched above the Tuscan countryside. Pienza is the "Ideal Renaissance City" and pecorino cheese capital. Montepulciano is famous for Vino Nobile wine, a medieval tower with 360° views, and streets named Love, Kiss, and Good Luck.',
+    reminders: [
+      { text: 'Italy parking lines: WHITE = free, BLUE = paid (buy ticket at nearby machine), YELLOW = residents only (fine ~€60+). Display ticket on dashboard.' },
+      { text: 'Ask for a "disco orario" parking disc at rental pickup or any tabaccheria (T-sign shop). Set clock to arrival time for timed free parking zones.' },
+      { text: 'Restaurant "coperto" (cover charge €1-3/person) is normal in Italy — not a scam. Water is charged too. Say "acqua del rubinetto" for free tap water.' }
+    ],
     am: 'Pienza — cheese tasting, Renaissance streets, panoramic views',
     pm: 'Montepulciano — tower climb + vineyard dinner',
     sleep: 'Val d\'Orcia (2/3)', sleepIcon: '🌻',
@@ -776,6 +792,10 @@ const DAYS = [
     day: 8, date: 'Mar 30', weekday: 'Sun', flag: '🇮🇹', phase: 'italy',
     title: 'Verona — Romeo & Juliet City',
     cityDesc: 'Shakespeare\'s city of star-crossed lovers. Verona is home to the Arena — a Roman amphitheater older than the Colosseum that still hosts opera. Famous for Juliet\'s balcony, pastel-colored piazzas, and some of the best risotto in northern Italy.',
+    reminders: [
+      { text: 'If hotel is inside ZTL: Email hotel your license plate BEFORE arrival so they can register it. Without registration, ZTL cameras auto-fine ~€100 per entry.' },
+      { text: 'Don\'t buy from street vendors selling counterfeit bags/sunglasses — buyers can be fined €1,000+ in Italy.' }
+    ],
     am: '3-3.5 hr drive Val d\'Orcia → Verona',
     pm: 'Arena di Verona (older than the Colosseum!) + Piazza evening stroll',
     sleep: 'Verona — OUTSIDE ZTL', sleepIcon: '🏛',
@@ -856,6 +876,9 @@ const DAYS = [
     day: 9, date: 'Mar 31', weekday: 'Mon', flag: '🇮🇹', phase: 'italy',
     title: 'Bologna — Italy\'s Food Capital 🍝',
     cityDesc: 'Italy\'s undisputed food capital — birthplace of ragù, tortellini, mortadella, and Parmigiano Reggiano. Home to the world\'s oldest university (1088 AD), 40km of UNESCO covered porticoes, and the iconic leaning Two Towers.',
+    reminders: [
+      { text: 'Bologna has a large ZTL. Email hotel your license plate BEFORE arrival to register. Park outside ZTL and walk/bus in if hotel can\'t register you.' }
+    ],
     am: 'Last Verona gelato → 1.5 hr drive to Bologna',
     pm: 'Explore the porticoes, Two Towers, Mercato di Mezzo — eat EVERYTHING',
     sleep: 'Bologna', sleepIcon: '🏛',
@@ -913,6 +936,11 @@ const DAYS = [
     day: 10, date: 'Apr 1', weekday: 'Tue', flag: '📦', phase: 'italy',
     title: 'Buffer Day → Florence Airport',
     cityDesc: 'Florence — the cradle of the Renaissance. Birthplace of Michelangelo\'s David, Brunelleschi\'s Dome, and the Uffizi Gallery. You\'re staying near the airport (skip the ZTL!), but the city\'s magic is just a tram ride away.',
+    reminders: [
+      { text: 'Don\'t sit or eat on church steps in Florence — fines up to €500. Florence heavily enforces anti-picnic laws near monuments and churches.' },
+      { text: 'Dress code for Italian churches: Knees and shoulders must be covered. Carry a light scarf/shawl. You WILL be turned away without it.' },
+      { text: 'Return rental car with full tank. Keep your final fuel receipt — rental companies charge 2-3x pump price to refuel if you forget.' }
+    ],
     am: 'Sleep in! Last Italian breakfast → 1.5 hr drive to Florence airport area',
     pm: 'Relax at hotel, pool if available, pack up. Final Italian dinner — no rush!',
     sleep: 'Florence Airport Hotel', sleepIcon: '✈️',
@@ -2058,7 +2086,7 @@ function renderCollapsibleDay(d) {
     </button>
     <div id="dayBody-${d.day}" class="bg-white dark:bg-gray-800 ${isExpanded ? '' : 'hidden'}">
       <div class="p-4 ${isExpanded ? 'anim-slide' : ''}">
-        ${d.reminder ? `<div class="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded-xl p-3 mb-3"><p class="font-heading font-600 text-sm text-amber-800 dark:text-amber-200">⚠️ ${escHtml(d.reminder.text)}</p>${d.reminder.url ? `<a href="${escHtml(d.reminder.url)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 mt-2 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-heading font-600 transition tap">${escHtml(d.reminder.label)}</a>` : ''}</div>` : ''}
+        ${d.reminders ? d.reminders.map(r => `<div class="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded-xl p-3 mb-3"><p class="font-heading font-600 text-sm text-amber-800 dark:text-amber-200">⚠️ ${escHtml(r.text)}</p>${r.url ? `<a href="${escHtml(r.url)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 mt-2 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-heading font-600 transition tap">${escHtml(r.label)}</a>` : ''}</div>`).join('') : ''}
         ${ztlBanner}
         <div class="grid grid-cols-1 gap-2 mb-3">
           <div class="flex gap-2 items-start"><span class="text-amber-400 flex-shrink-0">☀️</span><p class="text-sm"><strong>AM:</strong> ${escHtml(d.am)}</p></div>
