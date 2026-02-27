@@ -8,12 +8,12 @@
 <meta http-equiv="X-Frame-Options" content="DENY">
 <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://api.github.com; img-src 'self' data:; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
-<title>Tsue Family Europe 2026</title>
+<title>Family Europe 2026</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏔️</text></svg>">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Tsue Family Europe 2026">
+<meta name="apple-mobile-web-app-title" content="Family Europe 2026">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -255,6 +255,37 @@ tailwind.config = {
 
   /* Desktop nav hidden by default (shown via media query) */
   .desktop-nav { display: none; }
+
+  /* Toast notifications */
+  .toast-container { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); z-index: 300; display: flex; flex-direction: column; gap: 8px; pointer-events: none; width: 90%; max-width: 400px; }
+  .toast { padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 600; color: white; pointer-events: auto; animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+  .toast-success { background: #059669; }
+  .toast-error { background: #dc2626; }
+  .toast-info { background: #2563eb; }
+  @keyframes toastIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes toastOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-20px); } }
+
+  /* Offline banner */
+  .offline-banner { position: fixed; top: 0; left: 0; right: 0; z-index: 400; background: #dc2626; color: white; text-align: center; padding: 8px; font-size: 13px; font-weight: 600; transform: translateY(-100%); transition: transform 0.3s ease; }
+  .offline-banner.show { transform: translateY(0); }
+
+  /* Quick action bar */
+  .quick-actions { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .quick-actions::-webkit-scrollbar { display: none; }
+  .quick-action-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 12px; font-size: 13px; font-weight: 600; white-space: nowrap; transition: all 0.2s; border: 1px solid rgba(0,0,0,0.08); cursor: pointer; }
+  .dark .quick-action-btn { border-color: rgba(255,255,255,0.1); }
+
+  /* Trip progress dots */
+  .trip-progress { display: flex; align-items: center; gap: 4px; justify-content: center; }
+  .trip-dot { width: 8px; height: 8px; border-radius: 50%; transition: all 0.3s; }
+  .trip-dot.past { background: #059669; }
+  .trip-dot.current { width: 12px; height: 12px; background: #0d9488; box-shadow: 0 0 8px rgba(13,148,136,0.5); }
+  .trip-dot.future { background: #e2e8f0; }
+  .dark .trip-dot.future { background: #334155; }
+
+  /* Visited destination badge */
+  .dest-visited { opacity: 0.7; }
+  .dest-visited .font-heading { text-decoration: line-through; }
 </style>
 </head>
 <body class="bg-gray-50 text-gray-900 font-body min-h-screen pb-20">
@@ -266,7 +297,7 @@ tailwind.config = {
   <header id="appHeader" class="sticky top-0 z-50 glass">
     <div class="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
       <div>
-        <h1 class="font-heading font-800 text-xl leading-tight">Tsue Family Europe 2026</h1>
+        <h1 class="font-heading font-800 text-xl leading-tight">Family Europe 2026</h1>
         <p class="text-xs text-gray-500 dark:text-gray-400 font-body">Mar 23 – Apr 2, 2026</p>
       </div>
       <div class="flex items-center gap-1">
@@ -396,6 +427,12 @@ tailwind.config = {
 
 <!-- Modal container -->
 <div id="modalContainer"></div>
+
+<!-- Toast container -->
+<div id="toastContainer" class="toast-container"></div>
+
+<!-- Offline banner -->
+<div id="offlineBanner" class="offline-banner">📡 You're offline — data is saved locally</div>
 
 <script>
 // ============================================================
@@ -1025,6 +1062,9 @@ const DEFAULT_NOTE = {
 const STORAGE_KEY = 'TRIP_HUB_DATA';
 let state = null;
 let saveTimeout = null;
+let viewDay = null; // null = auto (use getTripDay()), number = manual override for Today tab
+let expenseFilterDay = 'all';
+let expenseFilterCat = 'all';
 
 function getDefaultState() {
   return {
@@ -1058,6 +1098,8 @@ function loadState() {
       if (state.budget === undefined) state.budget = 15000;
       if (state.currency === undefined) state.currency = 'EUR';
       if (state.fontSize === undefined) state.fontSize = 0;
+      if (!state.visitedDests) state.visitedDests = [];
+      if (state.autoNightMode === undefined) state.autoNightMode = false;
       if (!state.packingList) state.packingList = initPackingList();
     } else {
       state = getDefaultState();
@@ -1162,6 +1204,92 @@ function sanitizeState(s) {
 
 function mapsUrl(name) {
   return 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(name);
+}
+
+function weatherUrl(city) {
+  return 'https://www.google.com/search?q=weather+' + encodeURIComponent(city);
+}
+
+function showToast(msg, type) {
+  type = type || 'success';
+  var container = document.getElementById('toastContainer');
+  var toast = document.createElement('div');
+  toast.className = 'toast toast-' + type;
+  toast.textContent = msg;
+  container.appendChild(toast);
+  setTimeout(function() { toast.remove(); }, 3000);
+}
+
+function toggleVisitedDest(name) {
+  if (!state.visitedDests) state.visitedDests = [];
+  var idx = state.visitedDests.indexOf(name);
+  if (idx >= 0) state.visitedDests.splice(idx, 1);
+  else state.visitedDests.push(name);
+  saveState();
+  // Re-render current view
+  if (state.activeTab === 'today') renderToday();
+  else if (state.activeTab === 'days') renderDays();
+}
+
+function isDestVisited(name) {
+  return state.visitedDests && state.visitedDests.includes(name);
+}
+
+function showParkingInfo(dayNum) {
+  var d = DAYS[dayNum - 1];
+  if (!d) return;
+  var msg = d.parking;
+  if (d.parkingStrategy) msg += '\n\n🅿️ Strategy: ' + d.parkingStrategy;
+  var modal = document.getElementById('modalContainer');
+  modal.innerHTML = '<div class="modal-overlay" role="dialog" aria-modal="true" onclick="if(event.target===this)closeModal()"><div class="modal-content bg-white dark:bg-gray-800 anim-fade"><h3 class="font-heading font-700 text-lg mb-3">🅿️ Parking Info — Day ' + dayNum + '</h3><p class="text-sm whitespace-pre-wrap">' + escHtml(msg) + '</p><button onclick="closeModal()" class="tap w-full mt-4 py-3 rounded-xl bg-teal-600 text-white font-heading font-600 text-sm">Got it</button></div></div>';
+}
+
+function shareDaySummary(dayNum) {
+  var d = DAYS[dayNum - 1];
+  if (!d) return;
+  var text = 'Day ' + d.day + ' — ' + d.title + '\n' + d.date + ' (' + d.weekday + ')\n\n☀️ AM: ' + d.am + '\n🌙 PM: ' + d.pm + '\n🛏 ' + d.sleep + '\n\n👨‍👩‍👧‍👦 ' + d.familyTip;
+  if (navigator.share) {
+    navigator.share({ title: 'Day ' + d.day + ' — ' + d.title, text: text }).catch(function(){});
+  } else {
+    navigator.clipboard.writeText(text).then(function() {
+      showToast('Day summary copied!', 'success');
+    }).catch(function() {
+      showToast('Could not copy', 'error');
+    });
+  }
+}
+
+function swipeDay(dir) {
+  var trip = getTripDay();
+  var current = viewDay || trip.dayNum;
+  var next = current + dir;
+  if (next < 1 || next > 11) return;
+  viewDay = next;
+  renderToday();
+}
+
+function setupSwipe() {
+  var el = document.getElementById('tab-today');
+  var sx, sy;
+  el.addEventListener('touchstart', function(e) { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+  el.addEventListener('touchend', function(e) {
+    var dx = e.changedTouches[0].clientX - sx;
+    var dy = e.changedTouches[0].clientY - sy;
+    if (Math.abs(dx) > 80 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      swipeDay(dx < 0 ? 1 : -1);
+    }
+  }, { passive: true });
+}
+
+function checkAutoNightMode() {
+  if (!state.autoNightMode) return;
+  var hour = new Date().getHours();
+  var shouldBeDark = hour >= 20 || hour < 7;
+  if (state.darkMode !== shouldBeDark) {
+    state.darkMode = shouldBeDark;
+    applyDarkMode();
+    saveState();
+  }
 }
 
 function renderAlternatives(d) {
@@ -1558,8 +1686,29 @@ function switchNotesTab(sub) {
 // ============================================================
 function renderToday() {
   const trip = getTripDay();
-  const dayData = DAYS[trip.dayNum - 1];
+  const dayNum = viewDay || trip.dayNum;
+  const dayData = DAYS[dayNum - 1];
   const container = document.getElementById('todayContent');
+
+  // Trip progress dots
+  const progressHtml = `<div class="trip-progress mb-3">
+    ${DAYS.map(d => {
+      let cls = 'trip-dot ';
+      if (trip.status === 'before') cls += 'future';
+      else if (d.day < (trip.status === 'during' ? trip.dayNum : 12)) cls += 'past';
+      else if (d.day === (trip.status === 'during' ? trip.dayNum : 0)) cls += 'current';
+      else cls += 'future';
+      return '<span class="' + cls + '" title="Day ' + d.day + '"></span>';
+    }).join('')}
+  </div>`;
+
+  // Day navigation arrows
+  const dayNavHtml = `<div class="flex justify-between items-center mb-3">
+    <button onclick="swipeDay(-1)" class="tap px-3 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-sm font-heading font-600 transition hover:bg-gray-200 dark:hover:bg-gray-700 ${dayNum <= 1 ? 'opacity-30 pointer-events-none' : ''}">← Day ${dayNum - 1}</button>
+    <span class="font-heading font-700 text-sm text-gray-500 dark:text-gray-400">Day ${dayNum} of 11</span>
+    <button onclick="swipeDay(1)" class="tap px-3 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-sm font-heading font-600 transition hover:bg-gray-200 dark:hover:bg-gray-700 ${dayNum >= 11 ? 'opacity-30 pointer-events-none' : ''}">Day ${dayNum + 1} →</button>
+  </div>`;
+
   let countdownHtml = '';
   if (trip.status === 'before') {
     countdownHtml = `<div class="glass rounded-2xl p-4 mb-4 text-center anim-fade">
@@ -1575,12 +1724,42 @@ function renderToday() {
     </div>`;
   }
 
-  container.innerHTML = countdownHtml + renderDayCardFull(dayData, true);
+  // Quick-action bar
+  const quickActionsHtml = `<div class="quick-actions mb-3">
+    <button onclick="switchTab('notes');switchNotesTab('expenses');setTimeout(function(){showAddExpenseModal()},100)" class="quick-action-btn bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 tap">💰 Expense</button>
+    <button onclick="document.getElementById('todayNoteArea')?.focus()" class="quick-action-btn bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 tap">📝 Note</button>
+    <button onclick="showParkingInfo(${dayNum})" class="quick-action-btn bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 tap">🅿️ Parking</button>
+    <button onclick="shareDaySummary(${dayNum})" class="quick-action-btn bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 tap">📤 Share</button>
+  </div>`;
+
+  container.innerHTML = progressHtml + dayNavHtml + countdownHtml + quickActionsHtml + renderDayCardFull(dayData, true);
 }
 
 // ============================================================
 // RENDER: FULL DAY CARD (for Today tab)
 // ============================================================
+function renderDestCard(dest, dayNum) {
+  const visited = isDestVisited(dest.name);
+  return `<div class="glass rounded-xl p-3 hover:shadow-md transition ${visited ? 'dest-visited' : ''}">
+    <div class="flex items-start gap-2">
+      <button onclick="event.stopPropagation();toggleVisitedDest('${escHtml(dest.name).replace(/'/g, "\\'")}')" class="tap flex-shrink-0 mt-0.5" title="${visited ? 'Mark as not visited' : 'Mark as visited'}">
+        ${visited ? '<span class="text-green-500 text-sm">✅</span>' : dest.star ? '<span class="text-amber-400 text-sm">⭐</span>' : '<span class="text-gray-400 text-sm">📍</span>'}
+      </button>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-1.5">
+          <p class="font-heading font-600 text-sm">${escHtml(dest.name)}</p>
+          ${dest.star ? '<span class="text-xs" title="Great photo spot!">📸</span>' : ''}
+        </div>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${escHtml(dest.desc)}</p>
+        <div class="flex gap-3 mt-2">
+          <a href="${dest.url}" target="_blank" rel="noopener noreferrer" class="text-xs font-600 text-teal-600 dark:text-teal-400 tap">Info →</a>
+          <a href="${mapsUrl(dest.name)}" target="_blank" rel="noopener noreferrer" class="text-xs font-600 text-blue-600 dark:text-blue-400 tap">📍 Navigate</a>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
 function renderDayCardFull(d, isToday) {
   const ztlBanner = (d.phase === 'italy' || d.phase === 'transition') && (d.ztlStatus === 'warn' || d.ztlStatus === 'danger')
     ? `<div class="${d.ztlStatus === 'danger' ? 'ztl-danger' : 'ztl-banner'} rounded-xl p-3 mb-3"><p class="font-heading font-600 text-sm">${d.ztlStatus === 'danger' ? '🛑' : '🚦'} ZTL Warning: ${escHtml(d.ztl)}</p></div>` : '';
@@ -1597,17 +1776,15 @@ function renderDayCardFull(d, isToday) {
 
   const destsHtml = d.destinations && d.destinations.length > 0
     ? `<div class="mb-3"><p class="font-heading font-600 text-sm mb-2">📍 Destinations</p>
-      <div class="dest-grid" style="gap:0.5rem">${d.destinations.map(dest => `<div class="glass rounded-xl p-3 hover:shadow-md transition">
-        <div class="flex items-start gap-2">
-          ${dest.star ? '<span class="text-amber-400 text-sm flex-shrink-0">⭐</span>' : '<span class="text-gray-400 text-sm flex-shrink-0">📍</span>'}
-          <div class="flex-1 min-w-0"><p class="font-heading font-600 text-sm">${escHtml(dest.name)}</p><p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${escHtml(dest.desc)}</p>
-            <div class="flex gap-3 mt-2">
-              <a href="${dest.url}" target="_blank" rel="noopener noreferrer" class="text-xs font-600 text-teal-600 dark:text-teal-400 tap">Info →</a>
-              <a href="${mapsUrl(dest.name)}" target="_blank" rel="noopener noreferrer" class="text-xs font-600 text-blue-600 dark:text-blue-400 tap">📍 Navigate</a>
-            </div>
-          </div>
-        </div>
-      </div>`).join('')}</div></div>` : '';
+      <div class="dest-grid" style="gap:0.5rem">${d.destinations.map(dest => renderDestCard(dest, d.day)).join('')}</div></div>` : '';
+
+  // Hotel navigate button
+  const hotelNavHtml = d.sleep && d.sleep !== 'Home sweet home'
+    ? `<a href="${mapsUrl(d.sleep)}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-heading font-600 text-sm transition tap mb-3">🗺 Navigate to ${escHtml(d.sleep)}</a>` : '';
+
+  // Weather link
+  const weatherCity = d.sleep && d.sleep !== 'Home sweet home' ? d.sleep.split('(')[0].trim() : '';
+  const weatherHtml = weatherCity ? `<a href="${weatherUrl(weatherCity)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-3 py-1.5 bg-sky-50 dark:bg-sky-900/20 text-sky-700 dark:text-sky-300 rounded-full text-xs font-600 transition hover:bg-sky-100 dark:hover:bg-sky-900/40 tap">🌤 Weather in ${escHtml(weatherCity)}</a>` : '';
 
   // Today's Notes + Expenses
   const todayNotesHtml = isToday ? `<div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
@@ -1625,10 +1802,14 @@ function renderDayCardFull(d, isToday) {
           <p class="text-xs opacity-80 font-body">${d.date} (${d.weekday})</p>
           <h2 class="font-heading font-700 text-xl mt-1">${d.flag} Day ${d.day} — ${escHtml(d.title)}</h2>
         </div>
-        <span class="text-3xl">${d.sleepIcon}</span>
+        <div class="flex items-center gap-2">
+          ${weatherHtml}
+          <span class="text-3xl">${d.sleepIcon}</span>
+        </div>
       </div>
     </div>
     <div class="bg-white dark:bg-gray-800 p-4">
+      ${hotelNavHtml}
       <div class="day-ampm grid grid-cols-1 gap-2 mb-3">
         <div class="flex gap-2 items-start"><span class="text-amber-400 flex-shrink-0">☀️</span><p class="text-sm"><strong>AM:</strong> ${escHtml(d.am)}</p></div>
         <div class="flex gap-2 items-start"><span class="flex-shrink-0">🌙</span><p class="text-sm"><strong>PM:</strong> ${escHtml(d.pm)}</p></div>
@@ -1648,8 +1829,9 @@ function renderDayCardFull(d, isToday) {
       ${destsHtml}
       ${renderMidwayStops(d)}
       ${renderAlternatives(d)}
-      <div class="mt-3 text-center">
-        <button onclick="switchTab('hotels')" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-heading font-600 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition tap">🏨 View Hotels for This Day →</button>
+      <div class="mt-3 flex flex-wrap gap-2 justify-center">
+        <button onclick="switchTab('hotels')" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-heading font-600 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition tap">🏨 View Hotels →</button>
+        <button onclick="shareDaySummary(${d.day})" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-heading font-600 bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900/50 transition tap">📤 Share Day</button>
       </div>
       ${todayNotesHtml}
     </div>
@@ -1943,17 +2125,7 @@ function renderCollapsibleDay(d) {
 
   const destsHtml = d.destinations && d.destinations.length > 0
     ? `<div class="mb-3"><p class="font-heading font-600 text-sm mb-2">📍 Destinations</p>
-      <div class="dest-grid" style="gap:0.5rem">${d.destinations.map(dest => `<div class="glass rounded-xl p-3 hover:shadow-md transition">
-        <div class="flex items-start gap-2">
-          ${dest.star ? '<span class="text-amber-400 text-sm flex-shrink-0">⭐</span>' : '<span class="text-gray-400 text-sm flex-shrink-0">📍</span>'}
-          <div class="flex-1 min-w-0"><p class="font-heading font-600 text-sm">${escHtml(dest.name)}</p><p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${escHtml(dest.desc)}</p>
-            <div class="flex gap-3 mt-2">
-              <a href="${dest.url}" target="_blank" rel="noopener noreferrer" class="text-xs font-600 text-teal-600 dark:text-teal-400 tap">Info →</a>
-              <a href="${mapsUrl(dest.name)}" target="_blank" rel="noopener noreferrer" class="text-xs font-600 text-blue-600 dark:text-blue-400 tap">📍 Navigate</a>
-            </div>
-          </div>
-        </div>
-      </div>`).join('')}</div></div>` : '';
+      <div class="dest-grid" style="gap:0.5rem">${d.destinations.map(dest => renderDestCard(dest, d.day)).join('')}</div></div>` : '';
 
   return `<div data-day-card data-day="${d.day}" id="day-${d.day}" class="rounded-2xl overflow-hidden shadow-lg">
     <button onclick="toggleDay(${d.day})" class="${phaseBg(d.phase)} text-white p-4 w-full text-left tap">
@@ -2253,8 +2425,22 @@ function renderExpenses() {
     ${budgetHtml}
     ${summaryHtml}
     <button onclick="showAddExpenseModal()" class="tap w-full bg-teal-600 hover:bg-teal-700 text-white font-heading font-600 py-3 px-4 rounded-xl mb-4 transition text-sm">+ Add Expense</button>
+    ${expenses.length > 0 ? `<div class="flex gap-2 mb-3">
+      <select onchange="expenseFilterDay=this.value;renderExpenses()" class="flex-1 border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1.5 text-xs outline-none focus:ring-2 focus:ring-teal-400">
+        <option value="all" ${expenseFilterDay === 'all' ? 'selected' : ''}>All Days</option>
+        ${DAYS.map(d => '<option value="' + d.day + '" ' + (expenseFilterDay == d.day ? 'selected' : '') + '>Day ' + d.day + ' — ' + d.title + '</option>').join('')}
+      </select>
+      <select onchange="expenseFilterCat=this.value;renderExpenses()" class="flex-1 border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1.5 text-xs outline-none focus:ring-2 focus:ring-teal-400">
+        <option value="all" ${expenseFilterCat === 'all' ? 'selected' : ''}>All Categories</option>
+        ${CATEGORIES.map(c => '<option value="' + c.id + '" ' + (expenseFilterCat === c.id ? 'selected' : '') + '>' + c.label + '</option>').join('')}
+      </select>
+    </div>` : ''}
     ${expenses.length === 0 ? '<p class="text-center text-gray-400 py-8 text-sm">No expenses logged yet. Tap above to start tracking!</p>' : ''}
-    <div class="space-y-2">${expenses.slice().reverse().map(e => {
+    <div class="space-y-2">${expenses.filter(e => {
+      if (expenseFilterDay !== 'all' && e.day != expenseFilterDay) return false;
+      if (expenseFilterCat !== 'all' && e.category !== expenseFilterCat) return false;
+      return true;
+    }).slice().reverse().map(e => {
       const cat = CATEGORIES.find(c => c.id === e.category) || CATEGORIES[7];
       return `<div class="glass rounded-xl p-3 flex items-center gap-3" onclick="showEditExpenseModal('${e.id}')">
         <span class="text-lg">${cat.label.split(' ')[0]}</span>
@@ -2357,10 +2543,10 @@ function deleteExpense(id) {
 
 function exportExpenses() {
   const expenses = state.expenses;
-  if (expenses.length === 0) { alert('No expenses to export.'); return; }
+  if (expenses.length === 0) { showToast('No expenses to export.', 'info'); return; }
   const total = expenses.reduce((s, e) => s + e.amount, 0);
   const budget = state.budget || 15000;
-  let text = 'Tsue Family Europe 2026 — Expense Report\n';
+  let text = 'Family Europe 2026 — Expense Report\n';
   text += '================================\n\n';
   const s = currSym();
   text += `Budget: ${s}${budget.toLocaleString()}\n`;
@@ -2378,13 +2564,13 @@ function exportExpenses() {
     if (byCategory[c.id]) text += `  ${c.label}: ${s}${byCategory[c.id].toFixed(2)}\n`;
   });
   navigator.clipboard.writeText(text).then(() => {
-    alert('Expense report copied to clipboard!');
+    showToast('Expense report copied!', 'success');
   }).catch(() => {
     // Fallback
     const ta = document.createElement('textarea');
     ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy');
     document.body.removeChild(ta);
-    alert('Expense report copied to clipboard!');
+    showToast('Expense report copied!', 'success');
   });
 }
 
@@ -2434,6 +2620,15 @@ function renderSettings() {
         </div>
         <button onclick="toggleDarkMode()" class="tap w-14 h-8 rounded-full transition ${state.darkMode ? 'bg-teal-600' : 'bg-gray-300'} relative">
           <span class="absolute top-1 ${state.darkMode ? 'right-1' : 'left-1'} w-6 h-6 bg-white rounded-full shadow transition-all"></span>
+        </button>
+      </div>
+      <div class="border-t border-gray-200 dark:border-gray-700 pt-4 flex items-center justify-between">
+        <div>
+          <p class="font-heading font-600 text-sm">🌗 Auto Night Mode</p>
+          <p class="text-xs text-gray-400">Dark after 8 PM, light after 7 AM</p>
+        </div>
+        <button onclick="state.autoNightMode=!state.autoNightMode;saveState();checkAutoNightMode();renderSettings();" class="tap w-14 h-8 rounded-full transition ${state.autoNightMode ? 'bg-teal-600' : 'bg-gray-300'} relative">
+          <span class="absolute top-1 ${state.autoNightMode ? 'right-1' : 'left-1'} w-6 h-6 bg-white rounded-full shadow transition-all"></span>
         </button>
       </div>
       <div class="border-t border-gray-200 dark:border-gray-700 pt-4 flex items-center justify-between">
@@ -2574,19 +2769,19 @@ function renderSettings() {
       </div>
     </div>
 
-    <p class="text-center text-xs text-gray-400 mt-6 mb-4">Tsue Family Europe 2026 · Mar 23 – Apr 2, 2026</p>
+    <p class="text-center text-xs text-gray-400 mt-6 mb-4">Family Europe 2026 · Mar 23 – Apr 2, 2026</p>
   `;
 }
 
 function exportAllData() {
   const json = JSON.stringify(state, null, 2);
   navigator.clipboard.writeText(json).then(() => {
-    alert('All data copied to clipboard as JSON!');
+    showToast('Data copied to clipboard!', 'success');
   }).catch(() => {
     const ta = document.createElement('textarea');
     ta.value = json; document.body.appendChild(ta); ta.select(); document.execCommand('copy');
     document.body.removeChild(ta);
-    alert('All data copied to clipboard as JSON!');
+    showToast('Data copied to clipboard!', 'success');
   });
 }
 
@@ -2600,7 +2795,7 @@ function clearAllData() {
   saveState();
   renderSettings();
   renderNotes();
-  alert('All data has been cleared.');
+  showToast('All data cleared.', 'success');
 }
 
 // ============================================================
@@ -2655,7 +2850,7 @@ async function syncToCloud() {
         method: 'POST',
         headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          description: 'Tsue Family Europe 2026 — Trip Hub Data',
+          description: 'Family Europe 2026 — Trip Hub Data',
           public: false,
           files: { [GIST_FILENAME]: { content: body } }
         })
@@ -2725,7 +2920,7 @@ async function syncFromCloud() {
 async function quickCloudPush() {
   const token = getSyncToken();
   if (!token) {
-    alert('Set up your GitHub token in Settings → Cloud Sync first.');
+    showToast('Set up GitHub token in Settings first.', 'info');
     switchTab('settings');
     return;
   }
@@ -2745,7 +2940,7 @@ async function quickCloudPush() {
       const res = await fetch('https://api.github.com/gists', {
         method: 'POST',
         headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ description: 'Tsue Family Europe 2026 — Trip Hub Data', public: false, files: { [GIST_FILENAME]: { content: body } } })
+        body: JSON.stringify({ description: 'Family Europe 2026 — Trip Hub Data', public: false, files: { [GIST_FILENAME]: { content: body } } })
       });
       if (!res.ok) throw new Error(res.status);
       const data = await res.json();
@@ -2767,6 +2962,14 @@ function init() {
   applyDarkMode();
   applyFontSize();
   switchTab(state.activeTab || 'today');
+  setupSwipe();
+  checkAutoNightMode();
+  // Check auto night mode every minute
+  setInterval(checkAutoNightMode, 60000);
+  // Offline indicator
+  window.addEventListener('online', function() { document.getElementById('offlineBanner').classList.remove('show'); showToast('Back online!', 'success'); });
+  window.addEventListener('offline', function() { document.getElementById('offlineBanner').classList.add('show'); });
+  if (!navigator.onLine) document.getElementById('offlineBanner').classList.add('show');
 }
 
 // Start the app
