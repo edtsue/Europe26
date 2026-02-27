@@ -1090,7 +1090,7 @@ function getDefaultState() {
     notes: [{ ...DEFAULT_NOTE }],
     checklists: JSON.parse(JSON.stringify(DEFAULT_CHECKLISTS)),
     expenses: [],
-    expandedDays: [1,2,3,4,5,6,7,8,9,10,11],
+    expandedDays: [getTripDay().dayNum],
     activeTab: 'days',
     activeNotesTab: 'journal',
     budget: 15000,
@@ -1109,7 +1109,7 @@ function loadState() {
       if (!state.notes) state.notes = def.notes;
       if (!state.checklists) state.checklists = def.checklists;
       if (!state.expenses) state.expenses = def.expenses;
-      if (!state.expandedDays || state.expandedDays.length === 0) state.expandedDays = def.expandedDays;
+      if (!state.expandedDays) state.expandedDays = def.expandedDays;
       if (state.activeTab === undefined || state.activeTab === 'today') state.activeTab = 'days';
       if (state.activeNotesTab === undefined) state.activeNotesTab = 'journal';
       if (state.budget === undefined) state.budget = 15000;
@@ -1954,6 +1954,12 @@ function removeDayExpense(id, dayNum) {
 let dayObserver = null;
 
 function renderDays() {
+  // Ensure current day is always expanded
+  const currentDay = getTripDay().dayNum;
+  if (!state.expandedDays.includes(currentDay)) {
+    state.expandedDays.push(currentDay);
+  }
+
   // Day nav
   const nav = document.getElementById('dayNav');
   nav.innerHTML = DAYS.map(d => `<button onclick="scrollToDay(${d.day})" class="day-nav-btn tap flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-heading font-600 transition whitespace-nowrap" data-day="${d.day}" style="background:${phaseColor(d.phase)}20;color:${phaseColor(d.phase)}">${d.flag} ${d.day}</button>`).join('');
@@ -1961,6 +1967,12 @@ function renderDays() {
   // Day cards
   const cards = document.getElementById('dayCards');
   cards.innerHTML = DAYS.map(d => renderCollapsibleDay(d)).join('');
+
+  // Auto-scroll to current day
+  setTimeout(() => {
+    const el = document.getElementById('day-' + currentDay);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
 
   // IntersectionObserver
   if (dayObserver) dayObserver.disconnect();
