@@ -453,6 +453,7 @@ const DAYS = [
     day: 1, date: 'Mar 23', weekday: 'Sun', flag: '🇦🇹', phase: 'austria',
     title: 'Arrival → Salzburg',
     cityDesc: 'Mozart\'s birthplace and a baroque masterpiece. Famous for its hilltop fortress, Sound of Music locations, golden Getreidegasse shopping lane, and apple strudel with a view of the Alps.',
+    reminder: { text: 'Buy Austrian digital vignette (10-day) before driving! Valid immediately after purchase.', url: 'https://shop.asfinag.at/en/toll-products/digital-vignette/10-day-vignette-car/', label: '🛒 Buy at ASFINAG Shop' },
     am: 'Land Munich (11 AM) → Pick up rental car → 1.5 hr scenic drive to Salzburg',
     pm: 'Salzburg Old Town stroll + early family dinner',
     sleep: 'Salzburg', sleepIcon: '🏰',
@@ -2057,6 +2058,7 @@ function renderCollapsibleDay(d) {
     </button>
     <div id="dayBody-${d.day}" class="bg-white dark:bg-gray-800 ${isExpanded ? '' : 'hidden'}">
       <div class="p-4 ${isExpanded ? 'anim-slide' : ''}">
+        ${d.reminder ? `<div class="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded-xl p-3 mb-3"><p class="font-heading font-600 text-sm text-amber-800 dark:text-amber-200">⚠️ ${escHtml(d.reminder.text)}</p>${d.reminder.url ? `<a href="${escHtml(d.reminder.url)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 mt-2 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-heading font-600 transition tap">${escHtml(d.reminder.label)}</a>` : ''}</div>` : ''}
         ${ztlBanner}
         <div class="grid grid-cols-1 gap-2 mb-3">
           <div class="flex gap-2 items-start"><span class="text-amber-400 flex-shrink-0">☀️</span><p class="text-sm"><strong>AM:</strong> ${escHtml(d.am)}</p></div>
