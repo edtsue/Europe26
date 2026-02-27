@@ -449,7 +449,7 @@ const DAYS = [
     pm: 'Salzburg Old Town stroll + early family dinner',
     sleep: 'Salzburg', sleepIcon: '🏰',
     parking: '⚠️ Hotel garage required', parkingStatus: 'warn',
-    ztl: '⚠️ Some central areas restricted — confirm hotel access', ztlStatus: 'warn',
+    ztl: '⚠️ Some central areas restricted — confirm hotel access', ztlStatus: 'warn', ztlMapUrl: 'https://www.salzburg.info/en/travel-info/arrival-traffic/car/traffic-bollards',
     familyTip: 'Old Town is compact & flat — perfect evening stroll after a long flight. Kids will love the golden sphere sculpture in Kapitelplatz and the funicular up to the fortress!',
     destinations: [
       { name: 'Hohensalzburg Fortress', url: 'https://www.salzburg.info/en/sights/top10/hohensalzburg-fortress', desc: 'Largest medieval fortress in Europe! Take the funicular up — kids love the ride. Knight\'s rooms & puppet museum inside.', star: true },
@@ -656,7 +656,7 @@ const DAYS = [
     pm: 'Montepulciano — tower climb + vineyard dinner',
     sleep: 'Val d\'Orcia (2/3)', sleepIcon: '🌻',
     parking: '⚠️ Park OUTSIDE town walls', parkingStatus: 'warn',
-    ztl: '⚠️ Do NOT drive into historic town centers!', ztlStatus: 'warn',
+    ztl: '⚠️ Do NOT drive into historic town centers!', ztlStatus: 'warn', ztlMapUrl: 'https://www.accessibilitacentristorici.it/ztl/Tuscany/montepulciano.html',
     familyTip: 'Pienza\'s pecorino cheese shops have free samples everywhere! In Montepulciano, climb the Palazzo Comunale tower for a 360° view. Streets named \'Love\', \'Kiss\' and \'Good Luck\'!',
     destinations: [
       { name: 'Pienza', url: 'https://www.discovertuscany.com/valdorcia/visit-pienza.html', desc: 'The "Ideal Renaissance City" — pecorino cheese capital! Walk behind the cathedral for jaw-dropping views.', star: true },
@@ -764,7 +764,7 @@ const DAYS = [
     pm: 'Arena di Verona (older than the Colosseum!) + Piazza evening stroll',
     sleep: 'Verona — OUTSIDE ZTL', sleepIcon: '🏛',
     parking: '⚠️ Hotel garage OUTSIDE old town — critical!', parkingStatus: 'warn',
-    ztl: '⚠️ Stay OUTSIDE ZTL zone — walk into old town', ztlStatus: 'warn',
+    ztl: '⚠️ Stay OUTSIDE ZTL zone — walk into old town', ztlStatus: 'warn', ztlMapUrl: 'https://www.accessibilitacentristorici.it/ztl/Veneto_en/verona.html',
     familyTip: 'The Arena held gladiator fights and 30,000 spectators — it\'s like a smaller Colosseum! Under 8s are FREE. Visit Juliet\'s balcony for the photo op. Secret: Roman ruins hide in the Benetton store basement on Via Mazzini!',
     parkingStrategy: 'Corso Porta Nuova from the south — NOT in ZTL. Park at Parcheggio Cittadella (underground, modern) — 2-3 min walk to Arena, zero ZTL risk.',
     destinations: [
@@ -843,7 +843,7 @@ const DAYS = [
     pm: 'Explore the porticoes, Two Towers, Mercato di Mezzo — eat EVERYTHING',
     sleep: 'Bologna', sleepIcon: '🏛',
     parking: '⚠️ Park OUTSIDE ZTL — use Parcheggio Staveco or Tanari', parkingStatus: 'warn',
-    ztl: '🔴 Large ZTL in center — park outside, walk or shuttle in', ztlStatus: 'danger',
+    ztl: '🔴 Large ZTL in center — park outside, walk or shuttle in', ztlStatus: 'danger', ztlMapUrl: 'https://www.accessibilitacentristorici.it/ztl/Emilia-Romagna_en/bologna.html',
     familyTip: 'Bologna is THE food capital of Italy — this is where ragù, tortellini, and mortadella were born! Mercato di Mezzo is heaven for foodies. The Two Towers climb (498 steps!) is epic. 40km of covered porticoes mean rain doesn\'t matter!',
     destinations: [
       { name: 'Mercato di Mezzo', url: 'https://www.mercatodimezzo.it/', desc: 'Indoor food market in medieval streets — fresh pasta, mortadella, Parmigiano Reggiano, the best gelato. Taste EVERYTHING!', star: true },
@@ -1745,8 +1745,9 @@ function renderDestCard(dest, dayNum) {
 }
 
 function renderDayCardFull(d, isToday) {
+  const ztlMapLink = d.ztlMapUrl ? ` <a href="${escHtml(d.ztlMapUrl)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 ml-2 text-xs font-600 px-2 py-0.5 rounded-full bg-white/40 dark:bg-black/20 hover:bg-white/60 dark:hover:bg-black/30 transition">🗺 View ZTL Map →</a>` : '';
   const ztlBanner = (d.phase === 'italy' || d.phase === 'transition') && (d.ztlStatus === 'warn' || d.ztlStatus === 'danger')
-    ? `<div class="${d.ztlStatus === 'danger' ? 'ztl-danger' : 'ztl-banner'} rounded-xl p-3 mb-3"><p class="font-heading font-600 text-sm">${d.ztlStatus === 'danger' ? '🛑' : '🚦'} ZTL Warning: ${escHtml(d.ztl)}</p></div>` : '';
+    ? `<div class="${d.ztlStatus === 'danger' ? 'ztl-danger' : 'ztl-banner'} rounded-xl p-3 mb-3"><p class="font-heading font-600 text-sm">${d.ztlStatus === 'danger' ? '🛑' : '🚦'} ZTL Warning: ${escHtml(d.ztl)}${ztlMapLink}</p></div>` : '';
 
   const driveRouteHtml = d.driveRoute ? `<div class="bg-amber-50 dark:bg-amber-900/30 rounded-xl p-3 mb-3">
     <p class="font-heading font-600 text-sm mb-2">🚗 Drive Route</p>
@@ -2093,8 +2094,9 @@ function renderDays() {
 
 function renderCollapsibleDay(d) {
   const isExpanded = state.expandedDays.includes(d.day);
+  const ztlMapLink = d.ztlMapUrl ? ` <a href="${escHtml(d.ztlMapUrl)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 ml-2 text-xs font-600 px-2 py-0.5 rounded-full bg-white/40 dark:bg-black/20 hover:bg-white/60 dark:hover:bg-black/30 transition">🗺 View ZTL Map →</a>` : '';
   const ztlBanner = (d.phase === 'italy' || d.phase === 'transition') && (d.ztlStatus === 'warn' || d.ztlStatus === 'danger')
-    ? `<div class="${d.ztlStatus === 'danger' ? 'ztl-danger' : 'ztl-banner'} rounded-xl p-3 mb-3"><p class="font-heading font-600 text-sm">${d.ztlStatus === 'danger' ? '🛑' : '🚦'} ZTL Warning: ${escHtml(d.ztl)}</p></div>` : '';
+    ? `<div class="${d.ztlStatus === 'danger' ? 'ztl-danger' : 'ztl-banner'} rounded-xl p-3 mb-3"><p class="font-heading font-600 text-sm">${d.ztlStatus === 'danger' ? '🛑' : '🚦'} ZTL Warning: ${escHtml(d.ztl)}${ztlMapLink}</p></div>` : '';
 
   const driveRouteHtml = d.driveRoute ? `<div class="bg-amber-50 dark:bg-amber-900/30 rounded-xl p-3 mb-3">
     <p class="font-heading font-600 text-sm mb-2">🚗 Drive Route</p>
@@ -2647,27 +2649,37 @@ function renderSettings() {
       <div class="space-y-2">
         <div class="flex items-center gap-3 p-2 bg-green-50 dark:bg-green-900/20 rounded-xl">
           <span class="text-lg">🇦🇹</span>
-          <div class="flex-1"><p class="text-sm font-600">Austria</p><p class="text-xs text-gray-500 dark:text-gray-400">No ZTL — drive freely</p></div>
+          <div class="flex-1"><p class="text-sm font-600">Austria</p><p class="text-xs text-gray-500 dark:text-gray-400">No ZTL — drive freely</p>
+            <a href="https://www.salzburg.info/en/travel-info/arrival-traffic/car/traffic-bollards" target="_blank" rel="noopener noreferrer" class="inline-block mt-1 text-xs font-600 text-blue-600 dark:text-blue-400 hover:underline">🗺 Salzburg Bollards Map →</a>
+          </div>
           <span class="text-green-500">✅</span>
         </div>
         <div class="flex items-center gap-3 p-2 bg-amber-50 dark:bg-amber-900/20 rounded-xl">
           <span class="text-lg">🇮🇹</span>
-          <div class="flex-1"><p class="text-sm font-600">Tuscany Towns</p><p class="text-xs text-gray-500 dark:text-gray-400">NEVER drive inside walled town centers</p></div>
+          <div class="flex-1"><p class="text-sm font-600">Tuscany Towns</p><p class="text-xs text-gray-500 dark:text-gray-400">NEVER drive inside walled town centers</p>
+            <a href="https://www.accessibilitacentristorici.it/ztl/Tuscany/montepulciano.html" target="_blank" rel="noopener noreferrer" class="inline-block mt-1 text-xs font-600 text-blue-600 dark:text-blue-400 hover:underline">🗺 Montepulciano ZTL Map →</a>
+          </div>
           <span class="text-amber-500">⚠️</span>
         </div>
         <div class="flex items-center gap-3 p-2 bg-amber-50 dark:bg-amber-900/20 rounded-xl">
           <span class="text-lg">🇮🇹</span>
-          <div class="flex-1"><p class="text-sm font-600">Verona</p><p class="text-xs text-gray-500 dark:text-gray-400">Stay outside old town. Park at Cittadella garage.</p></div>
+          <div class="flex-1"><p class="text-sm font-600">Verona</p><p class="text-xs text-gray-500 dark:text-gray-400">Stay outside old town. Park at Cittadella garage.</p>
+            <a href="https://www.accessibilitacentristorici.it/ztl/Veneto_en/verona.html" target="_blank" rel="noopener noreferrer" class="inline-block mt-1 text-xs font-600 text-blue-600 dark:text-blue-400 hover:underline">🗺 Verona ZTL Map →</a>
+          </div>
           <span class="text-amber-500">⚠️</span>
         </div>
         <div class="flex items-center gap-3 p-2 bg-red-50 dark:bg-red-900/20 rounded-xl">
           <span class="text-lg">🇮🇹</span>
-          <div class="flex-1"><p class="text-sm font-600">Bologna</p><p class="text-xs text-gray-500 dark:text-gray-400">Large ZTL — park at Staveco or Tanari, walk/shuttle in.</p></div>
+          <div class="flex-1"><p class="text-sm font-600">Bologna</p><p class="text-xs text-gray-500 dark:text-gray-400">Large ZTL — park at Staveco or Tanari, walk/shuttle in.</p>
+            <a href="https://www.accessibilitacentristorici.it/ztl/Emilia-Romagna_en/bologna.html" target="_blank" rel="noopener noreferrer" class="inline-block mt-1 text-xs font-600 text-blue-600 dark:text-blue-400 hover:underline">🗺 Bologna ZTL Map →</a>
+          </div>
           <span class="text-red-500">🛑</span>
         </div>
         <div class="flex items-center gap-3 p-2 bg-red-50 dark:bg-red-900/20 rounded-xl">
           <span class="text-lg">🇮🇹</span>
-          <div class="flex-1"><p class="text-sm font-600">Florence</p><p class="text-xs text-gray-500 dark:text-gray-400">DO NOT enter city center. Airport area only!</p></div>
+          <div class="flex-1"><p class="text-sm font-600">Florence</p><p class="text-xs text-gray-500 dark:text-gray-400">DO NOT enter city center. Airport area only!</p>
+            <a href="https://florence-on-line.com/travel-tips/maps/florence-driving-map-ztl.html" target="_blank" rel="noopener noreferrer" class="inline-block mt-1 text-xs font-600 text-blue-600 dark:text-blue-400 hover:underline">🗺 Florence ZTL Map →</a>
+          </div>
           <span class="text-red-500">🛑</span>
         </div>
       </div>
