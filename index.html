@@ -276,12 +276,6 @@ tailwind.config = {
   .dark .quick-action-btn { border-color: rgba(255,255,255,0.1); }
 
   /* Trip progress dots */
-  .trip-progress { display: flex; align-items: center; gap: 4px; justify-content: center; }
-  .trip-dot { width: 8px; height: 8px; border-radius: 50%; transition: all 0.3s; }
-  .trip-dot.past { background: #059669; }
-  .trip-dot.current { width: 12px; height: 12px; background: #0d9488; box-shadow: 0 0 8px rgba(13,148,136,0.5); }
-  .trip-dot.future { background: #e2e8f0; }
-  .dark .trip-dot.future { background: #334155; }
 
   /* Visited destination badge */
   .dest-visited { opacity: 0.7; }
@@ -341,11 +335,8 @@ tailwind.config = {
 
   <!-- Desktop Sidebar Nav -->
   <nav class="desktop-nav glass border-r border-gray-200 dark:border-gray-700" role="tablist" aria-label="Main navigation">
-    <button onclick="switchTab('today')" class="desktop-tab-btn flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-heading font-600 transition hover:bg-gray-100 dark:hover:bg-gray-700 text-left w-full" data-tab="today">
-      <span class="text-lg">📅</span> Today
-    </button>
     <button onclick="switchTab('days')" class="desktop-tab-btn flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-heading font-600 transition hover:bg-gray-100 dark:hover:bg-gray-700 text-left w-full" data-tab="days">
-      <span class="text-lg">🗺</span> All Days
+      <span class="text-lg">🗺</span> Days
     </button>
     <button onclick="switchTab('hotels')" class="desktop-tab-btn flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-heading font-600 transition hover:bg-gray-100 dark:hover:bg-gray-700 text-left w-full" data-tab="hotels">
       <span class="text-lg">🏨</span> Hotels
@@ -366,15 +357,8 @@ tailwind.config = {
   <!-- Main Content Area -->
   <div id="tabContent">
 
-    <!-- Tab: Today -->
-    <div id="tab-today" class="tab-panel active" role="tabpanel" aria-label="Today">
-      <div class="max-w-lg mx-auto px-4 py-4">
-        <div id="todayContent"></div>
-      </div>
-    </div>
-
-    <!-- Tab: All Days -->
-    <div id="tab-days" class="tab-panel" role="tabpanel" aria-label="All Days">
+    <!-- Tab: Days -->
+    <div id="tab-days" class="tab-panel active" role="tabpanel" aria-label="Days">
       <div class="max-w-lg mx-auto px-4 pt-2 pb-4">
         <!-- Day Nav -->
         <div class="day-nav flex gap-2 py-3 pb-4 sticky z-40 bg-gray-50 dark:bg-gray-900 md-sticky-top" id="dayNav" style="top: var(--header-h, 48px)"></div>
@@ -423,10 +407,6 @@ tailwind.config = {
 <!-- Bottom Tab Bar -->
 <nav class="bottom-bar glass shadow-lg border-t border-gray-200 dark:border-gray-700" aria-label="Main navigation">
   <div class="max-w-lg mx-auto flex justify-around items-center py-2" role="tablist">
-    <button onclick="switchTab('today')" class="tab-btn tap flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition" data-tab="today">
-      <span class="text-xl">📅</span>
-      <span class="text-xs font-heading font-600">Today</span>
-    </button>
     <button onclick="switchTab('days')" class="tab-btn tap flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition" data-tab="days">
       <span class="text-xl">🗺</span>
       <span class="text-xs font-heading font-600">Days</span>
@@ -1100,7 +1080,6 @@ const DEFAULT_NOTE = {
 const STORAGE_KEY = 'TRIP_HUB_DATA';
 let state = null;
 let saveTimeout = null;
-let viewDay = null; // null = auto (use getTripDay()), number = manual override for Today tab
 let expenseFilterDay = 'all';
 let expenseFilterCat = 'all';
 
@@ -1112,7 +1091,7 @@ function getDefaultState() {
     checklists: JSON.parse(JSON.stringify(DEFAULT_CHECKLISTS)),
     expenses: [],
     expandedDays: [],
-    activeTab: 'today',
+    activeTab: 'days',
     activeNotesTab: 'journal',
     budget: 15000,
     fontSize: 0,
@@ -1131,7 +1110,7 @@ function loadState() {
       if (!state.checklists) state.checklists = def.checklists;
       if (!state.expenses) state.expenses = def.expenses;
       if (!state.expandedDays) state.expandedDays = def.expandedDays;
-      if (state.activeTab === undefined) state.activeTab = 'today';
+      if (state.activeTab === undefined || state.activeTab === 'today') state.activeTab = 'days';
       if (state.activeNotesTab === undefined) state.activeNotesTab = 'journal';
       if (state.budget === undefined) state.budget = 15000;
       if (state.currency === undefined) state.currency = 'EUR';
@@ -1265,8 +1244,7 @@ function toggleVisitedDest(name) {
   else state.visitedDests.push(name);
   saveState();
   // Re-render current view
-  if (state.activeTab === 'today') renderToday();
-  else if (state.activeTab === 'days') renderDays();
+  if (state.activeTab === 'days') renderDays();
 }
 
 function isDestVisited(name) {
@@ -1282,27 +1260,6 @@ function showParkingInfo(dayNum) {
   modal.innerHTML = '<div class="modal-overlay" role="dialog" aria-modal="true" onclick="if(event.target===this)closeModal()"><div class="modal-content bg-white dark:bg-gray-800 anim-fade"><h3 class="font-heading font-700 text-lg mb-3">🅿️ Parking Info — Day ' + dayNum + '</h3><p class="text-sm whitespace-pre-wrap">' + escHtml(msg) + '</p><button onclick="closeModal()" class="tap w-full mt-4 py-3 rounded-xl bg-teal-600 text-white font-heading font-600 text-sm">Got it</button></div></div>';
 }
 
-function swipeDay(dir) {
-  var trip = getTripDay();
-  var current = viewDay || trip.dayNum;
-  var next = current + dir;
-  if (next < 1 || next > 11) return;
-  viewDay = next;
-  renderToday();
-}
-
-function setupSwipe() {
-  var el = document.getElementById('tab-today');
-  var sx, sy;
-  el.addEventListener('touchstart', function(e) { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
-  el.addEventListener('touchend', function(e) {
-    var dx = e.changedTouches[0].clientX - sx;
-    var dy = e.changedTouches[0].clientY - sy;
-    if (Math.abs(dx) > 80 && Math.abs(dx) > Math.abs(dy) * 1.5) {
-      swipeDay(dx < 0 ? 1 : -1);
-    }
-  }, { passive: true });
-}
 
 // ============================================================
 // COLLAPSIBLE SECTIONS + NAVIGATION HELPERS
@@ -1742,7 +1699,6 @@ function switchTab(tab) {
       b.style.color = '';
     }
   });
-  if (tab === 'today') renderToday();
   if (tab === 'days') renderDays();
   if (tab === 'hotels') renderHotels();
   if (tab === 'packing') renderPacking();
@@ -1768,215 +1724,6 @@ function switchNotesTab(sub) {
       p.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
     }
   });
-}
-
-// ============================================================
-// RENDER: TODAY
-// ============================================================
-function renderToday() {
-  const trip = getTripDay();
-  const dayNum = viewDay || trip.dayNum;
-  const dayData = DAYS[dayNum - 1];
-  const container = document.getElementById('todayContent');
-
-  // Trip progress dots
-  const progressHtml = `<div class="trip-progress mb-3">
-    ${DAYS.map(d => {
-      let cls = 'trip-dot ';
-      if (trip.status === 'before') cls += 'future';
-      else if (d.day < (trip.status === 'during' ? trip.dayNum : 12)) cls += 'past';
-      else if (d.day === (trip.status === 'during' ? trip.dayNum : 0)) cls += 'current';
-      else cls += 'future';
-      return '<span class="' + cls + '" title="Day ' + d.day + '"></span>';
-    }).join('')}
-  </div>`;
-
-  // Day navigation arrows
-  const dayNavHtml = `<div class="flex justify-between items-center mb-3">
-    <button onclick="swipeDay(-1)" class="tap px-3 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-sm font-heading font-600 transition hover:bg-gray-200 dark:hover:bg-gray-700 ${dayNum <= 1 ? 'opacity-30 pointer-events-none' : ''}">← Day ${dayNum - 1}</button>
-    <span class="font-heading font-700 text-sm text-gray-500 dark:text-gray-400">Day ${dayNum} of 11</span>
-    <button onclick="swipeDay(1)" class="tap px-3 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-sm font-heading font-600 transition hover:bg-gray-200 dark:hover:bg-gray-700 ${dayNum >= 11 ? 'opacity-30 pointer-events-none' : ''}">Day ${dayNum + 1} →</button>
-  </div>`;
-
-  let countdownHtml = '';
-  if (trip.status === 'before') {
-    countdownHtml = `<div class="glass rounded-2xl p-4 mb-4 text-center anim-fade">
-      <div class="anim-float text-4xl mb-2">🏔 → 🌻 → 🏛 → ✈️</div>
-      <p class="font-heading font-700 text-2xl">${trip.daysUntil} days to go!</p>
-      <p class="text-sm text-gray-500 dark:text-gray-400">Mar 23 – Apr 2 · 11 Days · 6 Hotels · 2 Countries</p>
-    </div>`;
-  } else if (trip.status === 'after') {
-    countdownHtml = `<div class="glass rounded-2xl p-4 mb-4 text-center anim-fade">
-      <div class="text-4xl mb-2">🏠</div>
-      <p class="font-heading font-700 text-2xl">Trip Complete!</p>
-      <p class="text-sm text-gray-500 dark:text-gray-400">What an incredible adventure.</p>
-    </div>`;
-  }
-
-  container.innerHTML = progressHtml + dayNavHtml + countdownHtml + renderDayCardFull(dayData, true);
-}
-
-// ============================================================
-// RENDER: FULL DAY CARD (for Today tab)
-// ============================================================
-function renderDestCard(dest, dayNum) {
-  const visited = isDestVisited(dest.name);
-  return `<div class="glass rounded-xl p-3 hover:shadow-md transition ${visited ? 'dest-visited' : ''}">
-    <div class="flex items-start gap-2">
-      <button onclick="event.stopPropagation();toggleVisitedDest('${escHtml(dest.name).replace(/'/g, "\\'")}')" class="tap flex-shrink-0 mt-0.5" title="${visited ? 'Mark as not visited' : 'Mark as visited'}">
-        ${visited ? '<span class="text-green-500 text-sm">✅</span>' : dest.star ? '<span class="text-amber-400 text-sm">⭐</span>' : '<span class="text-gray-400 text-sm">📍</span>'}
-      </button>
-      <div class="flex-1 min-w-0">
-        <div class="flex items-center gap-1.5">
-          <p class="font-heading font-600 text-sm">${escHtml(dest.name)}</p>
-          ${dest.star ? '<span class="text-xs" title="Great photo spot!">📸</span>' : ''}
-        </div>
-        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${escHtml(dest.desc)}</p>
-        <div class="flex gap-3 mt-2">
-          <a href="${dest.url}" target="_blank" rel="noopener noreferrer" class="text-xs font-600 text-teal-600 dark:text-teal-400 tap">Info →</a>
-          <a href="${mapsUrl(dest.name)}" target="_blank" rel="noopener noreferrer" class="text-xs font-600 text-blue-600 dark:text-blue-400 tap">📍 Navigate</a>
-        </div>
-      </div>
-    </div>
-  </div>`;
-}
-
-function renderDayCardFull(d, isToday) {
-  const trip = getTripDay();
-  const isDuring = trip.status === 'during';
-  const n = d.day;
-
-  const ztlMapLink = d.ztlMapUrl ? ` <a href="${escHtml(d.ztlMapUrl)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 ml-2 text-xs font-600 px-2 py-0.5 rounded-full bg-white/40 dark:bg-black/20 hover:bg-white/60 dark:hover:bg-black/30 transition">🗺 View ZTL Map →</a>` : '';
-  const hasZtlBanner = (d.phase === 'italy' || d.phase === 'transition') && (d.ztlStatus === 'warn' || d.ztlStatus === 'danger');
-  const ztlBanner = hasZtlBanner
-    ? `<div class="${d.ztlStatus === 'danger' ? 'ztl-danger' : 'ztl-banner'} rounded-xl p-3 mb-3"><p class="font-heading font-600 text-sm">${d.ztlStatus === 'danger' ? '🛑' : '🚦'} ZTL Warning: ${escHtml(d.ztl)}${ztlMapLink}</p></div>` : '';
-
-  const driveRouteBody = d.driveRoute ? `<ul class="text-sm space-y-1">${d.driveRoute.map(r => `<li class="flex gap-2"><span class="text-amber-500">→</span><span>${escHtml(r)}</span></li>`).join('')}</ul>` : '';
-
-  const parkingBody = d.parkingStrategy ? `<p class="text-sm">${escHtml(d.parkingStrategy)}</p>` : '';
-
-  const destsBody = d.destinations && d.destinations.length > 0
-    ? `<div class="dest-grid" style="gap:0.5rem">${d.destinations.map(dest => renderDestCard(dest, d.day)).join('')}</div>` : '';
-
-  // Hotel navigate button
-  const hotelNavHtml = d.sleep && d.sleep !== 'Home sweet home'
-    ? `<a href="${mapsUrl(d.sleep)}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-heading font-600 text-sm transition tap mb-3">🗺 Navigate to ${escHtml(d.sleep)}</a>` : '';
-
-  // Weather link
-  const weatherCity = d.sleep && d.sleep !== 'Home sweet home' ? d.sleep.split('(')[0].trim() : '';
-  const weatherHtml = weatherCity ? `<a href="${weatherUrl(weatherCity)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-3 py-1.5 bg-sky-50 dark:bg-sky-900/20 text-sky-700 dark:text-sky-300 rounded-full text-xs font-600 transition hover:bg-sky-100 dark:hover:bg-sky-900/40 tap">🌤 Weather in ${escHtml(weatherCity)}</a>` : '';
-
-  // Section jump menu pills
-  const jumpPills = [];
-  jumpPills.push(`<button class="section-jump-pill" onclick="scrollToSection('${n}-sched')">Schedule</button>`);
-  if (destsBody) jumpPills.push(`<button class="section-jump-pill" onclick="scrollToSection('${n}-dests')">📍 Spots</button>`);
-  if (d.driveRoute) jumpPills.push(`<button class="section-jump-pill" onclick="scrollToSection('${n}-drive')">🚗 Drive</button>`);
-  if (d.parkingStrategy || d.parkingStatus === 'warn') jumpPills.push(`<button class="section-jump-pill" onclick="scrollToSection('${n}-park')">🅿️ Parking</button>`);
-  if (isToday) {
-    jumpPills.push(`<button class="section-jump-pill" onclick="scrollToSection('${n}-notes')">📝 Notes</button>`);
-    jumpPills.push(`<button class="section-jump-pill" onclick="scrollToSection('${n}-exp')">💰 Expenses</button>`);
-  }
-  const jumpHtml = jumpPills.length > 2 ? `<div class="section-jump mb-2">${jumpPills.join('')}</div>` : '';
-
-  // Today's Notes + Expenses (collapsible, near top for quick access)
-  const todayNotesSection = isToday ? `
-    <div class="border-t border-gray-200 dark:border-gray-700 mt-2">
-      <button class="sec-toggle" onclick="toggleSection('${n}-notes')">
-        <span class="font-heading font-600 text-sm">📝 Today's Notes</span>
-        <span class="chevron text-xs text-gray-400" id="secChev-${n}-notes">▼</span>
-      </button>
-      <div id="secBody-${n}-notes" class="hidden pb-3">
-        <textarea id="todayNoteArea" class="w-full rounded-xl border border-gray-200 dark:border-gray-700 p-3 text-sm resize-none h-24 focus:ring-2 focus:ring-teal-400 outline-none" placeholder="Jot down a note for today..." oninput="saveTodayNote(${d.day}, this.value)">${escHtml(getTodayNote(d.day))}</textarea>
-      </div>
-    </div>
-    <div class="border-t border-gray-200 dark:border-gray-700">
-      <button class="sec-toggle" onclick="toggleSection('${n}-exp')">
-        <span class="font-heading font-600 text-sm">💰 Today's Expenses</span>
-        <span class="chevron text-xs text-gray-400" id="secChev-${n}-exp">▼</span>
-      </button>
-      <div id="secBody-${n}-exp" class="hidden pb-3">
-        <div id="dayExpenses-${d.day}">${renderDayExpenses(d.day)}</div>
-      </div>
-    </div>` : '';
-
-  // Collapsible helper
-  function sec(id, icon, title, body, defaultOpen) {
-    if (!body) return '';
-    const hidden = defaultOpen ? '' : 'hidden';
-    const chevOpen = defaultOpen ? 'open' : '';
-    return `<div class="border-t border-gray-200 dark:border-gray-700 mt-1">
-      <button class="sec-toggle" onclick="toggleSection('${n}-${id}')">
-        <span class="font-heading font-600 text-sm">${icon} ${title}</span>
-        <span class="chevron text-xs text-gray-400 ${chevOpen}" id="secChev-${n}-${id}">▼</span>
-      </button>
-      <div id="secBody-${n}-${id}" class="${hidden} pb-3">${body}</div>
-    </div>`;
-  }
-
-  // Status pills: hide ZTL pill if banner is showing to avoid duplication
-  const ztlPill = (!hasZtlBanner && d.ztl !== '—') ? `<span class="px-2 py-1 rounded-full ${d.ztlStatus === 'warn' || d.ztlStatus === 'danger' ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300' : 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300'}">${escHtml(d.ztl)}</span>` : '';
-
-  return `<div class="rounded-2xl overflow-hidden shadow-lg anim-fade mb-4">
-    <div class="${phaseBg(d.phase)} text-white p-4">
-      <div class="flex justify-between items-start">
-        <div>
-          <p class="text-xs opacity-80 font-body">${d.date} (${d.weekday})</p>
-          <h2 class="font-heading font-700 text-xl mt-1">${d.flag} Day ${d.day} — ${escHtml(d.title)}</h2>
-        </div>
-        <div class="flex items-center gap-2">
-          ${weatherHtml}
-          <span class="text-3xl">${d.sleepIcon}</span>
-        </div>
-      </div>
-    </div>
-    <div class="bg-white dark:bg-gray-800 p-4">
-      ${jumpHtml}
-      ${hotelNavHtml}
-      ${ztlBanner}
-      <div id="secBody-${n}-sched">
-        <div class="day-ampm grid grid-cols-1 gap-2 mb-3">
-          <div class="flex gap-2 items-start"><span class="text-amber-400 flex-shrink-0">☀️</span><p class="text-sm"><strong>AM:</strong> ${escHtml(d.am)}</p></div>
-          <div class="flex gap-2 items-start"><span class="flex-shrink-0">🌙</span><p class="text-sm"><strong>PM:</strong> ${escHtml(d.pm)}</p></div>
-        </div>
-        <div class="flex flex-wrap gap-2 mb-3 text-xs">
-          <span class="px-2 py-1 rounded-full ${d.sleepIcon === '🏠' ? 'bg-gray-100 dark:bg-gray-700' : 'bg-indigo-50 dark:bg-indigo-900/30'}">🛏 ${escHtml(d.sleep)} ${d.sleepIcon}</span>
-          <span class="px-2 py-1 rounded-full ${d.parkingStatus === 'warn' ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300' : 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300'}">${escHtml(d.parking)}</span>
-          ${ztlPill}
-        </div>
-      </div>
-      ${todayNotesSection}
-      ${sec('desc', '📖', 'About This Destination', d.cityDesc ? `<p class="text-sm italic text-gray-500 dark:text-gray-400 leading-relaxed">${escHtml(d.cityDesc)}</p>` : '', !isDuring)}
-      ${sec('tip', '👨‍👩‍👧‍👦', 'Family Tip', `<div class="family-tip rounded-xl p-3"><p class="text-sm">${escHtml(d.familyTip)}</p></div>`, true)}
-      ${sec('drive', '🚗', 'Drive Route', driveRouteBody ? `<div class="bg-amber-50 dark:bg-amber-900/30 rounded-xl p-3">${driveRouteBody}</div>` : '', false)}
-      ${sec('park', '🅿️', 'Parking Strategy', parkingBody ? `<div class="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-3">${parkingBody}</div>` : '', false)}
-      ${sec('dests', '📍', 'Destinations (' + (d.destinations ? d.destinations.length : 0) + ')', destsBody, true)}
-      ${renderMidwayStops(d)}
-      ${renderAlternatives(d)}
-      <div class="mt-3 text-center">
-        <button onclick="switchToHotelsForDay(${d.day})" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-heading font-600 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition tap">🏨 View Hotels →</button>
-      </div>
-    </div>
-  </div>`;
-}
-
-function getTodayNote(dayNum) {
-  const note = state.notes.find(n => n.day === dayNum && n.id && n.id.startsWith('today-'));
-  return note ? note.text : '';
-}
-
-function saveTodayNote(dayNum, text) {
-  const existingIdx = state.notes.findIndex(n => n.day === dayNum && n.id && n.id.startsWith('today-'));
-  if (existingIdx >= 0) {
-    if (text.trim() === '') {
-      state.notes.splice(existingIdx, 1);
-    } else {
-      state.notes[existingIdx].text = text;
-      state.notes[existingIdx].timestamp = new Date().toISOString();
-    }
-  } else if (text.trim() !== '') {
-    state.notes.push({ id: 'today-' + dayNum, text, day: dayNum, timestamp: new Date().toISOString() });
-  }
-  saveState();
 }
 
 // ============================================================
@@ -2227,6 +1974,28 @@ function renderDays() {
   }, { threshold: 0.3, rootMargin: '-60px 0px -40% 0px' });
 
   document.querySelectorAll('[data-day-card]').forEach(el => dayObserver.observe(el));
+}
+
+function renderDestCard(dest, dayNum) {
+  const visited = isDestVisited(dest.name);
+  return `<div class="glass rounded-xl p-3 hover:shadow-md transition ${visited ? 'dest-visited' : ''}">
+    <div class="flex items-start gap-2">
+      <button onclick="event.stopPropagation();toggleVisitedDest('${escHtml(dest.name).replace(/'/g, "\\'")}')" class="tap flex-shrink-0 mt-0.5" title="${visited ? 'Mark as not visited' : 'Mark as visited'}">
+        ${visited ? '<span class="text-green-500 text-sm">✅</span>' : dest.star ? '<span class="text-amber-400 text-sm">⭐</span>' : '<span class="text-gray-400 text-sm">📍</span>'}
+      </button>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-1.5">
+          <p class="font-heading font-600 text-sm">${escHtml(dest.name)}</p>
+          ${dest.star ? '<span class="text-xs" title="Great photo spot!">📸</span>' : ''}
+        </div>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${escHtml(dest.desc)}</p>
+        <div class="flex gap-3 mt-2">
+          <a href="${dest.url}" target="_blank" rel="noopener noreferrer" class="text-xs font-600 text-teal-600 dark:text-teal-400 tap">Info →</a>
+          <a href="${mapsUrl(dest.name)}" target="_blank" rel="noopener noreferrer" class="text-xs font-600 text-blue-600 dark:text-blue-400 tap">📍 Navigate</a>
+        </div>
+      </div>
+    </div>
+  </div>`;
 }
 
 function renderCollapsibleDay(d) {
@@ -3087,7 +2856,7 @@ async function syncFromCloud() {
     applyDarkMode();
     applyFontSize();
     setSyncStatus('Pulled! ' + new Date().toLocaleTimeString(), false);
-    switchTab(state.activeTab || 'today');
+    switchTab(state.activeTab || 'days');
   } catch (e) {
     setSyncStatus('Error: ' + e.message, true);
   }
@@ -3137,8 +2906,7 @@ function init() {
   loadState();
   applyDarkMode();
   applyFontSize();
-  switchTab(state.activeTab || 'today');
-  setupSwipe();
+  switchTab(state.activeTab || 'days');
   setupBackToTop();
   checkAutoNightMode();
   // Check auto night mode every minute
