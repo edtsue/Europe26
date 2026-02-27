@@ -93,6 +93,7 @@ tailwind.config = {
 
   /* Checkbox animation */
   .check-box { width: 22px; height: 22px; border: 2px solid #94a3b8; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; }
+  *:focus-visible { outline: 2px solid #0d9488; outline-offset: 2px; border-radius: 4px; }
   .check-box.checked { background: #059669; border-color: #059669; }
   .check-box.checked::after { content: '✓'; color: white; font-size: 14px; font-weight: 700; }
 
@@ -163,6 +164,9 @@ tailwind.config = {
   .dark .text-gray-900, .dark .text-gray-800 { color: #f1f5f9; }
   .dark .text-gray-700, .dark .text-gray-600 { color: #cbd5e1; }
   .dark .text-gray-500 { color: #94a3b8; }
+  /* Improve contrast for informational text */
+  .info-text { color: #6b7280; }
+  .dark .info-text { color: #9ca3af; }
   .dark .border-gray-200 { border-color: #334155; }
   .dark input, .dark textarea, .dark select { background-color: #1e293b; color: #e2e8f0; border-color: #334155; }
 
@@ -275,7 +279,7 @@ tailwind.config = {
   </header>
 
   <!-- Desktop Sidebar Nav -->
-  <nav class="desktop-nav glass border-r border-gray-200 dark:border-gray-700">
+  <nav class="desktop-nav glass border-r border-gray-200 dark:border-gray-700" role="tablist" aria-label="Main navigation">
     <button onclick="switchTab('today')" class="desktop-tab-btn flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-heading font-600 transition hover:bg-gray-100 dark:hover:bg-gray-700 text-left w-full" data-tab="today">
       <span class="text-lg">📅</span> Today
     </button>
@@ -302,34 +306,34 @@ tailwind.config = {
   <div id="tabContent">
 
     <!-- Tab: Today -->
-    <div id="tab-today" class="tab-panel active">
+    <div id="tab-today" class="tab-panel active" role="tabpanel" aria-label="Today">
       <div class="max-w-lg mx-auto px-4 py-4">
         <div id="todayContent"></div>
       </div>
     </div>
 
     <!-- Tab: All Days -->
-    <div id="tab-days" class="tab-panel">
+    <div id="tab-days" class="tab-panel" role="tabpanel" aria-label="All Days">
       <div class="max-w-lg mx-auto px-4 pt-2 pb-4">
         <!-- Day Nav -->
-        <div class="day-nav flex gap-2 py-3 pb-4 sticky top-12 z-40 bg-gray-50 dark:bg-gray-900 md-sticky-top" id="dayNav"></div>
+        <div class="day-nav flex gap-2 py-3 pb-4 sticky z-40 bg-gray-50 dark:bg-gray-900 md-sticky-top" id="dayNav" style="top: var(--header-h, 48px)"></div>
         <!-- Day Cards -->
         <div id="dayCards" class="flex flex-col gap-4 mt-1"></div>
       </div>
     </div>
 
     <!-- Tab: Hotels -->
-    <div id="tab-hotels" class="tab-panel">
+    <div id="tab-hotels" class="tab-panel" role="tabpanel" aria-label="Hotels">
       <div class="max-w-lg mx-auto px-4 py-4" id="hotelsContent"></div>
     </div>
 
     <!-- Tab: Packing List -->
-    <div id="tab-packing" class="tab-panel">
+    <div id="tab-packing" class="tab-panel" role="tabpanel" aria-label="Packing List">
       <div class="max-w-lg mx-auto px-4 py-4" id="packingContent"></div>
     </div>
 
     <!-- Tab: Notes & Lists -->
-    <div id="tab-notes" class="tab-panel">
+    <div id="tab-notes" class="tab-panel" role="tabpanel" aria-label="Notes">
       <div class="max-w-lg mx-auto px-4 py-4">
         <!-- Sub-nav pills -->
         <div class="flex gap-2 mb-4 overflow-x-auto">
@@ -347,7 +351,7 @@ tailwind.config = {
     </div>
 
     <!-- Tab: Settings -->
-    <div id="tab-settings" class="tab-panel">
+    <div id="tab-settings" class="tab-panel" role="tabpanel" aria-label="Settings">
       <div class="max-w-lg mx-auto px-4 py-4" id="settingsContent"></div>
     </div>
 
@@ -356,8 +360,8 @@ tailwind.config = {
 </div>
 
 <!-- Bottom Tab Bar -->
-<nav class="bottom-bar glass shadow-lg border-t border-gray-200 dark:border-gray-700">
-  <div class="max-w-lg mx-auto flex justify-around items-center py-2">
+<nav class="bottom-bar glass shadow-lg border-t border-gray-200 dark:border-gray-700" aria-label="Main navigation">
+  <div class="max-w-lg mx-auto flex justify-around items-center py-2" role="tablist">
     <button onclick="switchTab('today')" class="tab-btn tap flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition" data-tab="today">
       <span class="text-xl">📅</span>
       <span class="text-xs font-heading font-600">Today</span>
@@ -410,6 +414,7 @@ const DAYS = [
       { name: 'Getreidegasse', url: 'https://www.salzburg.info/en/sights/top10/getreidegasse', desc: 'Fairy-tale shopping lane with wrought-iron signs. Mozart\'s Birthplace at #9. Get Mozartkugeln (chocolate balls) for the kids!', star: true },
       { name: 'Mirabell Palace & Gardens', url: 'https://www.salzburg.info/en/sights/top10/mirabell-palace-gardens', desc: 'Sound of Music filming location! Kids can run through the Do-Re-Mi gardens. Dwarf Garden is wonderfully weird.', star: true },
       { name: 'Salzburg Cathedral', url: 'https://www.salzburg.info/en/sights/churches-cemeteries/salzburger-cathedral', desc: 'Baroque masterpiece where Mozart was baptized. Free to enter.' },
+      { name: '🍽 Stiftskeller St. Peter', url: 'https://www.stiftskeller.at/en/', desc: 'Europe\'s oldest restaurant (803 AD!). Austrian classics in a magical courtyard. Book ahead.' },
       { name: 'Residenzplatz', url: 'https://www.salzburg.info/en/sights/squares-streets/residenzplatz', desc: 'Heart of Old Town with Salzburg\'s most beautiful fountain.' }
     ],
     hotels: [
@@ -470,7 +475,7 @@ const DAYS = [
   },
   {
     day: 5, date: 'Mar 27', weekday: 'Thu', flag: '🚗', phase: 'transition',
-    title: '"Tsue Family Europe 2026" ⭐ Big Drive Day',
+    title: 'Big Drive Day ⭐ Alps to Tuscany',
     am: 'Scenic 5 hr drive south → Coffee stop in Innsbruck + Brenner Pass into Italy',
     pm: 'Arrive Val d\'Orcia — Tuscan countryside welcome!',
     sleep: 'Val d\'Orcia (1/3)', sleepIcon: '🌻',
@@ -482,7 +487,7 @@ const DAYS = [
       'Innsbruck Old Town — Quick coffee & leg stretch. Golden Roof fun to spot.',
       'Innsbruck → Brenner Pass (~30 min): Cross into Italy!',
       'Brenner → Val d\'Orcia (~4 hrs): A22 south through Trentino, A1 toward Siena',
-      'Total: ~5 hours driving + stops'
+      'Total: ~6.5 hours driving + stops (plan for a full day)'
     ],
     midwayStops: [
       {
@@ -713,7 +718,7 @@ const DAYS = [
   {
     day: 8, date: 'Mar 30', weekday: 'Sun', flag: '🇮🇹', phase: 'italy',
     title: 'Verona — Romeo & Juliet City',
-    am: '2.5-3 hr drive Val d\'Orcia → Verona',
+    am: '3-3.5 hr drive Val d\'Orcia → Verona',
     pm: 'Arena di Verona (older than the Colosseum!) + Piazza evening stroll',
     sleep: 'Verona — OUTSIDE ZTL', sleepIcon: '🏛',
     parking: '⚠️ Hotel garage OUTSIDE old town — critical!', parkingStatus: 'warn',
@@ -721,11 +726,12 @@ const DAYS = [
     familyTip: 'The Arena held gladiator fights and 30,000 spectators — it\'s like a smaller Colosseum! Under 8s are FREE. Visit Juliet\'s balcony for the photo op. Secret: Roman ruins hide in the Benetton store basement on Via Mazzini!',
     parkingStrategy: 'Corso Porta Nuova from the south — NOT in ZTL. Park at Parcheggio Cittadella (underground, modern) — 2-3 min walk to Arena, zero ZTL risk.',
     destinations: [
-      { name: 'Arena di Verona', url: 'https://arenaverona.org/en', desc: '1st century AD — best preserved amphitheater in the world! Adults ~€12, kids under 8 FREE.', star: true },
+      { name: 'Arena di Verona', url: 'https://arenaverona.org/en', desc: '1st century AD — best preserved amphitheater in the world! Adults ~€12, kids under 8 FREE. Buy tickets online to skip the line!', star: true },
       { name: 'Juliet\'s House', url: 'https://www.visitverona.it/en', desc: 'The famous balcony! Touch Juliet\'s statue for luck.', star: true },
       { name: 'Piazza delle Erbe', url: 'https://www.visitverona.it/en', desc: 'Ancient Roman forum turned lively market. Gelato & frescoed buildings.', star: true },
       { name: 'Piazza Bra', url: 'https://www.arena.it/en/arena-verona-opera-festival/get-ready-for-the-opera/visiting-verona/', desc: 'Grand main square, cafes along the "Liston" promenade.' },
-      { name: 'Lamberti Tower', url: 'https://www.visitverona.it/en', desc: 'Tallest in Verona — amazing views. Kids love the climb.' }
+      { name: 'Lamberti Tower', url: 'https://www.visitverona.it/en', desc: 'Tallest in Verona — amazing views. Kids love the climb.' },
+      { name: '🍽 Osteria Sgarzarie', url: 'https://www.osteriasgarzarie.it/', desc: 'Local favorite near Piazza Erbe. Incredible risotto all\'Amarone, fresh pasta. Reservations recommended.' }
     ],
     hotels: [
       { name: 'Hotel Indigo Verona', url: 'https://www.ihg.com/hotelindigo/hotels/us/en/verona/vrndi/hoteldetail', why: 'Elegant 1920s Liberty-style. 10-min walk to Arena.', parking: 'Available, outside ZTL', price: '€€€', perk: 'Walkable, stylish rooms' },
@@ -802,7 +808,8 @@ const DAYS = [
       { name: 'Two Towers (Due Torri)', url: 'https://www.duetorribologna.com/', desc: 'Climb Torre degli Asinelli (498 steps!) for panoramic views. The leaning Garisenda next door is Italy\'s other leaning tower.', star: true },
       { name: 'Piazza Maggiore', url: 'https://www.bolognawelcome.com/en/', desc: 'Grand main square with Basilica di San Petronio (5th largest church in the world!). Street performers, cafes.', star: true },
       { name: 'Porticoes Walk', url: 'https://www.bolognawelcome.com/en/', desc: '40km of covered arcades (UNESCO!) — the longest in the world. Walk from Piazza Maggiore to the hilltop Sanctuary of San Luca.' },
-      { name: 'FICO Eataly World', url: 'https://www.fico.it/en/', desc: 'World\'s largest food theme park — watch pasta, cheese & chocolate being made. Rides + tastings! Kids LOVE it.' }
+      { name: 'FICO Eataly World', url: 'https://www.fico.it/en/', desc: 'World\'s largest food theme park — watch pasta, cheese & chocolate being made. Rides + tastings! Kids LOVE it.' },
+      { name: '🍽 Trattoria Anna Maria', url: 'https://www.trattoriaannamaria.com/', desc: 'Legendary handmade tortellini & tagliatelle al ragù. Walls covered in celebrity photos. Book ahead!' }
     ],
     hotels: [
       { name: 'Grand Hotel Majestic', url: 'https://www.grandhotelmajestic.duetorrihotels.com/', why: '5-star in 18th-century palazzo on Via Indipendenza. Frescoed ceilings, central location.', parking: 'Valet available', price: '€€€€', perk: 'Historic luxury, central' },
@@ -851,8 +858,12 @@ const DAYS = [
     sleep: 'Florence Airport Hotel', sleepIcon: '✈️',
     parking: '✅ Airport hotel parking', parkingStatus: 'ok',
     ztl: '✅ No ZTL near airport', ztlStatus: 'ok',
-    familyTip: 'This is YOUR day. Let kids swim, do laundry, pack calmly. One last pizza. Set out tomorrow\'s travel clothes tonight! DON\'T drive into Florence city center with the car.',
-    destinations: [],
+    familyTip: 'This is YOUR day. Let kids swim, do laundry, pack calmly. One last pizza. Set out tomorrow\'s travel clothes tonight! DON\'T drive into Florence city center with the car. If you want a half-day out, try the options below — all accessible without entering the ZTL.',
+    destinations: [
+      { name: 'The Mall Luxury Outlet', url: 'https://www.themall.it/en/', desc: 'Gucci, Prada, Ferragamo at big discounts. 30 min drive from airport area. No ZTL. Great for last-minute gifts!' },
+      { name: 'Piazzale Michelangelo (Taxi/Tram)', url: 'https://www.visitflorence.com/florence-churches/piazzale-michelangelo.html', desc: 'Best panoramic view of Florence. Take the tram + bus from hotel. Sunset here is magical. Free!' },
+      { name: 'Boboli Gardens (Taxi/Tram)', url: 'https://www.uffizi.it/en/boboli-garden', desc: 'Renaissance gardens behind Pitti Palace. Kids can run free. €10 adults, free under 18. Take the tram in.' }
+    ],
     hotels: [
       { name: 'Hilton Garden Inn Florence Novoli', url: 'https://www.hilton.com/en/hotels/flrfigi-hilton-garden-inn-florence-novoli/', why: 'Modern, near airport. Tram to Florence center.', parking: 'Free self-parking', price: '€€', perk: 'Restaurant, tram to city' },
       { name: 'Villa Campestri Olive Oil Resort', url: 'https://www.villacampestri.com/en/', why: 'Final splurge! 5-star olive oil estate. Pool, spa, incredible breakfast.', parking: 'Free on-site', price: '€€€€', perk: 'Pool, farm, stunning grounds' },
@@ -939,7 +950,7 @@ const DEFAULT_PACKING = [
     'Favorite snacks from home'
   ]},
   { cat: '🚗 Car & Road Trip', items: [
-    'Buy Austria Vignette (motorway sticker) online',
+    'Buy Austria Vignette at shop.asfinag.at (10-day digital, ~€11.50)',
     'Snacks & water for car',
     'Trash bags for car',
     'Paper towels / wet wipes',
@@ -954,8 +965,10 @@ const DEFAULT_PACKING = [
     'Book Florence airport hotel',
     'Reserve rental car',
     'Notify bank of travel dates',
-    'Check Arena di Verona hours',
+    'Buy Arena di Verona tickets online (skip the line!)',
     'Confirm Das Edelweiss reservation',
+    'Book Bologna Two Towers climb (timed entry)',
+    'Book restaurant: Trattoria Anna Maria (Bologna)',
     'Set GPS to avoid city centers in Italy',
     'Save Parcheggio Cittadella (Verona) in Maps'
   ]}
@@ -973,7 +986,9 @@ const DEFAULT_CHECKLISTS = {
       { text: 'Buy Austria Vignette (motorway sticker) online', checked: false },
       { text: 'Download offline maps', checked: false },
       { text: 'Notify bank of travel dates', checked: false },
-      { text: 'Check Arena di Verona hours (March closures?)', checked: false },
+      { text: 'Buy Arena di Verona tickets online', checked: false },
+      { text: 'Book Bologna Two Towers climb (timed entry)', checked: false },
+      { text: 'Book restaurant: Trattoria Anna Maria (Bologna)', checked: false },
       { text: 'Pack kids\' entertainment for flights + drives', checked: false },
       { text: 'Confirm Das Edelweiss reservation', checked: false }
     ]
@@ -1036,6 +1051,7 @@ function loadState() {
       if (state.activeTab === undefined) state.activeTab = 'today';
       if (state.activeNotesTab === undefined) state.activeNotesTab = 'journal';
       if (state.budget === undefined) state.budget = 15000;
+      if (state.currency === undefined) state.currency = 'EUR';
       if (state.fontSize === undefined) state.fontSize = 0;
       if (!state.packingList) state.packingList = initPackingList();
     } else {
@@ -1061,7 +1077,7 @@ function saveState() {
 function getTripDay() {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const start = new Date(TRIP_START);
+  const start = new Date(2026, 2, 23); // Month is 0-indexed: 2 = March
   const diff = Math.floor((today - start) / (1000 * 60 * 60 * 24));
   if (diff < 0) return { dayNum: 1, status: 'before', daysUntil: Math.abs(diff) };
   if (diff > 10) return { dayNum: 11, status: 'after' };
@@ -1082,7 +1098,17 @@ function phaseBgLight(phase) {
 }
 
 function genId() {
-  return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+  return Date.now().toString(36) + Math.random().toString(36).substring(2, 7);
+}
+
+function currSym() { return state.currency === 'EUR' ? '€' : '$'; }
+function fmtMoney(n) { return currSym() + n.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}); }
+
+function toggleCurrency() {
+  state.currency = state.currency === 'EUR' ? 'USD' : 'EUR';
+  saveState();
+  renderExpenses();
+  if (document.getElementById('settingsContent')?.innerHTML) renderSettings();
 }
 
 function formatTimestamp(iso) {
@@ -1416,6 +1442,11 @@ function applyFontSize() {
   document.documentElement.style.fontSize = size.scale + '%';
   const icon = document.getElementById('fontSizeIcon');
   if (icon) icon.textContent = size.label;
+  // Update sticky offset to match actual header height
+  requestAnimationFrame(() => {
+    const h = document.getElementById('appHeader');
+    if (h) document.documentElement.style.setProperty('--header-h', h.offsetHeight + 'px');
+  });
 }
 
 function cycleFontSize() {
@@ -1496,7 +1527,7 @@ function renderToday() {
     countdownHtml = `<div class="glass rounded-2xl p-4 mb-4 text-center anim-fade">
       <div class="anim-float text-4xl mb-2">🏔 → 🌻 → 🏛 → ✈️</div>
       <p class="font-heading font-700 text-2xl">${trip.daysUntil} days to go!</p>
-      <p class="text-sm text-gray-500 dark:text-gray-400">Mar 23 – Apr 2 · 11 Days · 5 Hotels · 2 Countries</p>
+      <p class="text-sm text-gray-500 dark:text-gray-400">Mar 23 – Apr 2 · 11 Days · 6 Hotels · 2 Countries</p>
     </div>`;
   } else if (trip.status === 'after') {
     countdownHtml = `<div class="glass rounded-2xl p-4 mb-4 text-center anim-fade">
@@ -1513,8 +1544,8 @@ function renderToday() {
 // RENDER: FULL DAY CARD (for Today tab)
 // ============================================================
 function renderDayCardFull(d, isToday) {
-  const ztlBanner = (d.phase === 'italy' || d.phase === 'transition') && d.ztlStatus === 'warn'
-    ? `<div class="ztl-banner rounded-xl p-3 mb-3"><p class="font-heading font-600 text-sm">🚦 ZTL Warning: ${escHtml(d.ztl)}</p></div>` : '';
+  const ztlBanner = (d.phase === 'italy' || d.phase === 'transition') && (d.ztlStatus === 'warn' || d.ztlStatus === 'danger')
+    ? `<div class="${d.ztlStatus === 'danger' ? 'ztl-danger' : 'ztl-banner'} rounded-xl p-3 mb-3"><p class="font-heading font-600 text-sm">${d.ztlStatus === 'danger' ? '🛑' : '🚦'} ZTL Warning: ${escHtml(d.ztl)}</p></div>` : '';
 
   const driveRouteHtml = d.driveRoute ? `<div class="bg-amber-50 dark:bg-amber-900/30 rounded-xl p-3 mb-3">
     <p class="font-heading font-600 text-sm mb-2">🚗 Drive Route</p>
@@ -1567,7 +1598,7 @@ function renderDayCardFull(d, isToday) {
       <div class="flex flex-wrap gap-2 mb-3 text-xs">
         <span class="px-2 py-1 rounded-full ${d.sleepIcon === '🏠' ? 'bg-gray-100 dark:bg-gray-700' : 'bg-indigo-50 dark:bg-indigo-900/30'}">🛏 ${escHtml(d.sleep)} ${d.sleepIcon}</span>
         <span class="px-2 py-1 rounded-full ${d.parkingStatus === 'warn' ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300' : 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300'}">${escHtml(d.parking)}</span>
-        ${d.ztl !== '—' ? `<span class="px-2 py-1 rounded-full ${d.ztlStatus === 'warn' ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300' : 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300'}">${escHtml(d.ztl)}</span>` : ''}
+        ${d.ztl !== '—' ? `<span class="px-2 py-1 rounded-full ${d.ztlStatus === 'warn' || d.ztlStatus === 'danger' ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300' : 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300'}">${escHtml(d.ztl)}</span>` : ''}
       </div>
       ${ztlBanner}
       <div class="family-tip rounded-xl p-3 mb-3">
@@ -1650,7 +1681,7 @@ function renderPackingCategory(cat, ci) {
   const isDone = checked === total && total > 0;
 
   return `<div class="glass rounded-2xl overflow-hidden">
-    <button onclick="togglePackingCat(${ci})" class="w-full tap flex items-center justify-between p-4 text-left">
+    <button onclick="togglePackingCat(${ci})" class="w-full tap flex items-center justify-between p-4 text-left" aria-expanded="false" aria-controls="packBody-${ci}">
       <div class="flex items-center gap-2">
         <span class="font-heading font-700 text-sm ${isDone ? 'line-through text-gray-400' : ''}">${escHtml(cat.cat)}</span>
         ${isDone ? '<span class="text-green-500 text-xs">✅</span>' : ''}
@@ -1663,12 +1694,12 @@ function renderPackingCategory(cat, ci) {
     <div id="packBody-${ci}" class="px-4 pb-4 hidden">
       <div class="progress-track mb-3"><div class="progress-fill ${isDone ? 'bg-green-500' : 'bg-teal-500'}" style="width:${pct}%"></div></div>
       <div class="space-y-1.5">
-        ${cat.items.map((item, ii) => `<div class="flex items-center gap-3 tap py-1" onclick="togglePackingItem(${ci},${ii},'items')">
-          <div class="check-box ${item.checked ? 'checked' : ''}"></div>
+        ${cat.items.map((item, ii) => `<div class="flex items-center gap-3 tap py-1" role="checkbox" aria-checked="${item.checked}" tabindex="0" onclick="togglePackingItem(${ci},${ii},'items')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();togglePackingItem(${ci},${ii},'items')}">
+          <div class="check-box ${item.checked ? 'checked' : ''}" aria-hidden="true"></div>
           <span class="text-sm ${item.checked ? 'line-through text-gray-400' : ''} flex-1">${escHtml(item.text)}</span>
         </div>`).join('')}
-        ${cat.customItems.map((item, ii) => `<div class="flex items-center gap-3 tap py-1" onclick="togglePackingItem(${ci},${ii},'customItems')">
-          <div class="check-box ${item.checked ? 'checked' : ''}"></div>
+        ${cat.customItems.map((item, ii) => `<div class="flex items-center gap-3 tap py-1" role="checkbox" aria-checked="${item.checked}" tabindex="0" onclick="togglePackingItem(${ci},${ii},'customItems')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();togglePackingItem(${ci},${ii},'customItems')}">
+          <div class="check-box ${item.checked ? 'checked' : ''}" aria-hidden="true"></div>
           <span class="text-sm ${item.checked ? 'line-through text-gray-400' : ''} flex-1">${escHtml(item.text)}</span>
           <button onclick="event.stopPropagation();removePackingItem(${ci},${ii})" class="text-red-300 hover:text-red-500 text-xs p-1 transition" aria-label="Remove">✕</button>
         </div>`).join('')}
@@ -1686,12 +1717,34 @@ function togglePackingCat(ci) {
   const chev = document.getElementById('packChev-' + ci);
   if (body) body.classList.toggle('hidden');
   if (chev) chev.classList.toggle('open');
+  const btn = chev?.closest('button');
+  if (btn) btn.setAttribute('aria-expanded', body && !body.classList.contains('hidden'));
+}
+
+function getExpandedPackingCats() {
+  const expanded = [];
+  state.packingList.forEach((_, ci) => {
+    const body = document.getElementById('packBody-' + ci);
+    if (body && !body.classList.contains('hidden')) expanded.push(ci);
+  });
+  return expanded;
+}
+
+function restorePackingCats(expanded) {
+  expanded.forEach(ci => {
+    const body = document.getElementById('packBody-' + ci);
+    const chev = document.getElementById('packChev-' + ci);
+    if (body) body.classList.remove('hidden');
+    if (chev) chev.classList.add('open');
+  });
 }
 
 function togglePackingItem(ci, ii, which) {
   state.packingList[ci][which][ii].checked = !state.packingList[ci][which][ii].checked;
   saveState();
+  const expanded = getExpandedPackingCats();
   renderPacking();
+  restorePackingCats(expanded);
 }
 
 function addPackingItem(ci) {
@@ -1701,13 +1754,17 @@ function addPackingItem(ci) {
   state.packingList[ci].customItems.push({ text, checked: false });
   input.value = '';
   saveState();
+  const expanded = getExpandedPackingCats();
   renderPacking();
+  restorePackingCats(expanded);
 }
 
 function removePackingItem(ci, ii) {
   state.packingList[ci].customItems.splice(ii, 1);
   saveState();
+  const expanded = getExpandedPackingCats();
   renderPacking();
+  restorePackingCats(expanded);
 }
 
 function uncheckAllPacking() {
@@ -1744,19 +1801,19 @@ function renderDayExpenses(dayNum) {
     return `<div class="flex items-center gap-2 py-1.5">
       <span class="text-sm">${cat.label.split(' ')[0]}</span>
       <span class="text-sm flex-1 truncate">${e.note ? escHtml(e.note) : cat.label.split(' ').slice(1).join(' ')}</span>
-      <span class="font-heading font-700 text-sm text-teal-700 dark:text-teal-300 flex-shrink-0">$${e.amount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+      <span class="font-heading font-700 text-sm text-teal-700 dark:text-teal-300 flex-shrink-0">${fmtMoney(e.amount)}</span>
       <button onclick="removeDayExpense('${e.id}', ${dayNum})" class="text-red-300 hover:text-red-500 text-xs p-1 transition flex-shrink-0" aria-label="Delete">✕</button>
     </div>`;
   }).join('') : '<p class="text-xs text-gray-400 py-2">No expenses yet today.</p>';
 
   return `<div class="flex justify-between items-center mb-2">
     <p class="font-heading font-600 text-sm">💰 Today's Expenses</p>
-    <span class="font-heading font-700 text-sm text-teal-700 dark:text-teal-300">$${dayTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+    <span class="font-heading font-700 text-sm text-teal-700 dark:text-teal-300">${fmtMoney(dayTotal)}</span>
   </div>
   <div class="mb-3">${expListHtml}</div>
   <!-- Quick add -->
   <div class="flex gap-2 mb-3">
-    <span class="text-sm font-700 leading-9">$</span>
+    <span class="text-sm font-700 leading-9">${currSym()}</span>
     <input type="number" id="quickExpAmt-${dayNum}" step="0.01" min="0" class="w-20 border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1.5 text-sm outline-none focus:ring-2 focus:ring-teal-400" placeholder="0.00" inputmode="decimal">
     <select id="quickExpCat-${dayNum}" class="flex-1 border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1.5 text-sm outline-none focus:ring-2 focus:ring-teal-400">
       ${CATEGORIES.map(c => `<option value="${c.id}">${c.label}</option>`).join('')}
@@ -1767,11 +1824,11 @@ function renderDayExpenses(dayNum) {
   <!-- Budget bar -->
   <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-3">
     <div class="flex justify-between text-xs mb-1.5">
-      <span class="font-600 ${isOverBudget ? 'text-red-600 dark:text-red-400' : 'text-gray-700 dark:text-gray-300'}">Trip total: $${tripTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-      <span class="${isOverBudget ? 'text-red-600 dark:text-red-400' : remaining < 2000 ? 'text-amber-600 dark:text-amber-400' : 'text-green-600 dark:text-green-400'}">${isOverBudget ? 'Over by' : 'Left:'} $${Math.abs(remaining).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+      <span class="font-600 ${isOverBudget ? 'text-red-600 dark:text-red-400' : 'text-gray-700 dark:text-gray-300'}">Trip total: ${fmtMoney(tripTotal)}</span>
+      <span class="${isOverBudget ? 'text-red-600 dark:text-red-400' : remaining < 2000 ? 'text-amber-600 dark:text-amber-400' : 'text-green-600 dark:text-green-400'}">${isOverBudget ? 'Over by' : 'Left:'} ${fmtMoney(Math.abs(remaining))}</span>
     </div>
     <div class="progress-track"><div class="progress-fill ${barColor}" style="width:${budgetPct}%"></div></div>
-    <p class="text-xs text-gray-400 mt-1 text-right">${budgetPct}% of $${budget.toLocaleString('en-US')} budget</p>
+    <p class="text-xs text-gray-400 mt-1 text-right">${budgetPct}% of ${currSym()}${budget.toLocaleString('en-US')} budget</p>
   </div>`;
 }
 
@@ -1833,8 +1890,8 @@ function renderDays() {
 
 function renderCollapsibleDay(d) {
   const isExpanded = state.expandedDays.includes(d.day);
-  const ztlBanner = (d.phase === 'italy' || d.phase === 'transition') && d.ztlStatus === 'warn'
-    ? `<div class="ztl-banner rounded-xl p-3 mb-3"><p class="font-heading font-600 text-sm">🚦 ZTL Warning: ${escHtml(d.ztl)}</p></div>` : '';
+  const ztlBanner = (d.phase === 'italy' || d.phase === 'transition') && (d.ztlStatus === 'warn' || d.ztlStatus === 'danger')
+    ? `<div class="${d.ztlStatus === 'danger' ? 'ztl-danger' : 'ztl-banner'} rounded-xl p-3 mb-3"><p class="font-heading font-600 text-sm">${d.ztlStatus === 'danger' ? '🛑' : '🚦'} ZTL Warning: ${escHtml(d.ztl)}</p></div>` : '';
 
   const driveRouteHtml = d.driveRoute ? `<div class="bg-amber-50 dark:bg-amber-900/30 rounded-xl p-3 mb-3">
     <p class="font-heading font-600 text-sm mb-2">🚗 Drive Route</p>
@@ -1883,7 +1940,7 @@ function renderCollapsibleDay(d) {
         <div class="flex flex-wrap gap-2 mb-3 text-xs">
           <span class="px-2 py-1 rounded-full bg-indigo-50 dark:bg-indigo-900/30">🛏 ${escHtml(d.sleep)} ${d.sleepIcon}</span>
           <span class="px-2 py-1 rounded-full ${d.parkingStatus === 'warn' ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300' : 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300'}">${escHtml(d.parking)}</span>
-          ${d.ztl !== '—' ? `<span class="px-2 py-1 rounded-full ${d.ztlStatus === 'warn' ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300' : 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300'}">${escHtml(d.ztl)}</span>` : ''}
+          ${d.ztl !== '—' ? `<span class="px-2 py-1 rounded-full ${d.ztlStatus === 'warn' || d.ztlStatus === 'danger' ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300' : 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300'}">${escHtml(d.ztl)}</span>` : ''}
         </div>
         ${ztlBanner}
         <div class="family-tip rounded-xl p-3 mb-3">
@@ -1971,7 +2028,7 @@ function renderJournal() {
 
 function showAddNoteModal() {
   const modal = document.getElementById('modalContainer');
-  modal.innerHTML = `<div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+  modal.innerHTML = `<div class="modal-overlay" role="dialog" aria-modal="true" onclick="if(event.target===this)closeModal()">
     <div class="modal-content bg-white dark:bg-gray-800 anim-fade">
       <h3 class="font-heading font-700 text-lg mb-3">📝 Add Note</h3>
       <textarea id="noteText" class="w-full border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm resize-none h-28 focus:ring-2 focus:ring-teal-400 outline-none mb-3" placeholder="What's on your mind?" autofocus></textarea>
@@ -2012,6 +2069,7 @@ function deleteNote(id) {
 function closeModal() {
   document.getElementById('modalContainer').innerHTML = '';
 }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
 // ---- Checklists ----
 function renderChecklists() {
@@ -2068,7 +2126,7 @@ function addCheckItem(key) {
 
 function showNewChecklistModal() {
   const modal = document.getElementById('modalContainer');
-  modal.innerHTML = `<div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+  modal.innerHTML = `<div class="modal-overlay" role="dialog" aria-modal="true" onclick="if(event.target===this)closeModal()">
     <div class="modal-content bg-white dark:bg-gray-800 anim-fade">
       <h3 class="font-heading font-700 text-lg mb-3">✅ New Checklist</h3>
       <input type="text" id="newClTitle" class="w-full border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm mb-4 outline-none focus:ring-2 focus:ring-teal-400" placeholder="Checklist name (e.g., Shopping List)" autofocus>
@@ -2113,22 +2171,25 @@ function renderExpenses() {
   const budgetHtml = `<div class="glass rounded-2xl p-4 mb-4">
     <div class="flex justify-between items-center mb-2">
       <h4 class="font-heading font-700 text-base">💰 Trip Budget</h4>
-      <button onclick="showEditBudgetModal()" class="tap text-xs px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full font-600 transition">Edit</button>
+      <div class="flex items-center gap-2">
+        <button onclick="toggleCurrency()" class="tap text-xs px-3 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-full font-600 transition">${state.currency}</button>
+        <button onclick="showEditBudgetModal()" class="tap text-xs px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full font-600 transition">Edit</button>
+      </div>
     </div>
     <div class="flex justify-between items-end mb-2">
       <div>
-        <p class="font-heading font-800 text-2xl ${isOverBudget ? 'text-red-600 dark:text-red-400' : 'text-teal-700 dark:text-teal-300'}">$${total.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
-        <p class="text-xs text-gray-500 dark:text-gray-400">of $${budget.toLocaleString('en-US')} budget</p>
+        <p class="font-heading font-800 text-2xl ${isOverBudget ? 'text-red-600 dark:text-red-400' : 'text-teal-700 dark:text-teal-300'}">${fmtMoney(total)}</p>
+        <p class="text-xs text-gray-500 dark:text-gray-400">of ${currSym()}${budget.toLocaleString('en-US')} budget</p>
       </div>
       <div class="text-right">
-        <p class="font-heading font-700 text-lg ${isOverBudget ? 'text-red-600 dark:text-red-400' : remaining < 2000 ? 'text-amber-600 dark:text-amber-400' : 'text-green-600 dark:text-green-400'}">$${Math.abs(remaining).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+        <p class="font-heading font-700 text-lg ${isOverBudget ? 'text-red-600 dark:text-red-400' : remaining < 2000 ? 'text-amber-600 dark:text-amber-400' : 'text-green-600 dark:text-green-400'}">${fmtMoney(Math.abs(remaining))}</p>
         <p class="text-xs text-gray-500 dark:text-gray-400">${isOverBudget ? 'over budget' : 'remaining'}</p>
       </div>
     </div>
     <div class="progress-track mb-3"><div class="progress-fill ${budgetBarColor}" style="width:${budgetPct}%"></div></div>
     <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400">
       <span>${budgetPct}% used</span>
-      ${daysRemaining > 0 ? `<span>~$${dailyBudgetRemaining.toFixed(0)}/day left to spend</span>` : ''}
+      ${daysRemaining > 0 ? `<span>~${currSym()}${dailyBudgetRemaining.toFixed(0)}/day left to spend</span>` : ''}
     </div>
   </div>`;
 
@@ -2140,14 +2201,14 @@ function renderExpenses() {
     <div class="grid grid-cols-2 gap-3 mb-3">
       <div class="bg-teal-50 dark:bg-teal-900/30 rounded-xl p-3 text-center">
         <p class="text-xs text-gray-500 dark:text-gray-400">Total Spent</p>
-        <p class="font-heading font-700 text-xl text-teal-700 dark:text-teal-300">$${total.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+        <p class="font-heading font-700 text-xl text-teal-700 dark:text-teal-300">${fmtMoney(total)}</p>
       </div>
       <div class="bg-indigo-50 dark:bg-indigo-900/30 rounded-xl p-3 text-center">
         <p class="text-xs text-gray-500 dark:text-gray-400">Per Day Avg</p>
-        <p class="font-heading font-700 text-xl text-indigo-700 dark:text-indigo-300">$${perDay.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+        <p class="font-heading font-700 text-xl text-indigo-700 dark:text-indigo-300">${fmtMoney(perDay)}</p>
       </div>
     </div>
-    <div class="flex flex-wrap gap-2">${CATEGORIES.filter(c => byCategory[c.id] > 0).map(c => `<span class="px-2 py-1 rounded-full text-xs font-600 ${c.color}">${c.label} $${byCategory[c.id].toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>`).join('')}</div>
+    <div class="flex flex-wrap gap-2">${CATEGORIES.filter(c => byCategory[c.id] > 0).map(c => `<span class="px-2 py-1 rounded-full text-xs font-600 ${c.color}">${c.label} ${fmtMoney(byCategory[c.id])}</span>`).join('')}</div>
   </div>` : '';
 
   el.innerHTML = `
@@ -2163,18 +2224,18 @@ function renderExpenses() {
           <p class="text-sm font-600 truncate">${e.note ? escHtml(e.note) : cat.label}</p>
           <p class="text-xs text-gray-400">Day ${e.day} · ${formatTimestamp(e.timestamp)}</p>
         </div>
-        <span class="font-heading font-700 text-sm text-teal-700 dark:text-teal-300 flex-shrink-0">$${e.amount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+        <span class="font-heading font-700 text-sm text-teal-700 dark:text-teal-300 flex-shrink-0">${fmtMoney(e.amount)}</span>
       </div>`;
     }).join('')}</div>`;
 }
 
 function showEditBudgetModal() {
   const modal = document.getElementById('modalContainer');
-  modal.innerHTML = `<div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+  modal.innerHTML = `<div class="modal-overlay" role="dialog" aria-modal="true" onclick="if(event.target===this)closeModal()">
     <div class="modal-content bg-white dark:bg-gray-800 anim-fade">
       <h3 class="font-heading font-700 text-lg mb-3">💰 Edit Budget Target</h3>
       <div class="flex items-center gap-2 mb-4">
-        <span class="text-lg font-700">$</span>
+        <span class="text-lg font-700">${currSym()}</span>
         <input type="number" id="budgetInput" step="100" min="0" class="flex-1 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-teal-400" value="${state.budget || 15000}" inputmode="numeric" autofocus>
       </div>
       <div class="flex gap-3">
@@ -2199,11 +2260,11 @@ function showAddExpenseModal(editId) {
   const trip = getTripDay();
   const defaultDay = existing ? existing.day : (trip.status === 'during' ? trip.dayNum : 1);
   const modal = document.getElementById('modalContainer');
-  modal.innerHTML = `<div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+  modal.innerHTML = `<div class="modal-overlay" role="dialog" aria-modal="true" onclick="if(event.target===this)closeModal()">
     <div class="modal-content bg-white dark:bg-gray-800 anim-fade">
       <h3 class="font-heading font-700 text-lg mb-3">💰 ${existing ? 'Edit' : 'Add'} Expense</h3>
       <div class="flex items-center gap-2 mb-3">
-        <span class="text-lg font-700">$</span>
+        <span class="text-lg font-700">${currSym()}</span>
         <input type="number" id="expAmount" step="0.01" min="0" class="flex-1 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-teal-400" placeholder="0.00" value="${existing ? existing.amount : ''}" inputmode="decimal" autofocus>
       </div>
       <select id="expCategory" class="w-full border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm mb-3 outline-none focus:ring-2 focus:ring-teal-400">
@@ -2263,19 +2324,20 @@ function exportExpenses() {
   const budget = state.budget || 15000;
   let text = 'Tsue Family Europe 2026 — Expense Report\n';
   text += '================================\n\n';
-  text += `Budget: $${budget.toLocaleString()}\n`;
-  text += `Spent:  $${total.toFixed(2)}\n`;
-  text += `Remaining: $${(budget - total).toFixed(2)}\n\n`;
+  const s = currSym();
+  text += `Budget: ${s}${budget.toLocaleString()}\n`;
+  text += `Spent:  ${s}${total.toFixed(2)}\n`;
+  text += `Remaining: ${s}${(budget - total).toFixed(2)}\n\n`;
   expenses.forEach(e => {
     const cat = CATEGORIES.find(c => c.id === e.category) || CATEGORIES[7];
-    text += `Day ${e.day} | ${cat.label} | $${e.amount.toFixed(2)}${e.note ? ' | ' + e.note : ''}\n`;
+    text += `Day ${e.day} | ${cat.label} | ${s}${e.amount.toFixed(2)}${e.note ? ' | ' + e.note : ''}\n`;
   });
-  text += `\n================================\nTotal: $${total.toFixed(2)} / $${budget.toLocaleString()} budget\n`;
+  text += `\n================================\nTotal: ${s}${total.toFixed(2)} / ${s}${budget.toLocaleString()} budget\n`;
   const byCategory = {};
   expenses.forEach(e => { byCategory[e.category] = (byCategory[e.category] || 0) + e.amount; });
   text += '\nBy Category:\n';
   CATEGORIES.forEach(c => {
-    if (byCategory[c.id]) text += `  ${c.label}: $${byCategory[c.id].toFixed(2)}\n`;
+    if (byCategory[c.id]) text += `  ${c.label}: ${s}${byCategory[c.id].toFixed(2)}\n`;
   });
   navigator.clipboard.writeText(text).then(() => {
     alert('Expense report copied to clipboard!');
@@ -2301,6 +2363,29 @@ function renderSettings() {
 
   el.innerHTML = `
     <h2 class="font-heading font-700 text-xl mb-4">⚙️ Settings</h2>
+
+    <!-- Travel Details -->
+    <div class="glass rounded-2xl p-4 mb-4">
+      <h3 class="font-heading font-700 text-base mb-3">✈️ Travel Details</h3>
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs font-600 text-gray-500 dark:text-gray-400 mb-1 block">Outbound Flight</label>
+          <input type="text" id="travelFlight1" class="w-full border border-gray-200 dark:border-gray-700 rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-teal-400" placeholder="e.g. LH 1234 — SFO → MUC — Mar 22, 10:30 PM" value="${escHtml(state.travelDetails?.flight1 || '')}" onchange="state.travelDetails=state.travelDetails||{};state.travelDetails.flight1=this.value;saveState()">
+        </div>
+        <div>
+          <label class="text-xs font-600 text-gray-500 dark:text-gray-400 mb-1 block">Return Flight</label>
+          <input type="text" id="travelFlight2" class="w-full border border-gray-200 dark:border-gray-700 rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-teal-400" placeholder="e.g. LH 5678 — FLR → SFO — Apr 2, 6:30 AM" value="${escHtml(state.travelDetails?.flight2 || '')}" onchange="state.travelDetails=state.travelDetails||{};state.travelDetails.flight2=this.value;saveState()">
+        </div>
+        <div>
+          <label class="text-xs font-600 text-gray-500 dark:text-gray-400 mb-1 block">Rental Car</label>
+          <input type="text" id="travelCar" class="w-full border border-gray-200 dark:border-gray-700 rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-teal-400" placeholder="e.g. Europcar — Conf# ABC123 — Munich pickup, Florence drop-off" value="${escHtml(state.travelDetails?.car || '')}" onchange="state.travelDetails=state.travelDetails||{};state.travelDetails.car=this.value;saveState()">
+        </div>
+        <div>
+          <label class="text-xs font-600 text-gray-500 dark:text-gray-400 mb-1 block">Travel Insurance</label>
+          <input type="text" id="travelInsurance" class="w-full border border-gray-200 dark:border-gray-700 rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-teal-400" placeholder="e.g. Allianz — Policy# XYZ789 — Hotline: +1-800-..." value="${escHtml(state.travelDetails?.insurance || '')}" onchange="state.travelDetails=state.travelDetails||{};state.travelDetails.insurance=this.value;saveState()">
+        </div>
+      </div>
+    </div>
 
     <!-- Dark Mode & Font Size -->
     <div class="glass rounded-2xl p-4 mb-4 space-y-4">
@@ -2329,12 +2414,12 @@ function renderSettings() {
       <h3 class="font-heading font-700 text-base mb-3">📊 Trip Stats</h3>
       <div class="grid grid-cols-3 gap-3">
         <div class="text-center"><p class="font-heading font-700 text-xl text-teal-600 dark:text-teal-400">11</p><p class="text-xs text-gray-400">Days</p></div>
-        <div class="text-center"><p class="font-heading font-700 text-xl text-teal-600 dark:text-teal-400">5</p><p class="text-xs text-gray-400">Hotels</p></div>
+        <div class="text-center"><p class="font-heading font-700 text-xl text-teal-600 dark:text-teal-400">6</p><p class="text-xs text-gray-400">Hotels</p></div>
         <div class="text-center"><p class="font-heading font-700 text-xl text-teal-600 dark:text-teal-400">2</p><p class="text-xs text-gray-400">Countries</p></div>
       </div>
       <div class="border-t border-gray-200 dark:border-gray-700 mt-3 pt-3 grid grid-cols-2 gap-3 text-center">
         <div><p class="font-heading font-600 text-sm">${totalNotes}</p><p class="text-xs text-gray-400">Journal Notes</p></div>
-        <div><p class="font-heading font-600 text-sm">$${totalSpent.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p><p class="text-xs text-gray-400">of $${(state.budget || 15000).toLocaleString()} budget</p></div>
+        <div><p class="font-heading font-600 text-sm">${fmtMoney(totalSpent)}</p><p class="text-xs text-gray-400">of ${currSym()}${(state.budget || 15000).toLocaleString()} budget</p></div>
         <div><p class="font-heading font-600 text-sm">${totalExpenses}</p><p class="text-xs text-gray-400">Expenses</p></div>
         <div><p class="font-heading font-600 text-sm">${checkedItems}/${checklistItems}</p><p class="text-xs text-gray-400">Items Checked</p></div>
       </div>
@@ -2361,6 +2446,11 @@ function renderSettings() {
         </div>
         <div class="flex items-center gap-3 p-2 bg-red-50 dark:bg-red-900/20 rounded-xl">
           <span class="text-lg">🇮🇹</span>
+          <div class="flex-1"><p class="text-sm font-600">Bologna</p><p class="text-xs text-gray-500 dark:text-gray-400">Large ZTL — park at Staveco or Tanari, walk/shuttle in.</p></div>
+          <span class="text-red-500">🛑</span>
+        </div>
+        <div class="flex items-center gap-3 p-2 bg-red-50 dark:bg-red-900/20 rounded-xl">
+          <span class="text-lg">🇮🇹</span>
           <div class="flex-1"><p class="text-sm font-600">Florence</p><p class="text-xs text-gray-500 dark:text-gray-400">DO NOT enter city center. Airport area only!</p></div>
           <span class="text-red-500">🛑</span>
         </div>
@@ -2373,6 +2463,49 @@ function renderSettings() {
         <a href="https://www.visitflorence.com/tourist-info/driving-in-florence-ztl-zone.html" target="_blank" rel="noopener noreferrer" class="tap text-xs px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full font-600 transition">Florence ZTL Map →</a>
         <a href="https://mominitaly.com/ztl-in-italy/" target="_blank" rel="noopener noreferrer" class="tap text-xs px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full font-600 transition">Italy ZTL Guide →</a>
         <a href="https://www.autoeurope.com/italy-ztl-zones/" target="_blank" rel="noopener noreferrer" class="tap text-xs px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full font-600 transition">Auto Europe ZTL Maps →</a>
+      </div>
+    </div>
+
+    <!-- Emergency & Travel Info -->
+    <div class="glass rounded-2xl p-4 mb-4">
+      <h3 class="font-heading font-700 text-base mb-3">🆘 Emergency & Travel Info</h3>
+      <div class="space-y-2">
+        <div class="flex items-center gap-3 p-2 bg-red-50 dark:bg-red-900/20 rounded-xl">
+          <span class="text-lg">📞</span>
+          <div class="flex-1"><p class="text-sm font-600">EU Emergency: 112</p><p class="text-xs text-gray-500 dark:text-gray-400">Works in ALL EU countries — police, fire, ambulance</p></div>
+        </div>
+        <div class="flex items-center gap-3 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+          <span class="text-lg">🏥</span>
+          <div class="flex-1"><p class="text-sm font-600">Nearest Hospital / Pharmacy</p><p class="text-xs text-gray-500 dark:text-gray-400">Google Maps → "Farmacia" or "Ospedale" — pharmacies can treat minor issues</p></div>
+        </div>
+        <div class="flex items-center gap-3 p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl">
+          <span class="text-lg">🚗</span>
+          <div class="flex-1"><p class="text-sm font-600">Rental Car Roadside Assistance</p><p class="text-xs text-gray-500 dark:text-gray-400">Check rental agreement for 24/7 number — save it in your phone!</p></div>
+        </div>
+        <div class="flex items-center gap-3 p-2 bg-amber-50 dark:bg-amber-900/20 rounded-xl">
+          <span class="text-lg">🛡</span>
+          <div class="flex-1"><p class="text-sm font-600">Travel Insurance</p><p class="text-xs text-gray-500 dark:text-gray-400">Keep policy number & claim hotline accessible offline</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Road & Toll Info -->
+    <div class="glass rounded-2xl p-4 mb-4">
+      <h3 class="font-heading font-700 text-base mb-3">🛣 Road & Toll Info</h3>
+      <div class="space-y-3">
+        <div class="bg-teal-50 dark:bg-teal-900/20 rounded-xl p-3">
+          <p class="font-heading font-600 text-sm mb-1">🇦🇹 Austria Vignette (Required!)</p>
+          <p class="text-xs text-gray-600 dark:text-gray-400 mb-2">Digital 10-day motorway sticker — buy online BEFORE entering Austria. €11.50 for 10 days. Cameras enforce automatically. Fine without one: €120+.</p>
+          <a href="https://shop.asfinag.at/" target="_blank" rel="noopener noreferrer" class="tap inline-flex items-center gap-1 text-xs px-3 py-1.5 bg-teal-600 text-white rounded-full font-600 transition hover:bg-teal-700">Buy Digital Vignette →</a>
+        </div>
+        <div class="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-3">
+          <p class="font-heading font-600 text-sm mb-1">🇮🇹 Italian Autostrada Tolls</p>
+          <p class="text-xs text-gray-600 dark:text-gray-400">Italian highways charge per-km tolls. Brenner Pass to Tuscany costs roughly €30-40. Take a ticket at entry, pay at exit. Most booths accept credit cards — look for the blue lane. Cash lanes show coins/bills icon.</p>
+        </div>
+        <div class="bg-green-50 dark:bg-green-900/20 rounded-xl p-3">
+          <p class="font-heading font-600 text-sm mb-1">⛽ Fuel Tips</p>
+          <p class="text-xs text-gray-600 dark:text-gray-400">Fuel is ~€1.80/L in both countries. Highway stations cost more — fill up off the autostrada. "Servito" = attendant pumps (more expensive), "Self" = self-service. Keep tank above ¼ in rural Tuscany.</p>
+        </div>
       </div>
     </div>
 
@@ -2543,6 +2676,7 @@ async function syncFromCloud() {
     if (!state.packingList) state.packingList = initPackingList();
     if (state.fontSize === undefined) state.fontSize = 0;
     if (state.budget === undefined) state.budget = 15000;
+    if (state.currency === undefined) state.currency = 'EUR';
     saveState();
     applyDarkMode();
     applyFontSize();
