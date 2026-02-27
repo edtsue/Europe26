@@ -445,11 +445,12 @@ const DAYS = [
   {
     day: 1, date: 'Mar 23', weekday: 'Sun', flag: '🇦🇹', phase: 'austria',
     title: 'Arrival → Salzburg',
+    cityDesc: 'Mozart\'s birthplace and a baroque masterpiece. Famous for its hilltop fortress, Sound of Music locations, golden Getreidegasse shopping lane, and apple strudel with a view of the Alps.',
     am: 'Land Munich (11 AM) → Pick up rental car → 1.5 hr scenic drive to Salzburg',
     pm: 'Salzburg Old Town stroll + early family dinner',
     sleep: 'Salzburg', sleepIcon: '🏰',
     parking: '⚠️ Hotel garage required', parkingStatus: 'warn',
-    ztl: '⚠️ Some central areas restricted — confirm hotel access', ztlStatus: 'warn', ztlMapUrl: 'https://www.salzburg.info/en/travel-info/arrival-traffic/car/traffic-bollards',
+    ztl: '⚠️ Some central areas restricted — confirm hotel access', ztlStatus: 'warn', ztlMapUrl: 'https://www.stadt-salzburg.at/verkehr-und-strassenraum/poller-sichern-fussgaengerzonen/',
     familyTip: 'Old Town is compact & flat — perfect evening stroll after a long flight. Kids will love the golden sphere sculpture in Kapitelplatz and the funicular up to the fortress!',
     destinations: [
       { name: 'Hohensalzburg Fortress', url: 'https://www.salzburg.info/en/sights/top10/hohensalzburg-fortress', desc: 'Largest medieval fortress in Europe! Take the funicular up — kids love the ride. Knight\'s rooms & puppet museum inside.', star: true },
@@ -470,6 +471,7 @@ const DAYS = [
   {
     day: 2, date: 'Mar 24', weekday: 'Mon', flag: '🏔', phase: 'austria',
     title: 'Grossarl Check-in',
+    cityDesc: 'The "Valley of Alpine Huts" — a peaceful Austrian valley with 40+ traditional mountain huts, family-friendly trails, and towering Alpine peaks. Home to Das Edelweiss, one of Austria\'s top family resorts.',
     am: 'Breakfast in Salzburg → 1 hr drive to Grossarl Valley',
     pm: 'Check-in at Das Edelweiss → Spa, waterpark & pool time!',
     sleep: 'Das Edelweiss (1/3)', sleepIcon: '⛷',
@@ -488,6 +490,7 @@ const DAYS = [
   {
     day: 3, date: 'Mar 25', weekday: 'Tue', flag: '🏔', phase: 'austria',
     title: 'Alpine Adventure Day',
+    cityDesc: 'High up in the Austrian Alps. Cable cars lift you above the treeline to panoramic ridges, while cozy mountain huts below serve Kaiserschmarrn and hot chocolate by roaring fires.',
     am: 'Cable car ride up Panoramabahn → Alpine walk or valley exploration',
     pm: 'Mountain dinner at the resort + evening swim',
     sleep: 'Das Edelweiss (2/3)', sleepIcon: '⛷',
@@ -503,6 +506,7 @@ const DAYS = [
   {
     day: 4, date: 'Mar 26', weekday: 'Wed', flag: '🏔', phase: 'austria',
     title: 'Relax or Explore',
+    cityDesc: 'Your flex day in the Alps. Unwind at the resort spa and waterpark, or day-trip to Hellbrunn Palace — a 17th-century estate famous for its trick water fountains that surprise and soak visitors.',
     am: 'Slow mountain morning OR half-day Salzburg trip',
     pm: 'Final spa evening — soak it all in',
     sleep: 'Das Edelweiss (3/3)', sleepIcon: '⛷',
@@ -518,6 +522,7 @@ const DAYS = [
   {
     day: 5, date: 'Mar 27', weekday: 'Thu', flag: '🚗', phase: 'transition',
     title: 'Big Drive Day ⭐ Alps to Tuscany',
+    cityDesc: 'An epic road trip across the Alps into Italy. You\'ll cross the dramatic Brenner Pass, stop in Innsbruck under its golden roof, and descend into Tuscany\'s UNESCO Val d\'Orcia — rolling hills, cypress trees, and golden light.',
     am: 'Scenic 5 hr drive south → Coffee stop in Innsbruck + Brenner Pass into Italy',
     pm: 'Arrive Val d\'Orcia — Tuscan countryside welcome!',
     sleep: 'Val d\'Orcia (1/3)', sleepIcon: '🌻',
@@ -652,6 +657,7 @@ const DAYS = [
   {
     day: 6, date: 'Mar 28', weekday: 'Fri', flag: '🇮🇹', phase: 'italy',
     title: 'Pienza & Montepulciano',
+    cityDesc: 'Two jewel-box hilltop towns perched above the Tuscan countryside. Pienza is the "Ideal Renaissance City" and pecorino cheese capital. Montepulciano is famous for Vino Nobile wine, a medieval tower with 360° views, and streets named Love, Kiss, and Good Luck.',
     am: 'Pienza — cheese tasting, Renaissance streets, panoramic views',
     pm: 'Montepulciano — tower climb + vineyard dinner',
     sleep: 'Val d\'Orcia (2/3)', sleepIcon: '🌻',
@@ -706,6 +712,7 @@ const DAYS = [
   {
     day: 7, date: 'Mar 29', weekday: 'Sat', flag: '🇮🇹', phase: 'italy',
     title: 'Tuscan Slow Day',
+    cityDesc: 'The Val d\'Orcia is a UNESCO World Heritage landscape — Italy\'s most photographed countryside. Rolling golden hills, lone cypress trees, medieval villages, and vineyards stretching to the horizon. Famous for Brunello wine, pecorino cheese, and thermal springs.',
     am: 'Farm visit or countryside drive — gelato stops mandatory',
     pm: 'Sunset dinner with Val d\'Orcia views',
     sleep: 'Val d\'Orcia (3/3)', sleepIcon: '🌻',
@@ -760,6 +767,7 @@ const DAYS = [
   {
     day: 8, date: 'Mar 30', weekday: 'Sun', flag: '🇮🇹', phase: 'italy',
     title: 'Verona — Romeo & Juliet City',
+    cityDesc: 'Shakespeare\'s city of star-crossed lovers. Verona is home to the Arena — a Roman amphitheater older than the Colosseum that still hosts opera. Famous for Juliet\'s balcony, pastel-colored piazzas, and some of the best risotto in northern Italy.',
     am: '3-3.5 hr drive Val d\'Orcia → Verona',
     pm: 'Arena di Verona (older than the Colosseum!) + Piazza evening stroll',
     sleep: 'Verona — OUTSIDE ZTL', sleepIcon: '🏛',
@@ -839,6 +847,7 @@ const DAYS = [
   {
     day: 9, date: 'Mar 31', weekday: 'Mon', flag: '🇮🇹', phase: 'italy',
     title: 'Bologna — Italy\'s Food Capital 🍝',
+    cityDesc: 'Italy\'s undisputed food capital — birthplace of ragù, tortellini, mortadella, and Parmigiano Reggiano. Home to the world\'s oldest university (1088 AD), 40km of UNESCO covered porticoes, and the iconic leaning Two Towers.',
     am: 'Last Verona gelato → 1.5 hr drive to Bologna',
     pm: 'Explore the porticoes, Two Towers, Mercato di Mezzo — eat EVERYTHING',
     sleep: 'Bologna', sleepIcon: '🏛',
@@ -895,6 +904,7 @@ const DAYS = [
   {
     day: 10, date: 'Apr 1', weekday: 'Tue', flag: '📦', phase: 'italy',
     title: 'Buffer Day → Florence Airport',
+    cityDesc: 'Florence — the cradle of the Renaissance. Birthplace of Michelangelo\'s David, Brunelleschi\'s Dome, and the Uffizi Gallery. You\'re staying near the airport (skip the ZTL!), but the city\'s magic is just a tram ride away.',
     am: 'Sleep in! Last Italian breakfast → 1.5 hr drive to Florence airport area',
     pm: 'Relax at hotel, pool if available, pack up. Final Italian dinner — no rush!',
     sleep: 'Florence Airport Hotel', sleepIcon: '✈️',
@@ -917,6 +927,7 @@ const DAYS = [
   {
     day: 11, date: 'Apr 2', weekday: 'Wed', flag: '✈️', phase: 'departure',
     title: 'Fly Home!',
+    cityDesc: 'Arrivederci, Europe! 11 days of Alpine peaks, Tuscan sunsets, Roman arenas, and the best food on Earth. Time to head home with a suitcase full of memories (and probably too much cheese).',
     am: 'Early departure — 6:30 AM flight. Return rental car at Florence Airport.',
     pm: '—',
     sleep: 'Home sweet home', sleepIcon: '🏠',
@@ -1794,6 +1805,7 @@ function renderDayCardFull(d, isToday) {
       </div>
     </div>
     <div class="bg-white dark:bg-gray-800 p-4">
+      ${d.cityDesc ? `<p class="text-sm italic text-gray-500 dark:text-gray-400 mb-3 leading-relaxed">${escHtml(d.cityDesc)}</p>` : ''}
       ${hotelNavHtml}
       <div class="day-ampm grid grid-cols-1 gap-2 mb-3">
         <div class="flex gap-2 items-start"><span class="text-amber-400 flex-shrink-0">☀️</span><p class="text-sm"><strong>AM:</strong> ${escHtml(d.am)}</p></div>
@@ -2128,6 +2140,7 @@ function renderCollapsibleDay(d) {
     </button>
     <div id="dayBody-${d.day}" class="bg-white dark:bg-gray-800 ${isExpanded ? '' : 'hidden'}">
       <div class="p-4 ${isExpanded ? 'anim-slide' : ''}">
+        ${d.cityDesc ? `<p class="text-sm italic text-gray-500 dark:text-gray-400 mb-3 leading-relaxed">${escHtml(d.cityDesc)}</p>` : ''}
         <div class="grid grid-cols-1 gap-2 mb-3">
           <div class="flex gap-2 items-start"><span class="text-amber-400 flex-shrink-0">☀️</span><p class="text-sm"><strong>AM:</strong> ${escHtml(d.am)}</p></div>
           <div class="flex gap-2 items-start"><span class="flex-shrink-0">🌙</span><p class="text-sm"><strong>PM:</strong> ${escHtml(d.pm)}</p></div>
@@ -2650,7 +2663,7 @@ function renderSettings() {
         <div class="flex items-center gap-3 p-2 bg-green-50 dark:bg-green-900/20 rounded-xl">
           <span class="text-lg">🇦🇹</span>
           <div class="flex-1"><p class="text-sm font-600">Austria</p><p class="text-xs text-gray-500 dark:text-gray-400">No ZTL — drive freely</p>
-            <a href="https://www.salzburg.info/en/travel-info/arrival-traffic/car/traffic-bollards" target="_blank" rel="noopener noreferrer" class="inline-block mt-1 text-xs font-600 text-blue-600 dark:text-blue-400 hover:underline">🗺 Salzburg Bollards Map →</a>
+            <a href="https://www.stadt-salzburg.at/verkehr-und-strassenraum/poller-sichern-fussgaengerzonen/" target="_blank" rel="noopener noreferrer" class="inline-block mt-1 text-xs font-600 text-blue-600 dark:text-blue-400 hover:underline">🗺 Salzburg Pedestrian Zones Map →</a>
           </div>
           <span class="text-green-500">✅</span>
         </div>
