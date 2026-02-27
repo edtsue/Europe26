@@ -1090,7 +1090,7 @@ function getDefaultState() {
     notes: [{ ...DEFAULT_NOTE }],
     checklists: JSON.parse(JSON.stringify(DEFAULT_CHECKLISTS)),
     expenses: [],
-    expandedDays: [],
+    expandedDays: [1,2,3,4,5,6,7,8,9,10,11],
     activeTab: 'days',
     activeNotesTab: 'journal',
     budget: 15000,
@@ -1109,7 +1109,7 @@ function loadState() {
       if (!state.notes) state.notes = def.notes;
       if (!state.checklists) state.checklists = def.checklists;
       if (!state.expenses) state.expenses = def.expenses;
-      if (!state.expandedDays) state.expandedDays = def.expandedDays;
+      if (!state.expandedDays || state.expandedDays.length === 0) state.expandedDays = def.expandedDays;
       if (state.activeTab === undefined || state.activeTab === 'today') state.activeTab = 'days';
       if (state.activeNotesTab === undefined) state.activeNotesTab = 'journal';
       if (state.budget === undefined) state.budget = 15000;
