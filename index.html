@@ -286,6 +286,31 @@ tailwind.config = {
   /* Visited destination badge */
   .dest-visited { opacity: 0.7; }
   .dest-visited .font-heading { text-decoration: line-through; }
+
+  /* Collapsible section toggle */
+  .sec-toggle { display: flex; align-items: center; justify-content: space-between; width: 100%; text-align: left; padding: 8px 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .sec-toggle:active { opacity: 0.7; }
+
+  /* Section jump menu */
+  .section-jump { display: flex; gap: 6px; overflow-x: auto; padding: 8px 0; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .section-jump::-webkit-scrollbar { display: none; }
+  .section-jump-pill { padding: 4px 12px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap; border: 1px solid rgba(0,0,0,0.08); cursor: pointer; transition: all 0.2s; background: rgba(0,0,0,0.03); }
+  .dark .section-jump-pill { border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); }
+  .section-jump-pill:active { transform: scale(0.95); }
+
+
+  /* Back to top */
+  .back-to-top { position: fixed; bottom: 80px; right: 16px; z-index: 90; width: 44px; height: 44px; border-radius: 50%; background: rgba(13,148,136,0.9); color: white; display: none; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer; transition: all 0.2s; -webkit-tap-highlight-color: transparent; }
+  .back-to-top:hover { background: #0d9488; transform: scale(1.1); }
+  @media (min-width: 768px) { .back-to-top { bottom: 24px; right: 24px; } }
+
+  /* Hotel filter bar */
+  .hotel-filter-bar { display: flex; gap: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding: 2px 0; }
+  .hotel-filter-bar::-webkit-scrollbar { display: none; }
+  .hotel-filter-pill { padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; transition: all 0.2s; }
+  .hotel-filter-pill.active { background: #0d9488; color: white; }
+  .hotel-filter-pill:not(.active) { background: #f1f5f9; color: #475569; }
+  .dark .hotel-filter-pill:not(.active) { background: #1e293b; color: #94a3b8; }
 </style>
 </head>
 <body class="bg-gray-50 text-gray-900 font-body min-h-screen pb-20">
@@ -433,6 +458,8 @@ tailwind.config = {
 
 <!-- Offline banner -->
 <div id="offlineBanner" class="offline-banner">📡 You're offline — data is saved locally</div>
+<!-- Back to top button -->
+<button id="backToTop" class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'});document.querySelector('.tab-panel.active')?.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">↑</button>
 
 <script>
 // ============================================================
@@ -1277,6 +1304,58 @@ function setupSwipe() {
   }, { passive: true });
 }
 
+// ============================================================
+// COLLAPSIBLE SECTIONS + NAVIGATION HELPERS
+// ============================================================
+let hotelFilterDay = 'all';
+
+function toggleSection(id) {
+  const body = document.getElementById('secBody-' + id);
+  const chev = document.getElementById('secChev-' + id);
+  if (body) body.classList.toggle('hidden');
+  if (chev) chev.classList.toggle('open');
+}
+
+function scrollToSection(id) {
+  const body = document.getElementById('secBody-' + id);
+  if (!body) return;
+  // Open if closed
+  if (body.classList.contains('hidden')) toggleSection(id);
+  setTimeout(() => body.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+}
+
+function switchToHotelsForDay(dayNum) {
+  hotelFilterDay = 'all'; // Reset filter so the target day is visible
+  switchTab('hotels');
+  setTimeout(() => {
+    const el = document.querySelector('[data-hotel-day="' + dayNum + '"]');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 150);
+}
+
+function toggleSettingsSection(id) {
+  const body = document.getElementById('setBody-' + id);
+  const chev = document.getElementById('setChev-' + id);
+  if (body) body.classList.toggle('hidden');
+  if (chev) chev.classList.toggle('open');
+}
+
+function setupBackToTop() {
+  const btn = document.getElementById('backToTop');
+  if (!btn) return;
+  const check = () => {
+    const scrollY = window.scrollY || document.documentElement.scrollTop;
+    btn.style.display = scrollY > window.innerHeight ? 'flex' : 'none';
+  };
+  window.addEventListener('scroll', check, { passive: true });
+  // Desktop panels scroll independently
+  document.querySelectorAll('.tab-panel').forEach(p => {
+    p.addEventListener('scroll', () => {
+      btn.style.display = p.scrollTop > window.innerHeight ? 'flex' : 'none';
+    }, { passive: true });
+  });
+}
+
 function checkAutoNightMode() {
   if (!state.autoNightMode) return;
   var hour = new Date().getHours();
@@ -1462,9 +1541,16 @@ function renderHotelCard(h, isMain) {
 
 function renderHotels() {
   const container = document.getElementById('hotelsContent');
-  let html = `<div class="mb-6">
+
+  // Build filter bar
+  const daysWithHotels = DAYS.filter(d => (d.hotels && d.hotels.length > 0) || (d.alternatives && d.alternatives.some(a => a.hotels && a.hotels.length > 0)) || (d.midwayStops && d.midwayStops.some(m => m.hotels && m.hotels.length > 0)));
+  let html = `<div class="mb-4">
     <h1 class="font-heading font-800 text-2xl mb-1">🏨 Hotels by Destination</h1>
-    <p class="text-sm text-gray-500 dark:text-gray-400">All accommodation options organized by day and city</p>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">All accommodation options organized by day and city</p>
+    <div class="hotel-filter-bar sticky z-40 bg-gray-50 dark:bg-gray-900 py-2" style="top: var(--header-h, 48px)">
+      <button onclick="hotelFilterDay='all';renderHotels()" class="hotel-filter-pill ${hotelFilterDay === 'all' ? 'active' : ''}">All</button>
+      ${daysWithHotels.map(d => `<button onclick="hotelFilterDay=${d.day};renderHotels()" class="hotel-filter-pill ${hotelFilterDay === d.day ? 'active' : ''}">${d.flag} Day ${d.day}</button>`).join('')}
+    </div>
   </div>`;
 
   // Track which sleep locations we've already shown to avoid duplicates
@@ -1473,6 +1559,9 @@ function renderHotels() {
     const hasMainHotels = d.hotels && d.hotels.length > 0;
     const hasAltHotels = d.alternatives && d.alternatives.some(a => a.hotels && a.hotels.length > 0);
     const hasMidwayHotels = d.midwayStops && d.midwayStops.some(m => m.hotels && m.hotels.length > 0);
+
+    // Apply filter
+    if (hotelFilterDay !== 'all' && hotelFilterDay !== d.day) { lastSleep = d.sleep; return; }
 
     // Skip days with no hotel content at all
     if (!hasMainHotels && !hasAltHotels && !hasMidwayHotels) {
@@ -1491,17 +1580,21 @@ function renderHotels() {
       return;
     }
 
-    // Section header
-    html += `<div class="mb-6">
-      <div class="${phaseBg(d.phase)} text-white rounded-xl p-3 mb-3">
-        <div class="flex items-center gap-3">
-          <span class="text-2xl">${d.sleepIcon}</span>
-          <div>
-            <p class="font-heading font-700 text-lg">Day ${d.day} — ${escHtml(d.sleep)}</p>
-            <p class="text-xs opacity-80">${d.date} (${d.weekday}) · ${escHtml(d.title)}</p>
+    // Section header (collapsible)
+    html += `<div class="mb-6" data-hotel-day="${d.day}">
+      <button onclick="toggleSection('hotel-${d.day}')" class="${phaseBg(d.phase)} text-white rounded-xl p-3 mb-3 w-full text-left tap">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">${d.sleepIcon}</span>
+            <div>
+              <p class="font-heading font-700 text-lg">Day ${d.day} — ${escHtml(d.sleep)}</p>
+              <p class="text-xs opacity-80">${d.date} (${d.weekday}) · ${escHtml(d.title)}</p>
+            </div>
           </div>
+          <span class="chevron text-white text-lg open" id="secChev-hotel-${d.day}">▼</span>
         </div>
-      </div>`;
+      </button>
+      <div id="secBody-hotel-${d.day}">`;
 
     // Main hotels
     if (hasMainHotels) {
@@ -1544,7 +1637,7 @@ function renderHotels() {
       html += `</div>`;
     }
 
-    html += `</div>`; // close section
+    html += `</div></div>`; // close collapsible body + section
     lastSleep = d.sleep;
   });
 
@@ -1720,14 +1813,7 @@ function renderToday() {
     </div>`;
   }
 
-  // Quick-action bar
-  const quickActionsHtml = `<div class="quick-actions mb-3">
-    <button onclick="switchTab('notes');switchNotesTab('expenses');setTimeout(function(){showAddExpenseModal()},100)" class="quick-action-btn bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 tap">💰 Expense</button>
-    <button onclick="document.getElementById('todayNoteArea')?.focus()" class="quick-action-btn bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 tap">📝 Note</button>
-    <button onclick="showParkingInfo(${dayNum})" class="quick-action-btn bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 tap">🅿️ Parking</button>
-  </div>`;
-
-  container.innerHTML = progressHtml + dayNavHtml + countdownHtml + quickActionsHtml + renderDayCardFull(dayData, true);
+  container.innerHTML = progressHtml + dayNavHtml + countdownHtml + renderDayCardFull(dayData, true);
 }
 
 // ============================================================
@@ -1756,23 +1842,21 @@ function renderDestCard(dest, dayNum) {
 }
 
 function renderDayCardFull(d, isToday) {
+  const trip = getTripDay();
+  const isDuring = trip.status === 'during';
+  const n = d.day;
+
   const ztlMapLink = d.ztlMapUrl ? ` <a href="${escHtml(d.ztlMapUrl)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 ml-2 text-xs font-600 px-2 py-0.5 rounded-full bg-white/40 dark:bg-black/20 hover:bg-white/60 dark:hover:bg-black/30 transition">🗺 View ZTL Map →</a>` : '';
-  const ztlBanner = (d.phase === 'italy' || d.phase === 'transition') && (d.ztlStatus === 'warn' || d.ztlStatus === 'danger')
+  const hasZtlBanner = (d.phase === 'italy' || d.phase === 'transition') && (d.ztlStatus === 'warn' || d.ztlStatus === 'danger');
+  const ztlBanner = hasZtlBanner
     ? `<div class="${d.ztlStatus === 'danger' ? 'ztl-danger' : 'ztl-banner'} rounded-xl p-3 mb-3"><p class="font-heading font-600 text-sm">${d.ztlStatus === 'danger' ? '🛑' : '🚦'} ZTL Warning: ${escHtml(d.ztl)}${ztlMapLink}</p></div>` : '';
 
-  const driveRouteHtml = d.driveRoute ? `<div class="bg-amber-50 dark:bg-amber-900/30 rounded-xl p-3 mb-3">
-    <p class="font-heading font-600 text-sm mb-2">🚗 Drive Route</p>
-    <ul class="text-sm space-y-1">${d.driveRoute.map(r => `<li class="flex gap-2"><span class="text-amber-500">→</span><span>${escHtml(r)}</span></li>`).join('')}</ul>
-  </div>` : '';
+  const driveRouteBody = d.driveRoute ? `<ul class="text-sm space-y-1">${d.driveRoute.map(r => `<li class="flex gap-2"><span class="text-amber-500">→</span><span>${escHtml(r)}</span></li>`).join('')}</ul>` : '';
 
-  const parkingStrategyHtml = d.parkingStrategy ? `<div class="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-3 mb-3">
-    <p class="font-heading font-600 text-sm">🅿️ Parking Strategy</p>
-    <p class="text-sm mt-1">${escHtml(d.parkingStrategy)}</p>
-  </div>` : '';
+  const parkingBody = d.parkingStrategy ? `<p class="text-sm">${escHtml(d.parkingStrategy)}</p>` : '';
 
-  const destsHtml = d.destinations && d.destinations.length > 0
-    ? `<div class="mb-3"><p class="font-heading font-600 text-sm mb-2">📍 Destinations</p>
-      <div class="dest-grid" style="gap:0.5rem">${d.destinations.map(dest => renderDestCard(dest, d.day)).join('')}</div></div>` : '';
+  const destsBody = d.destinations && d.destinations.length > 0
+    ? `<div class="dest-grid" style="gap:0.5rem">${d.destinations.map(dest => renderDestCard(dest, d.day)).join('')}</div>` : '';
 
   // Hotel navigate button
   const hotelNavHtml = d.sleep && d.sleep !== 'Home sweet home'
@@ -1782,14 +1866,55 @@ function renderDayCardFull(d, isToday) {
   const weatherCity = d.sleep && d.sleep !== 'Home sweet home' ? d.sleep.split('(')[0].trim() : '';
   const weatherHtml = weatherCity ? `<a href="${weatherUrl(weatherCity)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-3 py-1.5 bg-sky-50 dark:bg-sky-900/20 text-sky-700 dark:text-sky-300 rounded-full text-xs font-600 transition hover:bg-sky-100 dark:hover:bg-sky-900/40 tap">🌤 Weather in ${escHtml(weatherCity)}</a>` : '';
 
-  // Today's Notes + Expenses
-  const todayNotesHtml = isToday ? `<div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-    <p class="font-heading font-600 text-sm mb-2">📝 Today's Notes</p>
-    <textarea id="todayNoteArea" class="w-full rounded-xl border border-gray-200 dark:border-gray-700 p-3 text-sm resize-none h-24 focus:ring-2 focus:ring-teal-400 outline-none" placeholder="Jot down a note for today..." oninput="saveTodayNote(${d.day}, this.value)">${escHtml(getTodayNote(d.day))}</textarea>
-  </div>
-  <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-    <div id="dayExpenses-${d.day}">${renderDayExpenses(d.day)}</div>
-  </div>` : '';
+  // Section jump menu pills
+  const jumpPills = [];
+  jumpPills.push(`<button class="section-jump-pill" onclick="scrollToSection('${n}-sched')">Schedule</button>`);
+  if (destsBody) jumpPills.push(`<button class="section-jump-pill" onclick="scrollToSection('${n}-dests')">📍 Spots</button>`);
+  if (d.driveRoute) jumpPills.push(`<button class="section-jump-pill" onclick="scrollToSection('${n}-drive')">🚗 Drive</button>`);
+  if (d.parkingStrategy || d.parkingStatus === 'warn') jumpPills.push(`<button class="section-jump-pill" onclick="scrollToSection('${n}-park')">🅿️ Parking</button>`);
+  if (isToday) {
+    jumpPills.push(`<button class="section-jump-pill" onclick="scrollToSection('${n}-notes')">📝 Notes</button>`);
+    jumpPills.push(`<button class="section-jump-pill" onclick="scrollToSection('${n}-exp')">💰 Expenses</button>`);
+  }
+  const jumpHtml = jumpPills.length > 2 ? `<div class="section-jump mb-2">${jumpPills.join('')}</div>` : '';
+
+  // Today's Notes + Expenses (collapsible, near top for quick access)
+  const todayNotesSection = isToday ? `
+    <div class="border-t border-gray-200 dark:border-gray-700 mt-2">
+      <button class="sec-toggle" onclick="toggleSection('${n}-notes')">
+        <span class="font-heading font-600 text-sm">📝 Today's Notes</span>
+        <span class="chevron text-xs text-gray-400" id="secChev-${n}-notes">▼</span>
+      </button>
+      <div id="secBody-${n}-notes" class="hidden pb-3">
+        <textarea id="todayNoteArea" class="w-full rounded-xl border border-gray-200 dark:border-gray-700 p-3 text-sm resize-none h-24 focus:ring-2 focus:ring-teal-400 outline-none" placeholder="Jot down a note for today..." oninput="saveTodayNote(${d.day}, this.value)">${escHtml(getTodayNote(d.day))}</textarea>
+      </div>
+    </div>
+    <div class="border-t border-gray-200 dark:border-gray-700">
+      <button class="sec-toggle" onclick="toggleSection('${n}-exp')">
+        <span class="font-heading font-600 text-sm">💰 Today's Expenses</span>
+        <span class="chevron text-xs text-gray-400" id="secChev-${n}-exp">▼</span>
+      </button>
+      <div id="secBody-${n}-exp" class="hidden pb-3">
+        <div id="dayExpenses-${d.day}">${renderDayExpenses(d.day)}</div>
+      </div>
+    </div>` : '';
+
+  // Collapsible helper
+  function sec(id, icon, title, body, defaultOpen) {
+    if (!body) return '';
+    const hidden = defaultOpen ? '' : 'hidden';
+    const chevOpen = defaultOpen ? 'open' : '';
+    return `<div class="border-t border-gray-200 dark:border-gray-700 mt-1">
+      <button class="sec-toggle" onclick="toggleSection('${n}-${id}')">
+        <span class="font-heading font-600 text-sm">${icon} ${title}</span>
+        <span class="chevron text-xs text-gray-400 ${chevOpen}" id="secChev-${n}-${id}">▼</span>
+      </button>
+      <div id="secBody-${n}-${id}" class="${hidden} pb-3">${body}</div>
+    </div>`;
+  }
+
+  // Status pills: hide ZTL pill if banner is showing to avoid duplication
+  const ztlPill = (!hasZtlBanner && d.ztl !== '—') ? `<span class="px-2 py-1 rounded-full ${d.ztlStatus === 'warn' || d.ztlStatus === 'danger' ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300' : 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300'}">${escHtml(d.ztl)}</span>` : '';
 
   return `<div class="rounded-2xl overflow-hidden shadow-lg anim-fade mb-4">
     <div class="${phaseBg(d.phase)} text-white p-4">
@@ -1805,31 +1930,31 @@ function renderDayCardFull(d, isToday) {
       </div>
     </div>
     <div class="bg-white dark:bg-gray-800 p-4">
-      ${d.cityDesc ? `<p class="text-sm italic text-gray-500 dark:text-gray-400 mb-3 leading-relaxed">${escHtml(d.cityDesc)}</p>` : ''}
+      ${jumpHtml}
       ${hotelNavHtml}
-      <div class="day-ampm grid grid-cols-1 gap-2 mb-3">
-        <div class="flex gap-2 items-start"><span class="text-amber-400 flex-shrink-0">☀️</span><p class="text-sm"><strong>AM:</strong> ${escHtml(d.am)}</p></div>
-        <div class="flex gap-2 items-start"><span class="flex-shrink-0">🌙</span><p class="text-sm"><strong>PM:</strong> ${escHtml(d.pm)}</p></div>
-      </div>
-      <div class="flex flex-wrap gap-2 mb-3 text-xs">
-        <span class="px-2 py-1 rounded-full ${d.sleepIcon === '🏠' ? 'bg-gray-100 dark:bg-gray-700' : 'bg-indigo-50 dark:bg-indigo-900/30'}">🛏 ${escHtml(d.sleep)} ${d.sleepIcon}</span>
-        <span class="px-2 py-1 rounded-full ${d.parkingStatus === 'warn' ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300' : 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300'}">${escHtml(d.parking)}</span>
-        ${d.ztl !== '—' ? `<span class="px-2 py-1 rounded-full ${d.ztlStatus === 'warn' || d.ztlStatus === 'danger' ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300' : 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300'}">${escHtml(d.ztl)}</span>` : ''}
-      </div>
       ${ztlBanner}
-      <div class="family-tip rounded-xl p-3 mb-3">
-        <p class="font-heading font-600 text-sm mb-1">👨‍👩‍👧‍👦 Family Tip</p>
-        <p class="text-sm">${escHtml(d.familyTip)}</p>
+      <div id="secBody-${n}-sched">
+        <div class="day-ampm grid grid-cols-1 gap-2 mb-3">
+          <div class="flex gap-2 items-start"><span class="text-amber-400 flex-shrink-0">☀️</span><p class="text-sm"><strong>AM:</strong> ${escHtml(d.am)}</p></div>
+          <div class="flex gap-2 items-start"><span class="flex-shrink-0">🌙</span><p class="text-sm"><strong>PM:</strong> ${escHtml(d.pm)}</p></div>
+        </div>
+        <div class="flex flex-wrap gap-2 mb-3 text-xs">
+          <span class="px-2 py-1 rounded-full ${d.sleepIcon === '🏠' ? 'bg-gray-100 dark:bg-gray-700' : 'bg-indigo-50 dark:bg-indigo-900/30'}">🛏 ${escHtml(d.sleep)} ${d.sleepIcon}</span>
+          <span class="px-2 py-1 rounded-full ${d.parkingStatus === 'warn' ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300' : 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300'}">${escHtml(d.parking)}</span>
+          ${ztlPill}
+        </div>
       </div>
-      ${driveRouteHtml}
-      ${parkingStrategyHtml}
-      ${destsHtml}
+      ${todayNotesSection}
+      ${sec('desc', '📖', 'About This Destination', d.cityDesc ? `<p class="text-sm italic text-gray-500 dark:text-gray-400 leading-relaxed">${escHtml(d.cityDesc)}</p>` : '', !isDuring)}
+      ${sec('tip', '👨‍👩‍👧‍👦', 'Family Tip', `<div class="family-tip rounded-xl p-3"><p class="text-sm">${escHtml(d.familyTip)}</p></div>`, true)}
+      ${sec('drive', '🚗', 'Drive Route', driveRouteBody ? `<div class="bg-amber-50 dark:bg-amber-900/30 rounded-xl p-3">${driveRouteBody}</div>` : '', false)}
+      ${sec('park', '🅿️', 'Parking Strategy', parkingBody ? `<div class="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-3">${parkingBody}</div>` : '', false)}
+      ${sec('dests', '📍', 'Destinations (' + (d.destinations ? d.destinations.length : 0) + ')', destsBody, true)}
       ${renderMidwayStops(d)}
       ${renderAlternatives(d)}
       <div class="mt-3 text-center">
-        <button onclick="switchTab('hotels')" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-heading font-600 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition tap">🏨 View Hotels →</button>
+        <button onclick="switchToHotelsForDay(${d.day})" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-heading font-600 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition tap">🏨 View Hotels →</button>
       </div>
-      ${todayNotesHtml}
     </div>
   </div>`;
 }
@@ -2106,23 +2231,34 @@ function renderDays() {
 
 function renderCollapsibleDay(d) {
   const isExpanded = state.expandedDays.includes(d.day);
+  const n = 'd' + d.day; // prefix to distinguish from Today tab sections
+
   const ztlMapLink = d.ztlMapUrl ? ` <a href="${escHtml(d.ztlMapUrl)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 ml-2 text-xs font-600 px-2 py-0.5 rounded-full bg-white/40 dark:bg-black/20 hover:bg-white/60 dark:hover:bg-black/30 transition">🗺 View ZTL Map →</a>` : '';
-  const ztlBanner = (d.phase === 'italy' || d.phase === 'transition') && (d.ztlStatus === 'warn' || d.ztlStatus === 'danger')
+  const hasZtlBanner = (d.phase === 'italy' || d.phase === 'transition') && (d.ztlStatus === 'warn' || d.ztlStatus === 'danger');
+  const ztlBanner = hasZtlBanner
     ? `<div class="${d.ztlStatus === 'danger' ? 'ztl-danger' : 'ztl-banner'} rounded-xl p-3 mb-3"><p class="font-heading font-600 text-sm">${d.ztlStatus === 'danger' ? '🛑' : '🚦'} ZTL Warning: ${escHtml(d.ztl)}${ztlMapLink}</p></div>` : '';
 
-  const driveRouteHtml = d.driveRoute ? `<div class="bg-amber-50 dark:bg-amber-900/30 rounded-xl p-3 mb-3">
-    <p class="font-heading font-600 text-sm mb-2">🚗 Drive Route</p>
-    <ul class="text-sm space-y-1">${d.driveRoute.map(r => `<li class="flex gap-2"><span class="text-amber-500">→</span><span>${escHtml(r)}</span></li>`).join('')}</ul>
-  </div>` : '';
+  const driveRouteBody = d.driveRoute ? `<ul class="text-sm space-y-1">${d.driveRoute.map(r => `<li class="flex gap-2"><span class="text-amber-500">→</span><span>${escHtml(r)}</span></li>`).join('')}</ul>` : '';
+  const parkingBody = d.parkingStrategy ? `<p class="text-sm">${escHtml(d.parkingStrategy)}</p>` : '';
+  const destsBody = d.destinations && d.destinations.length > 0
+    ? `<div class="dest-grid" style="gap:0.5rem">${d.destinations.map(dest => renderDestCard(dest, d.day)).join('')}</div>` : '';
 
-  const parkingStrategyHtml = d.parkingStrategy ? `<div class="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-3 mb-3">
-    <p class="font-heading font-600 text-sm">🅿️ Parking Strategy</p>
-    <p class="text-sm mt-1">${escHtml(d.parkingStrategy)}</p>
-  </div>` : '';
+  // Hide ZTL pill when banner shows
+  const ztlPill = (!hasZtlBanner && d.ztl !== '—') ? `<span class="px-2 py-1 rounded-full ${d.ztlStatus === 'warn' || d.ztlStatus === 'danger' ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300' : 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300'}">${escHtml(d.ztl)}</span>` : '';
 
-  const destsHtml = d.destinations && d.destinations.length > 0
-    ? `<div class="mb-3"><p class="font-heading font-600 text-sm mb-2">📍 Destinations</p>
-      <div class="dest-grid" style="gap:0.5rem">${d.destinations.map(dest => renderDestCard(dest, d.day)).join('')}</div></div>` : '';
+  // Collapsible helper
+  function sec(id, icon, title, body, defaultOpen) {
+    if (!body) return '';
+    const hidden = defaultOpen ? '' : 'hidden';
+    const chevOpen = defaultOpen ? 'open' : '';
+    return `<div class="border-t border-gray-200 dark:border-gray-700 mt-1">
+      <button class="sec-toggle" onclick="toggleSection('${n}-${id}')">
+        <span class="font-heading font-600 text-sm">${icon} ${title}</span>
+        <span class="chevron text-xs text-gray-400 ${chevOpen}" id="secChev-${n}-${id}">▼</span>
+      </button>
+      <div id="secBody-${n}-${id}" class="${hidden} pb-3">${body}</div>
+    </div>`;
+  }
 
   return `<div data-day-card data-day="${d.day}" id="day-${d.day}" class="rounded-2xl overflow-hidden shadow-lg">
     <button onclick="toggleDay(${d.day})" class="${phaseBg(d.phase)} text-white p-4 w-full text-left tap">
@@ -2140,7 +2276,7 @@ function renderCollapsibleDay(d) {
     </button>
     <div id="dayBody-${d.day}" class="bg-white dark:bg-gray-800 ${isExpanded ? '' : 'hidden'}">
       <div class="p-4 ${isExpanded ? 'anim-slide' : ''}">
-        ${d.cityDesc ? `<p class="text-sm italic text-gray-500 dark:text-gray-400 mb-3 leading-relaxed">${escHtml(d.cityDesc)}</p>` : ''}
+        ${ztlBanner}
         <div class="grid grid-cols-1 gap-2 mb-3">
           <div class="flex gap-2 items-start"><span class="text-amber-400 flex-shrink-0">☀️</span><p class="text-sm"><strong>AM:</strong> ${escHtml(d.am)}</p></div>
           <div class="flex gap-2 items-start"><span class="flex-shrink-0">🌙</span><p class="text-sm"><strong>PM:</strong> ${escHtml(d.pm)}</p></div>
@@ -2148,16 +2284,13 @@ function renderCollapsibleDay(d) {
         <div class="flex flex-wrap gap-2 mb-3 text-xs">
           <span class="px-2 py-1 rounded-full bg-indigo-50 dark:bg-indigo-900/30">🛏 ${escHtml(d.sleep)} ${d.sleepIcon}</span>
           <span class="px-2 py-1 rounded-full ${d.parkingStatus === 'warn' ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300' : 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300'}">${escHtml(d.parking)}</span>
-          ${d.ztl !== '—' ? `<span class="px-2 py-1 rounded-full ${d.ztlStatus === 'warn' || d.ztlStatus === 'danger' ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300' : 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300'}">${escHtml(d.ztl)}</span>` : ''}
+          ${ztlPill}
         </div>
-        ${ztlBanner}
-        <div class="family-tip rounded-xl p-3 mb-3">
-          <p class="font-heading font-600 text-sm mb-1">👨‍👩‍👧‍👦 Family Tip</p>
-          <p class="text-sm">${escHtml(d.familyTip)}</p>
-        </div>
-        ${driveRouteHtml}
-        ${parkingStrategyHtml}
-        ${destsHtml}
+        ${sec('desc', '📖', 'About This Destination', d.cityDesc ? `<p class="text-sm italic text-gray-500 dark:text-gray-400 leading-relaxed">${escHtml(d.cityDesc)}</p>` : '', false)}
+        ${sec('tip', '👨‍👩‍👧‍👦', 'Family Tip', `<div class="family-tip rounded-xl p-3"><p class="text-sm">${escHtml(d.familyTip)}</p></div>`, true)}
+        ${sec('drive', '🚗', 'Drive Route', driveRouteBody ? `<div class="bg-amber-50 dark:bg-amber-900/30 rounded-xl p-3">${driveRouteBody}</div>` : '', false)}
+        ${sec('park', '🅿️', 'Parking Strategy', parkingBody ? `<div class="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-3">${parkingBody}</div>` : '', false)}
+        ${sec('dests', '📍', 'Destinations (' + (d.destinations ? d.destinations.length : 0) + ')', destsBody, true)}
         ${renderMidwayStops(d)}
         ${renderAlternatives(d)}
       </div>
@@ -2586,9 +2719,13 @@ function renderSettings() {
   el.innerHTML = `
     <h2 class="font-heading font-700 text-xl mb-4">⚙️ Settings</h2>
 
-    <!-- Travel Details -->
+    <!-- Travel Details (collapsible) -->
     <div class="glass rounded-2xl p-4 mb-4">
-      <h3 class="font-heading font-700 text-base mb-3">✈️ Travel Details</h3>
+      <button onclick="toggleSettingsSection('travel')" class="flex items-center justify-between w-full text-left">
+        <h3 class="font-heading font-700 text-base">✈️ Travel Details</h3>
+        <span class="chevron text-xs text-gray-400" id="setChev-travel">▼</span>
+      </button>
+      <div id="setBody-travel" class="hidden mt-3">
       <div class="space-y-3">
         <div>
           <label class="text-xs font-600 text-gray-500 dark:text-gray-400 mb-1 block">Outbound Flight</label>
@@ -2606,6 +2743,7 @@ function renderSettings() {
           <label class="text-xs font-600 text-gray-500 dark:text-gray-400 mb-1 block">Travel Insurance</label>
           <input type="text" id="travelInsurance" class="w-full border border-gray-200 dark:border-gray-700 rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-teal-400" placeholder="e.g. Allianz — Policy# XYZ789 — Hotline: +1-800-..." value="${escHtml(state.travelDetails?.insurance || '')}" onchange="state.travelDetails=state.travelDetails||{};state.travelDetails.insurance=this.value;saveState()">
         </div>
+      </div>
       </div>
     </div>
 
@@ -2640,9 +2778,13 @@ function renderSettings() {
       </div>
     </div>
 
-    <!-- Trip Stats -->
+    <!-- Trip Stats (collapsible) -->
     <div class="glass rounded-2xl p-4 mb-4">
-      <h3 class="font-heading font-700 text-base mb-3">📊 Trip Stats</h3>
+      <button onclick="toggleSettingsSection('stats')" class="flex items-center justify-between w-full text-left">
+        <h3 class="font-heading font-700 text-base">📊 Trip Stats</h3>
+        <span class="chevron text-xs text-gray-400" id="setChev-stats">▼</span>
+      </button>
+      <div id="setBody-stats" class="hidden mt-3">
       <div class="grid grid-cols-3 gap-3">
         <div class="text-center"><p class="font-heading font-700 text-xl text-teal-600 dark:text-teal-400">11</p><p class="text-xs text-gray-400">Days</p></div>
         <div class="text-center"><p class="font-heading font-700 text-xl text-teal-600 dark:text-teal-400">6</p><p class="text-xs text-gray-400">Hotels</p></div>
@@ -2654,11 +2796,16 @@ function renderSettings() {
         <div><p class="font-heading font-600 text-sm">${totalExpenses}</p><p class="text-xs text-gray-400">Expenses</p></div>
         <div><p class="font-heading font-600 text-sm">${checkedItems}/${checklistItems}</p><p class="text-xs text-gray-400">Items Checked</p></div>
       </div>
+      </div>
     </div>
 
-    <!-- ZTL Quick Reference -->
+    <!-- ZTL Quick Reference (collapsible) -->
     <div class="glass rounded-2xl p-4 mb-4">
-      <h3 class="font-heading font-700 text-base mb-3">🚦 ZTL Quick Reference</h3>
+      <button onclick="toggleSettingsSection('ztl')" class="flex items-center justify-between w-full text-left">
+        <h3 class="font-heading font-700 text-base">🚦 ZTL Quick Reference</h3>
+        <span class="chevron text-xs text-gray-400" id="setChev-ztl">▼</span>
+      </button>
+      <div id="setBody-ztl" class="hidden mt-3">
       <div class="space-y-2">
         <div class="flex items-center gap-3 p-2 bg-green-50 dark:bg-green-900/20 rounded-xl">
           <span class="text-lg">🇦🇹</span>
@@ -2705,11 +2852,16 @@ function renderSettings() {
         <a href="https://mominitaly.com/ztl-in-italy/" target="_blank" rel="noopener noreferrer" class="tap text-xs px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full font-600 transition">Italy ZTL Guide →</a>
         <a href="https://www.autoeurope.com/italy-ztl-zones/" target="_blank" rel="noopener noreferrer" class="tap text-xs px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full font-600 transition">Auto Europe ZTL Maps →</a>
       </div>
+      </div>
     </div>
 
-    <!-- Emergency & Travel Info -->
+    <!-- Emergency & Travel Info (collapsible) -->
     <div class="glass rounded-2xl p-4 mb-4">
-      <h3 class="font-heading font-700 text-base mb-3">🆘 Emergency & Travel Info</h3>
+      <button onclick="toggleSettingsSection('emergency')" class="flex items-center justify-between w-full text-left">
+        <h3 class="font-heading font-700 text-base">🆘 Emergency & Travel Info</h3>
+        <span class="chevron text-xs text-gray-400" id="setChev-emergency">▼</span>
+      </button>
+      <div id="setBody-emergency" class="hidden mt-3">
       <div class="space-y-2">
         <div class="flex items-center gap-3 p-2 bg-red-50 dark:bg-red-900/20 rounded-xl">
           <span class="text-lg">📞</span>
@@ -2728,11 +2880,16 @@ function renderSettings() {
           <div class="flex-1"><p class="text-sm font-600">Travel Insurance</p><p class="text-xs text-gray-500 dark:text-gray-400">Keep policy number & claim hotline accessible offline</p></div>
         </div>
       </div>
+      </div>
     </div>
 
-    <!-- Road & Toll Info -->
+    <!-- Road & Toll Info (collapsible) -->
     <div class="glass rounded-2xl p-4 mb-4">
-      <h3 class="font-heading font-700 text-base mb-3">🛣 Road & Toll Info</h3>
+      <button onclick="toggleSettingsSection('road')" class="flex items-center justify-between w-full text-left">
+        <h3 class="font-heading font-700 text-base">🛣 Road & Toll Info</h3>
+        <span class="chevron text-xs text-gray-400" id="setChev-road">▼</span>
+      </button>
+      <div id="setBody-road" class="hidden mt-3">
       <div class="space-y-3">
         <div class="bg-teal-50 dark:bg-teal-900/20 rounded-xl p-3">
           <p class="font-heading font-600 text-sm mb-1">🇦🇹 Austria Vignette (Required!)</p>
@@ -2748,11 +2905,16 @@ function renderSettings() {
           <p class="text-xs text-gray-600 dark:text-gray-400">Fuel is ~€1.80/L in both countries. Highway stations cost more — fill up off the autostrada. "Servito" = attendant pumps (more expensive), "Self" = self-service. Keep tank above ¼ in rural Tuscany.</p>
         </div>
       </div>
+      </div>
     </div>
 
-    <!-- Cloud Sync -->
+    <!-- Cloud Sync (collapsible) -->
     <div class="glass rounded-2xl p-4 mb-4">
-      <h3 class="font-heading font-700 text-base mb-3">☁️ Cloud Sync</h3>
+      <button onclick="toggleSettingsSection('sync')" class="flex items-center justify-between w-full text-left">
+        <h3 class="font-heading font-700 text-base">☁️ Cloud Sync</h3>
+        <span class="chevron text-xs text-gray-400" id="setChev-sync">▼</span>
+      </button>
+      <div id="setBody-sync" class="hidden mt-3">
       <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Sync your data across all devices using GitHub. Enter your token once — it stays saved on this device.</p>
       <div class="space-y-3">
         <div>
@@ -2766,14 +2928,20 @@ function renderSettings() {
         <div id="syncStatus" class="text-xs text-center text-gray-400"></div>
         ${getSyncGistId() ? '<p class="text-xs text-green-600 dark:text-green-400 text-center">✅ Linked to cloud</p>' : '<p class="text-xs text-gray-400 text-center">Not yet linked — push to create your sync</p>'}
       </div>
+      </div>
     </div>
 
-    <!-- Data Management -->
+    <!-- Data Management (collapsible) -->
     <div class="glass rounded-2xl p-4 mb-4">
-      <h3 class="font-heading font-700 text-base mb-3">📦 Data Management</h3>
-      <div class="space-y-3">
-        <button onclick="exportAllData()" class="tap w-full py-3 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-xl font-heading font-600 text-sm hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition">📋 Export All Data (Clipboard)</button>
-        <button onclick="clearAllData()" class="tap w-full py-3 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-xl font-heading font-600 text-sm hover:bg-red-100 dark:hover:bg-red-900/50 transition">🗑 Clear All Data</button>
+      <button onclick="toggleSettingsSection('data')" class="flex items-center justify-between w-full text-left">
+        <h3 class="font-heading font-700 text-base">📦 Data Management</h3>
+        <span class="chevron text-xs text-gray-400" id="setChev-data">▼</span>
+      </button>
+      <div id="setBody-data" class="hidden mt-3">
+        <div class="space-y-3">
+          <button onclick="exportAllData()" class="tap w-full py-3 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-xl font-heading font-600 text-sm hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition">📋 Export All Data (Clipboard)</button>
+          <button onclick="clearAllData()" class="tap w-full py-3 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-xl font-heading font-600 text-sm hover:bg-red-100 dark:hover:bg-red-900/50 transition">🗑 Clear All Data</button>
+        </div>
       </div>
     </div>
 
@@ -2971,6 +3139,7 @@ function init() {
   applyFontSize();
   switchTab(state.activeTab || 'today');
   setupSwipe();
+  setupBackToTop();
   checkAutoNightMode();
   // Check auto night mode every minute
   setInterval(checkAutoNightMode, 60000);
