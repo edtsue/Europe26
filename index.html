@@ -32,7 +32,7 @@ window.addEventListener('pageshow', function(e) {
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
 tailwind.config = {
@@ -40,8 +40,8 @@ tailwind.config = {
   theme: {
     extend: {
       fontFamily: {
-        heading: ['"EB Garamond"', 'Georgia', 'serif'],
-        body: ['"EB Garamond"', 'Georgia', 'serif'],
+        heading: ['"Space Grotesk"', 'system-ui', 'sans-serif'],
+        body: ['"Space Grotesk"', 'system-ui', 'sans-serif'],
       },
       colors: {
         austria: { DEFAULT: '#0d9488', light: '#99f6e4', dark: '#134e4a' },
@@ -60,8 +60,8 @@ tailwind.config = {
     html { scroll-behavior: auto; }
     *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   }
-  body { font-family: 'EB Garamond', Georgia, serif; margin: 0; padding: 0; min-height: 100vh; -webkit-font-smoothing: antialiased; }
-  h1, h2, h3, h4, h5, h6 { font-family: 'EB Garamond', Georgia, serif; }
+  body { font-family: 'Space Grotesk', system-ui, sans-serif; margin: 0; padding: 0; min-height: 100vh; -webkit-font-smoothing: antialiased; font-size: 17px; }
+  h1, h2, h3, h4, h5, h6 { font-family: 'Space Grotesk', system-ui, sans-serif; }
 
   /* Phase gradients */
   .phase-austria { background: linear-gradient(135deg, #0d9488 0%, #059669 50%, #047857 100%); }
