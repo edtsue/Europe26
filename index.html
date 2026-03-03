@@ -117,15 +117,28 @@ tailwind.config = {
   .dark .progress-track { background: #334155; }
   .progress-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
 
-  /* Family tip */
-  .family-tip { background: linear-gradient(135deg, #fce7f3, #fdf2f8); border-left: 4px solid #ec4899; }
-  .dark .family-tip { background: linear-gradient(135deg, #831843, #4a0e2e); border-left: 4px solid #f472b6; }
+  /* Tier section colors — left border + tinted background */
+  .tier-travel { border-left: 4px solid #60a5fa; background: rgba(239,246,255,0.6); }
+  .dark .tier-travel { border-left-color: #60a5fa; background: rgba(30,58,138,0.2); }
+  .tier-headsup { border-left: 4px solid #fbbf24; background: rgba(255,251,235,0.6); }
+  .dark .tier-headsup { border-left-color: #fbbf24; background: rgba(120,53,15,0.2); }
+  .tier-dests { border-left: 4px solid #2dd4bf; background: rgba(240,253,250,0.6); }
+  .dark .tier-dests { border-left-color: #2dd4bf; background: rgba(19,78,74,0.2); }
+  .tier-familytip { border-left: 4px solid #f472b6; background: rgba(253,242,248,0.6); }
+  .dark .tier-familytip { border-left-color: #f472b6; background: rgba(131,24,67,0.2); }
+  .tier-about { border-left: 4px solid #d1d5db; background: rgba(249,250,251,0.6); }
+  .dark .tier-about { border-left-color: #4b5563; background: rgba(31,41,55,0.5); }
+  .tier-alts { border-left: 4px solid #fb923c; background: rgba(255,237,213,0.6); }
+  .dark .tier-alts { border-left-color: #fb923c; background: rgba(124,45,18,0.2); }
+  .tier-midway { border-left: 4px solid #eab308; background: rgba(254,252,232,0.6); }
+  .dark .tier-midway { border-left-color: #eab308; background: rgba(113,63,18,0.2); }
 
-  /* ZTL banner */
-  .ztl-banner { background: linear-gradient(135deg, #fef3c7, #fde68a); border-left: 4px solid #f59e0b; }
-  .dark .ztl-banner { background: linear-gradient(135deg, #78350f, #451a03); border-left: 4px solid #fbbf24; }
-  .ztl-danger { background: linear-gradient(135deg, #fee2e2, #fecaca); border-left: 4px solid #ef4444; }
-  .dark .ztl-danger { background: linear-gradient(135deg, #7f1d1d, #450a0a); border-left: 4px solid #f87171; }
+  /* Day header indicator badges */
+  .day-badge { display: inline-flex; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* Count badge for collapsible sections */
+  .sec-count { display: inline-flex; padding: 1px 8px; border-radius: 999px; font-size: 0.65rem; font-weight: 600; background: rgba(0,0,0,0.06); color: #6b7280; margin-left: 6px; }
+  .dark .sec-count { background: rgba(255,255,255,0.08); color: #9ca3af; }
 
   /* Expense category colors */
   .cat-food { background: #fef3c7; color: #92400e; }
@@ -143,16 +156,20 @@ tailwind.config = {
   .dark .cat-parking { background: #312e81; color: #a5b4fc; }
   .dark .cat-other { background: #334155; color: #94a3b8; }
 
-  /* Alternative cities explorer */
-  .alt-explorer { border: 2px dashed rgba(194,65,12,0.3); background: linear-gradient(135deg, rgba(255,237,213,0.4), rgba(254,215,170,0.2)); }
-  .dark .alt-explorer { border-color: rgba(251,146,60,0.3); background: linear-gradient(135deg, rgba(124,45,18,0.3), rgba(154,52,18,0.15)); }
+  /* Shared accent styles (used in Hotels, Settings tabs) */
+  .family-tip { background: linear-gradient(135deg, #fce7f3, #fdf2f8); border-left: 4px solid #ec4899; }
+  .dark .family-tip { background: linear-gradient(135deg, #831843, #4a0e2e); border-left: 4px solid #f472b6; }
+  .ztl-danger { background: linear-gradient(135deg, #fee2e2, #fecaca); border-left: 4px solid #ef4444; }
+  .dark .ztl-danger { background: linear-gradient(135deg, #7f1d1d, #450a0a); border-left: 4px solid #f87171; }
+  .alt-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 999px; font-size: 0.7rem; font-weight: 600; background: linear-gradient(135deg, #c2410c, #9a3412); color: white; }
+
+  /* Alternative/midway city cards */
   .alt-city-card { border: 1px solid rgba(194,65,12,0.2); transition: all 0.3s ease; cursor: pointer; }
   .alt-city-card:hover { border-color: rgba(194,65,12,0.5); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
   .dark .alt-city-card { border-color: rgba(251,146,60,0.2); }
   .dark .alt-city-card:hover { border-color: rgba(251,146,60,0.5); }
   .alt-city-card.expanded { border-color: #c2410c; background: rgba(255,237,213,0.3); }
   .dark .alt-city-card.expanded { border-color: #fb923c; background: rgba(124,45,18,0.3); }
-  .alt-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 999px; font-size: 0.7rem; font-weight: 600; background: linear-gradient(135deg, #c2410c, #9a3412); color: white; }
 
   /* Modal overlay */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; display: flex; align-items: flex-end; justify-content: center; }
@@ -282,7 +299,7 @@ tailwind.config = {
   .dest-visited .font-heading { text-decoration: line-through; }
 
   /* Collapsible section toggle */
-  .sec-toggle { display: flex; align-items: center; justify-content: space-between; width: 100%; text-align: left; padding: 8px 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .sec-toggle { display: flex; align-items: center; justify-content: space-between; width: 100%; text-align: left; padding: 10px 12px; min-height: 44px; cursor: pointer; -webkit-tap-highlight-color: transparent; border-radius: 8px; }
   .sec-toggle:active { opacity: 0.7; }
 
   /* Section jump menu */
@@ -472,6 +489,7 @@ const DAYS = [
       { flight: 'AF 0062', route: 'New York (EWR) → Paris (CDG)', depart: '5:05 PM ET (Mar 22)', arrive: '6:10 AM CET (Mar 23)', confirmation: 'ZTWSTH' },
       { flight: 'AF 1722', route: 'Paris (CDG) → Munich (MUC)', depart: '9:30 AM CET', arrive: '11:00 AM CET', confirmation: 'ZTWSTH' }
     ],
+    rentalCar: { company: 'Sixt', confirmation: '9731331737', pickup: 'Munich Airport', dropoff: 'Florence Airport' },
     am: 'Land Munich (11 AM) → Pick up rental car → 1.5 hr scenic drive to Salzburg',
     pm: 'Salzburg Old Town stroll + early family dinner',
     sleep: 'Salzburg', sleepIcon: '🏰',
@@ -1316,7 +1334,11 @@ function toggleSection(id) {
   const body = document.getElementById('secBody-' + id);
   const chev = document.getElementById('secChev-' + id);
   if (body) body.classList.toggle('hidden');
-  if (chev) chev.classList.toggle('open');
+  if (chev) {
+    chev.classList.toggle('open');
+    const btn = chev.closest('.sec-toggle');
+    if (btn) btn.setAttribute('aria-expanded', !body.classList.contains('hidden'));
+  }
 }
 
 function scrollToSection(id) {
@@ -1370,61 +1392,6 @@ function checkAutoNightMode() {
   }
 }
 
-function renderAlternatives(d) {
-  if (!d.alternatives || d.alternatives.length === 0) return '';
-  return `<div class="alt-explorer rounded-2xl p-4 mt-4">
-    <button onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.chevron').classList.toggle('open')" class="tap flex items-center justify-between w-full text-left">
-      <div class="flex items-center gap-2">
-        <span class="alt-badge">✨ NEW</span>
-        <span class="font-heading font-700 text-sm">Explore Alternative Cities</span>
-      </div>
-      <span class="chevron text-sm text-gray-400">▼</span>
-    </button>
-    <div class="hidden mt-3">
-      <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Instead of the planned route, consider these alternative bases for your Tuscany days:</p>
-      <div class="space-y-3">${d.alternatives.map((alt, i) => `
-        <div class="alt-city-card rounded-xl overflow-hidden" id="alt-${d.day}-${i}">
-          <button onclick="toggleAltCity(${d.day}, ${i})" class="tap w-full text-left p-3">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <span class="text-2xl">${alt.emoji}</span>
-                <div>
-                  <p class="font-heading font-700 text-sm">${escHtml(alt.city)}</p>
-                  <p class="text-xs text-gray-500 dark:text-gray-400">${escHtml(alt.driveFromPrev)}</p>
-                </div>
-              </div>
-              <span class="chevron text-xs text-gray-400" id="altChev-${d.day}-${i}">▼</span>
-            </div>
-            <p class="text-xs mt-2 leading-relaxed">${escHtml(alt.pitch)}</p>
-          </button>
-          <div class="hidden px-3 pb-3" id="altBody-${d.day}-${i}">
-            <div class="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-2.5 mb-3">
-              <p class="text-xs font-600 text-orange-800 dark:text-orange-300">💡 Why swap? ${escHtml(alt.whySwap)}</p>
-            </div>
-            <p class="font-heading font-600 text-xs mb-2">🏛 Highlights</p>
-            <div class="space-y-2 mb-3">${alt.highlights.map(h => `<div class="glass rounded-lg p-2.5">
-              <p class="font-heading font-600 text-xs">${escHtml(h.name)}</p>
-              <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${escHtml(h.desc)}</p>
-            </div>`).join('')}</div>
-            ${alt.hotels.length > 0 ? `<p class="font-heading font-600 text-xs mb-2">🏨 Where to Stay</p>
-            <div class="space-y-2 mb-3">${alt.hotels.map(h => `<div class="glass rounded-lg p-2.5">
-              <div class="flex justify-between items-start">
-                <p class="font-heading font-600 text-xs">${escHtml(h.name)}</p>
-                <span class="text-xs text-amber-600 dark:text-amber-400 font-600 ml-2">${h.price}</span>
-              </div>
-              <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${escHtml(h.desc)}</p>
-              <a href="${h.url}" target="_blank" rel="noopener noreferrer" class="inline-block mt-1 text-xs font-600 text-teal-600 dark:text-teal-400">View →</a>
-            </div>`).join('')}</div>` : ''}
-            <div class="rounded-lg p-2.5 text-xs ${alt.ztlNote.startsWith('✅') ? 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300' : alt.ztlNote.startsWith('🔴') ? 'bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-300' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300'}">
-              🚗 ${escHtml(alt.ztlNote)}
-            </div>
-          </div>
-        </div>`).join('')}
-      </div>
-    </div>
-  </div>`;
-}
-
 function toggleAltCity(day, idx) {
   const body = document.getElementById('altBody-' + day + '-' + idx);
   const card = document.getElementById('alt-' + day + '-' + idx);
@@ -1434,67 +1401,6 @@ function toggleAltCity(day, idx) {
     card.classList.toggle('expanded');
     chev.classList.toggle('open');
   }
-}
-
-// ============================================================
-// RENDER: MIDWAY STOPS (for day cards)
-// ============================================================
-function renderMidwayStops(d) {
-  if (!d.midwayStops || d.midwayStops.length === 0) return '';
-  return `<div class="alt-explorer rounded-2xl p-4 mt-4" style="border-color:rgba(217,119,6,0.3);background:linear-gradient(135deg,rgba(254,243,199,0.4),rgba(253,230,138,0.2))">
-    <button onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.chevron').classList.toggle('open')" class="tap flex items-center justify-between w-full text-left">
-      <div class="flex items-center gap-2">
-        <span class="alt-badge" style="background:linear-gradient(135deg,#d97706,#92400e)">🛑 OPTION</span>
-        <span class="font-heading font-700 text-sm">Break Up the Drive — Overnight Stop</span>
-      </div>
-      <span class="chevron text-sm text-gray-400">▼</span>
-    </button>
-    <div class="hidden mt-3">
-      <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Instead of driving straight through, consider an overnight at one of these worthwhile stops:</p>
-      <div class="space-y-3">${d.midwayStops.map((stop, i) => `
-        <div class="alt-city-card rounded-xl overflow-hidden" style="border-color:rgba(217,119,6,0.2)" id="midway-${d.day}-${i}">
-          <button onclick="toggleMidway(${d.day}, ${i})" class="tap w-full text-left p-3">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <span class="text-2xl">${stop.emoji}</span>
-                <div>
-                  <p class="font-heading font-700 text-sm">${escHtml(stop.city)}</p>
-                  <p class="text-xs text-gray-500 dark:text-gray-400">${escHtml(stop.driveFromPrev)} · then ${escHtml(stop.driveToNext)}</p>
-                </div>
-              </div>
-              <span class="chevron text-xs text-gray-400" id="midwayChev-${d.day}-${i}">▼</span>
-            </div>
-            <p class="text-xs mt-2 leading-relaxed">${escHtml(stop.pitch)}</p>
-          </button>
-          <div class="hidden px-3 pb-3" id="midwayBody-${d.day}-${i}">
-            <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-2.5 mb-3">
-              <p class="text-xs font-600 text-amber-800 dark:text-amber-300">💡 Why stop? ${escHtml(stop.whyStop)}</p>
-            </div>
-            <p class="font-heading font-600 text-xs mb-2">🏛 Highlights</p>
-            <div class="space-y-2 mb-3">${stop.highlights.map(h => `<div class="glass rounded-lg p-2.5">
-              <p class="font-heading font-600 text-xs">${escHtml(h.name)}</p>
-              <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${escHtml(h.desc)}</p>
-            </div>`).join('')}</div>
-            ${stop.hotels && stop.hotels.length > 0 ? `<p class="font-heading font-600 text-xs mb-2">🏨 Where to Stay</p>
-            <div class="space-y-2 mb-3">${stop.hotels.map(h => `<div class="glass rounded-lg p-2.5">
-              <div class="flex justify-between items-start">
-                <p class="font-heading font-600 text-xs">${escHtml(h.name)}</p>
-                <span class="text-xs text-amber-600 dark:text-amber-400 font-600 ml-2">${h.price}</span>
-              </div>
-              <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${escHtml(h.desc)}</p>
-              <div class="flex gap-3 mt-1">
-                <a href="${h.url}" target="_blank" rel="noopener noreferrer" class="text-xs font-600 text-teal-600 dark:text-teal-400">View →</a>
-                <a href="${mapsUrl(h.name)}" target="_blank" rel="noopener noreferrer" class="text-xs font-600 text-blue-600 dark:text-blue-400">📍 Map</a>
-              </div>
-            </div>`).join('')}</div>` : ''}
-            <div class="rounded-lg p-2.5 text-xs ${stop.ztlNote.startsWith('✅') ? 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300' : stop.ztlNote.startsWith('🔴') ? 'bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-300' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300'}">
-              🚗 ${escHtml(stop.ztlNote)}
-            </div>
-          </div>
-        </div>`).join('')}
-      </div>
-    </div>
-  </div>`;
 }
 
 function toggleMidway(day, idx) {
@@ -2059,37 +1965,124 @@ function renderDestCard(dest, dayNum) {
 
 function renderCollapsibleDay(d) {
   const isExpanded = state.expandedDays.includes(d.day);
-  const n = 'd' + d.day; // prefix to distinguish from Today tab sections
+  const n = 'd' + d.day;
 
-  const ztlMapLink = d.ztlMapUrl ? ` <a href="${escHtml(d.ztlMapUrl)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 ml-2 text-xs font-600 px-2 py-0.5 rounded-full bg-white/40 dark:bg-black/20 hover:bg-white/60 dark:hover:bg-black/30 transition">🗺 View ZTL Map →</a>` : '';
-  const hasZtlBanner = (d.phase === 'italy' || d.phase === 'transition') && (d.ztlStatus === 'warn' || d.ztlStatus === 'danger');
-  const ztlBanner = hasZtlBanner
-    ? `<div class="${d.ztlStatus === 'danger' ? 'ztl-danger' : 'ztl-banner'} rounded-xl p-3 mb-3"><p class="font-heading font-600 text-sm">${d.ztlStatus === 'danger' ? '🛑' : '🚦'} ZTL Warning: ${escHtml(d.ztl)}${ztlMapLink}</p></div>` : '';
+  // --- Pre-compute flags ---
+  const ztlMapLink = d.ztlMapUrl ? ` <a href="${escHtml(d.ztlMapUrl)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 ml-1 text-xs font-600 underline">🗺 ZTL Map</a>` : '';
+  const hasZtlWarn = (d.phase === 'italy' || d.phase === 'transition') && (d.ztlStatus === 'warn' || d.ztlStatus === 'danger');
+  const ztlPill = (d.ztl && d.ztl !== '—') ? `<span class="px-2 py-1 rounded-full ${d.ztlStatus === 'warn' || d.ztlStatus === 'danger' ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300' : 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300'}">${escHtml(d.ztl)}</span>` : '';
 
-  const driveRouteBody = d.driveRoute ? `<ul class="text-sm space-y-1">${d.driveRoute.map(r => `<li class="flex gap-2"><span class="text-amber-500">→</span><span>${escHtml(r)}</span></li>`).join('')}</ul>` : '';
-  const parkingBody = d.parkingStrategy ? `<p class="text-sm">${escHtml(d.parkingStrategy)}</p>` : '';
-  const flightsBody = d.flights ? `<div class="space-y-2">${d.flights.map(f => `<div class="glass rounded-xl p-3">
-    <div class="flex items-center justify-between mb-1"><span class="font-heading font-700 text-sm">✈️ ${escHtml(f.flight)}</span><span class="text-xs px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 font-mono">${escHtml(f.confirmation)}</span></div>
-    <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">${escHtml(f.route)}</p>
-    <div class="flex gap-4 text-xs"><span>🛫 ${escHtml(f.depart)}</span><span>🛬 ${escHtml(f.arrive)}</span></div>
-  </div>`).join('')}</div>` : '';
+  // --- Build Travel & Logistics body ---
+  const travelParts = [];
+  if (d.flights) {
+    travelParts.push(d.flights.map(f => `<div class="glass rounded-lg p-2.5 mb-2">
+      <div class="flex items-center justify-between mb-1"><span class="font-heading font-600 text-xs">✈️ ${escHtml(f.flight)}</span><span class="text-xs px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 font-mono">${escHtml(f.confirmation)}</span></div>
+      <p class="text-xs text-gray-500 dark:text-gray-400">${escHtml(f.route)}</p>
+      <div class="flex gap-3 text-xs text-gray-600 dark:text-gray-400 mt-1"><span>🛫 ${escHtml(f.depart)}</span><span>🛬 ${escHtml(f.arrive)}</span></div>
+    </div>`).join(''));
+  }
+  if (d.rentalCar) {
+    travelParts.push(`<div class="glass rounded-lg p-2.5 mb-2">
+      <div class="flex items-center justify-between mb-1"><span class="font-heading font-600 text-xs">🚗 ${escHtml(d.rentalCar.company)}</span><span class="text-xs px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 font-mono">${escHtml(d.rentalCar.confirmation)}</span></div>
+      <p class="text-xs text-gray-500 dark:text-gray-400">Pickup: ${escHtml(d.rentalCar.pickup)} → Drop-off: ${escHtml(d.rentalCar.dropoff)}</p>
+    </div>`);
+  }
+  if (d.driveRoute) {
+    travelParts.push(`<div class="mb-2"><p class="font-heading font-600 text-xs mb-1">🛣 Drive Route</p><ul class="text-xs space-y-1">${d.driveRoute.map(r => `<li class="flex gap-2"><span class="text-amber-500">→</span><span>${escHtml(r)}</span></li>`).join('')}</ul></div>`);
+  }
+  if (d.parkingStrategy) {
+    travelParts.push(`<div><p class="font-heading font-600 text-xs mb-1">🅿️ Parking Strategy</p><p class="text-xs">${escHtml(d.parkingStrategy)}</p></div>`);
+  }
+  const travelBody = travelParts.join('');
+
+  // --- Build Heads Up body ---
+  const headsUpParts = [];
+  if (d.reminders) {
+    d.reminders.forEach(r => {
+      headsUpParts.push(`<div class="glass rounded-lg p-2.5 mb-2"><p class="font-heading font-600 text-xs">⚠️ ${escHtml(r.text)}</p>${r.url ? `<a href="${escHtml(r.url)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 mt-1.5 px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-heading font-600 transition tap">${escHtml(r.label)}</a>` : ''}</div>`);
+    });
+  }
+  if (hasZtlWarn) {
+    const ztlIcon = d.ztlStatus === 'danger' ? '🛑' : '🚦';
+    headsUpParts.push(`<div class="glass rounded-lg p-2.5 mb-2"><p class="font-heading font-600 text-xs">${ztlIcon} ZTL: ${escHtml(d.ztl)}${ztlMapLink}</p></div>`);
+  }
+  const headsUpBody = headsUpParts.join('');
+  const headsUpCount = headsUpParts.length;
+
+  // --- Build Destinations body ---
   const destsBody = d.destinations && d.destinations.length > 0
     ? `<div class="dest-grid" style="gap:0.5rem">${d.destinations.map(dest => renderDestCard(dest, d.day)).join('')}</div>` : '';
 
-  // Hide ZTL pill when banner shows
-  const ztlPill = (!hasZtlBanner && d.ztl !== '—') ? `<span class="px-2 py-1 rounded-full ${d.ztlStatus === 'warn' || d.ztlStatus === 'danger' ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300' : 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300'}">${escHtml(d.ztl)}</span>` : '';
+  // --- Build Alternatives body ---
+  const altsBody = (d.alternatives && d.alternatives.length > 0)
+    ? `<p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Consider these alternative bases:</p>
+       <div class="space-y-3">${d.alternatives.map((alt, i) => `
+        <div class="alt-city-card rounded-xl overflow-hidden" id="alt-${d.day}-${i}">
+          <button onclick="toggleAltCity(${d.day}, ${i})" class="tap w-full text-left p-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-2xl">${alt.emoji}</span>
+                <div>
+                  <p class="font-heading font-700 text-sm">${escHtml(alt.city)}</p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">${escHtml(alt.driveFromPrev)}</p>
+                </div>
+              </div>
+              <span class="chevron text-xs text-gray-400" id="altChev-${d.day}-${i}">▼</span>
+            </div>
+            <p class="text-xs mt-2 leading-relaxed">${escHtml(alt.pitch)}</p>
+          </button>
+          <div class="hidden px-3 pb-3" id="altBody-${d.day}-${i}">
+            <div class="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-2.5 mb-3">
+              <p class="text-xs font-600 text-orange-800 dark:text-orange-300">💡 Why swap? ${escHtml(alt.whySwap)}</p>
+            </div>
+            <p class="font-heading font-600 text-xs mb-2">🏛 Highlights</p>
+            <div class="space-y-2 mb-3">${alt.highlights.map(h => `<div class="glass rounded-lg p-2.5"><p class="font-heading font-600 text-xs">${escHtml(h.name)}</p><p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${escHtml(h.desc)}</p></div>`).join('')}</div>
+            ${alt.hotels.length > 0 ? `<p class="font-heading font-600 text-xs mb-2">🏨 Where to Stay</p><div class="space-y-2 mb-3">${alt.hotels.map(h => `<div class="glass rounded-lg p-2.5"><div class="flex justify-between items-start"><p class="font-heading font-600 text-xs">${escHtml(h.name)}</p><span class="text-xs text-amber-600 dark:text-amber-400 font-600 ml-2">${h.price}</span></div><p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${escHtml(h.desc)}</p><a href="${h.url}" target="_blank" rel="noopener noreferrer" class="inline-block mt-1 text-xs font-600 text-teal-600 dark:text-teal-400">View →</a></div>`).join('')}</div>` : ''}
+            <div class="rounded-lg p-2.5 text-xs ${alt.ztlNote.startsWith('✅') ? 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300' : alt.ztlNote.startsWith('🔴') ? 'bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-300' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300'}">🚗 ${escHtml(alt.ztlNote)}</div>
+          </div>
+        </div>`).join('')}</div>` : '';
 
-  // Collapsible helper
-  function sec(id, icon, title, body, defaultOpen) {
+  // --- Build Midway Stops body ---
+  const midwayBody = (d.midwayStops && d.midwayStops.length > 0)
+    ? `<p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Break up the drive with an overnight stop:</p>
+       <div class="space-y-3">${d.midwayStops.map((stop, i) => `
+        <div class="alt-city-card rounded-xl overflow-hidden" style="border-color:rgba(217,119,6,0.2)" id="midway-${d.day}-${i}">
+          <button onclick="toggleMidway(${d.day}, ${i})" class="tap w-full text-left p-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-2xl">${stop.emoji}</span>
+                <div>
+                  <p class="font-heading font-700 text-sm">${escHtml(stop.city)}</p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">${escHtml(stop.driveFromPrev)} · then ${escHtml(stop.driveToNext)}</p>
+                </div>
+              </div>
+              <span class="chevron text-xs text-gray-400" id="midwayChev-${d.day}-${i}">▼</span>
+            </div>
+            <p class="text-xs mt-2 leading-relaxed">${escHtml(stop.pitch)}</p>
+          </button>
+          <div class="hidden px-3 pb-3" id="midwayBody-${d.day}-${i}">
+            <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-2.5 mb-3">
+              <p class="text-xs font-600 text-amber-800 dark:text-amber-300">💡 Why stop? ${escHtml(stop.whyStop)}</p>
+            </div>
+            <p class="font-heading font-600 text-xs mb-2">🏛 Highlights</p>
+            <div class="space-y-2 mb-3">${stop.highlights.map(h => `<div class="glass rounded-lg p-2.5"><p class="font-heading font-600 text-xs">${escHtml(h.name)}</p><p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${escHtml(h.desc)}</p></div>`).join('')}</div>
+            ${stop.hotels && stop.hotels.length > 0 ? `<p class="font-heading font-600 text-xs mb-2">🏨 Where to Stay</p><div class="space-y-2 mb-3">${stop.hotels.map(h => `<div class="glass rounded-lg p-2.5"><div class="flex justify-between items-start"><p class="font-heading font-600 text-xs">${escHtml(h.name)}</p><span class="text-xs text-amber-600 dark:text-amber-400 font-600 ml-2">${h.price}</span></div><p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${escHtml(h.desc)}</p><div class="flex gap-3 mt-1"><a href="${h.url}" target="_blank" rel="noopener noreferrer" class="text-xs font-600 text-teal-600 dark:text-teal-400">View →</a><a href="${mapsUrl(h.name)}" target="_blank" rel="noopener noreferrer" class="text-xs font-600 text-blue-600 dark:text-blue-400">📍 Map</a></div></div>`).join('')}</div>` : ''}
+            <div class="rounded-lg p-2.5 text-xs ${stop.ztlNote.startsWith('✅') ? 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300' : stop.ztlNote.startsWith('🔴') ? 'bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-300' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300'}">🚗 ${escHtml(stop.ztlNote)}</div>
+          </div>
+        </div>`).join('')}</div>` : '';
+
+  // --- Collapsible section helper ---
+  function sec(id, icon, title, body, opts) {
     if (!body) return '';
-    const hidden = defaultOpen ? '' : 'hidden';
-    const chevOpen = defaultOpen ? 'open' : '';
-    return `<div class="border-t border-gray-200 dark:border-gray-700 mt-1">
-      <button class="sec-toggle" onclick="toggleSection('${n}-${id}')">
-        <span class="font-heading font-600 text-sm">${icon} ${title}</span>
-        <span class="chevron text-xs text-gray-400 ${chevOpen}" id="secChev-${n}-${id}">▼</span>
+    opts = opts || {};
+    const tierClass = opts.tierClass || '';
+    const count = opts.count ? `<span class="sec-count">${opts.count}</span>` : '';
+    return `<div class="${tierClass} rounded-xl mt-2 overflow-hidden">
+      <button class="sec-toggle" onclick="toggleSection('${n}-${id}')" aria-expanded="false">
+        <span class="font-heading font-600 text-sm">${icon} ${title}${count}</span>
+        <span class="chevron text-xs text-gray-400" id="secChev-${n}-${id}">▼</span>
       </button>
-      <div id="secBody-${n}-${id}" class="${hidden} pb-3">${body}</div>
+      <div id="secBody-${n}-${id}" class="hidden px-3 pb-3">${body}</div>
     </div>`;
   }
 
@@ -2097,37 +2090,41 @@ function renderCollapsibleDay(d) {
     <button onclick="toggleDay(${d.day})" class="${phaseBg(d.phase)} text-white p-4 w-full text-left tap">
       <div class="flex justify-between items-center">
         <div>
-          <p class="text-xs opacity-80 font-body">${d.date} (${d.weekday})</p>
+          <div class="flex items-center gap-1.5">
+            <p class="text-xs opacity-80 font-body">${d.date} (${d.weekday})</p>
+            ${d.flights ? '<span class="day-badge bg-blue-400" title="Flight day"></span>' : ''}
+            ${hasZtlWarn ? '<span class="day-badge bg-red-400" title="ZTL warning"></span>' : ''}
+          </div>
           <h3 class="font-heading font-700 text-lg mt-0.5">${d.flag} Day ${d.day} — ${escHtml(d.title)}</h3>
         </div>
         <span class="chevron text-white text-lg ${isExpanded ? 'open' : ''}" id="chev-${d.day}">▼</span>
       </div>
       <div class="flex flex-wrap gap-2 mt-2 text-xs opacity-90">
-        <span>☀️ ${escHtml(d.am.substring(0, 40))}${d.am.length > 40 ? '...' : ''}</span>
+        <span>☀️ ${escHtml(d.am.substring(0, 50))}${d.am.length > 50 ? '...' : ''}</span>
       </div>
       <div class="mt-1 text-xs opacity-80">🛏 ${escHtml(d.sleep)} ${d.sleepIcon}</div>
     </button>
     <div id="dayBody-${d.day}" class="bg-white dark:bg-gray-800 ${isExpanded ? '' : 'hidden'}">
       <div class="p-4 ${isExpanded ? 'anim-slide' : ''}">
-        ${d.reminders ? d.reminders.map(r => `<div class="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded-xl p-3 mb-3"><p class="font-heading font-600 text-sm text-amber-800 dark:text-amber-200">⚠️ ${escHtml(r.text)}</p>${r.url ? `<a href="${escHtml(r.url)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 mt-2 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-heading font-600 transition tap">${escHtml(r.label)}</a>` : ''}</div>`).join('') : ''}
-        ${d.flights ? `<div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-3 mb-3"><p class="font-heading font-600 text-sm text-blue-800 dark:text-blue-200 mb-2">✈️ Flight Information</p>${d.flights.map(f => `<div class="flex flex-col gap-0.5 mb-2 last:mb-0"><div class="flex items-center justify-between"><span class="font-heading font-600 text-xs text-blue-700 dark:text-blue-300">${escHtml(f.flight)} · ${escHtml(f.route)}</span></div><div class="flex gap-3 text-xs text-gray-600 dark:text-gray-400"><span>🛫 ${escHtml(f.depart)}</span><span>🛬 ${escHtml(f.arrive)}</span></div></div>`).join('')}<p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Confirmation: <span class="font-mono font-600">${escHtml(d.flights[0].confirmation)}</span></p></div>` : ''}
-        ${ztlBanner}
+        <!-- TIER 1: The Plan -->
         <div class="grid grid-cols-1 gap-2 mb-3">
           <div class="flex gap-2 items-start"><span class="text-amber-400 flex-shrink-0">☀️</span><p class="text-sm"><strong>AM:</strong> ${escHtml(d.am)}</p></div>
           <div class="flex gap-2 items-start"><span class="flex-shrink-0">🌙</span><p class="text-sm"><strong>PM:</strong> ${escHtml(d.pm)}</p></div>
         </div>
-        <div class="flex flex-wrap gap-2 mb-3 text-xs">
+        <div class="flex flex-wrap gap-2 mb-2 text-xs">
           <span class="px-2 py-1 rounded-full bg-indigo-50 dark:bg-indigo-900/30">🛏 ${escHtml(d.sleep)} ${d.sleepIcon}</span>
           <span class="px-2 py-1 rounded-full ${d.parkingStatus === 'warn' ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300' : 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300'}">${escHtml(d.parking)}</span>
           ${ztlPill}
         </div>
-        ${sec('desc', '📖', 'About This Destination', d.cityDesc ? `<p class="text-sm italic text-gray-500 dark:text-gray-400 leading-relaxed">${escHtml(d.cityDesc)}</p>` : '', false)}
-        ${sec('tip', '👨‍👩‍👧‍👦', 'Family Tip', `<div class="family-tip rounded-xl p-3"><p class="text-sm">${escHtml(d.familyTip)}</p></div>`, true)}
-        ${sec('drive', '🚗', 'Drive Route', driveRouteBody ? `<div class="bg-amber-50 dark:bg-amber-900/30 rounded-xl p-3">${driveRouteBody}</div>` : '', false)}
-        ${sec('park', '🅿️', 'Parking Strategy', parkingBody ? `<div class="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-3">${parkingBody}</div>` : '', false)}
-        ${sec('dests', '📍', 'Destinations (' + (d.destinations ? d.destinations.length : 0) + ')', destsBody, true)}
-        ${renderMidwayStops(d)}
-        ${renderAlternatives(d)}
+        <!-- TIER 2: Color-coded sections -->
+        ${sec('travel', '✈️', 'Travel & Logistics', travelBody, { tierClass: 'tier-travel' })}
+        ${sec('headsup', '⚠️', 'Heads Up', headsUpBody, { tierClass: 'tier-headsup', count: headsUpCount > 0 ? headsUpCount + ' item' + (headsUpCount > 1 ? 's' : '') : '' })}
+        ${sec('dests', '📍', 'Destinations', destsBody, { tierClass: 'tier-dests', count: d.destinations && d.destinations.length > 0 ? d.destinations.length + ' places' : '' })}
+        ${sec('tip', '👨‍👩‍👧‍👦', 'Family Tip', d.familyTip ? `<p class="text-sm">${escHtml(d.familyTip)}</p>` : '', { tierClass: 'tier-familytip' })}
+        <!-- TIER 3: Deep info -->
+        ${sec('desc', '📖', 'About This Destination', d.cityDesc ? `<p class="text-sm italic text-gray-500 dark:text-gray-400 leading-relaxed">${escHtml(d.cityDesc)}</p>` : '', { tierClass: 'tier-about' })}
+        ${sec('alts', '✨', 'Alternative Cities', altsBody, { tierClass: 'tier-alts', count: d.alternatives && d.alternatives.length > 0 ? d.alternatives.length + ' options' : '' })}
+        ${sec('midway', '🛑', 'Midway Stops', midwayBody, { tierClass: 'tier-midway', count: d.midwayStops && d.midwayStops.length > 0 ? d.midwayStops.length + ' options' : '' })}
       </div>
     </div>
   </div>`;
