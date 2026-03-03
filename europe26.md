@@ -255,7 +255,7 @@ This is a phone app used one-handed in European cities and moving cars.
 
 ### DAY 1 — Mar 23 (Mon) 🇦🇹 — "Arrival → Salzburg"
 - **Phase**: austria
-- ✈️ **Flights** (Confirmation: ZGD5EE):
+- ✈️ **Flights** (Confirmation: ZTWSTH):
   - AF 0062: New York (EWR) → Paris (CDG) — Depart 5:05 PM ET (Mar 22) → Arrive 6:10 AM CET (Mar 23)
   - AF 1722: Paris (CDG) → Munich (MUC) — Depart 9:30 AM CET → Arrive 11:00 AM CET
 - ☀️ AM: Land Munich (11 AM) → Pick up rental car → 1.5 hr scenic drive to Salzburg
