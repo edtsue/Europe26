@@ -412,6 +412,10 @@ tailwind.config = {
   body.s-mode.dark .s-more-btn { color: #D4B97A; background: rgba(201,169,110,0.1); border-color: rgba(201,169,110,0.25); }
   body.s-mode.dark .s-info-card { background: linear-gradient(135deg, rgba(201,169,110,0.06), rgba(135,160,139,0.06)); }
 
+  /* S MODE: hide expenses tab */
+  body.s-mode .desktop-tab-btn[data-tab="expenses"],
+  body.s-mode .tab-btn[data-tab="expenses"] { display: none; }
+
   /* S MODE header tweak */
   body.s-mode header.glass { background: rgba(253,251,247,0.95); backdrop-filter: blur(12px); }
   body.s-mode.dark header.glass { background: rgba(26,29,46,0.95); }
@@ -1678,8 +1682,14 @@ function toggleSMode() {
   state.sMode = !state.sMode;
   applySMode();
   saveState();
+  // If on a hidden tab (expenses), redirect to days
+  let tab = state.activeTab || 'days';
+  if (state.sMode && tab === 'expenses') {
+    switchTab('days');
+    showToast('🌸 S Mode on', 'success');
+    return;
+  }
   // Re-render current tab
-  const tab = state.activeTab || 'days';
   if (tab === 'days') renderDays();
   else if (tab === 'hotels') renderHotels();
   else if (tab === 'packing') renderPacking();
@@ -3665,7 +3675,10 @@ function init() {
   applyDarkMode();
   applyFontSize();
   applySMode();
-  switchTab(state.activeTab || 'days');
+  // If S MODE is on and saved tab is hidden, redirect to days
+  let initTab = state.activeTab || 'days';
+  if (state.sMode && initTab === 'expenses') initTab = 'days';
+  switchTab(initTab);
   setupBackToTop();
   checkAutoNightMode();
   // Check auto night mode every minute
