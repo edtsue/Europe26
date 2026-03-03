@@ -148,10 +148,13 @@ tailwind.config = {
   .dark .sec-count { background: rgba(255,255,255,0.08); color: #9ca3af; }
 
   /* Packing reorder buttons */
-  .pack-move { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 8px; border: none; background: rgba(0,0,0,0.04); color: #94a3b8; font-size: 13px; cursor: pointer; transition: all 0.15s; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
-  .pack-move:active { background: rgba(13,148,136,0.2); color: #0d9488; transform: scale(0.92); }
-  .dark .pack-move { background: rgba(255,255,255,0.06); }
-  .dark .pack-move:active { background: rgba(45,212,191,0.2); color: #2dd4bf; }
+  .pack-drag-handle { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; color: #94a3b8; font-size: 16px; cursor: grab; flex-shrink: 0; -webkit-tap-highlight-color: transparent; touch-action: none; user-select: none; }
+  .pack-drag-handle:active { cursor: grabbing; }
+  .dark .pack-drag-handle { color: #64748b; }
+  .pack-item { transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease; border-radius: 8px; }
+  .pack-item.dragging { opacity: 0.4; background: rgba(13,148,136,0.1); }
+  .pack-item.drag-over { border-top: 2px solid #0d9488; margin-top: -2px; }
+  .dark .pack-item.drag-over { border-top-color: #2dd4bf; }
 
   /* Expense category colors */
   .cat-food { background: #fef3c7; color: #92400e; }
@@ -1652,6 +1655,7 @@ function renderPacking() {
       <button onclick="uncheckAllPacking()" class="tap flex-1 py-3 rounded-xl border border-gray-200 dark:border-gray-700 font-heading font-600 text-sm transition hover:bg-gray-100 dark:hover:bg-gray-800">Uncheck All</button>
       <button onclick="resetPacking()" class="tap flex-1 py-3 rounded-xl bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 font-heading font-600 text-sm transition hover:bg-red-100 dark:hover:bg-red-900/50">Reset List</button>
     </div>`;
+  setTimeout(initPackingDrag, 0);
 }
 
 function renderPackingCategory(cat, ci) {
@@ -1664,14 +1668,12 @@ function renderPackingCategory(cat, ci) {
 
   const itemsHtml = allItems.map((item, ai) => {
     const isCustom = item.src === 'customItems';
-    const upBtn = ai > 0 ? `<button onclick="event.stopPropagation();movePackingItem(${ci},${ai},-1)" class="pack-move" aria-label="Move up">&#9650;</button>` : '<span class="pack-move" style="visibility:hidden"></span>';
-    const downBtn = ai < total - 1 ? `<button onclick="event.stopPropagation();movePackingItem(${ci},${ai},1)" class="pack-move" aria-label="Move down">&#9660;</button>` : '<span class="pack-move" style="visibility:hidden"></span>';
     const delBtn = isCustom ? `<button onclick="event.stopPropagation();removePackingItem(${ci},${item.idx})" class="tap text-red-400 hover:text-red-600 text-sm p-2 transition flex-shrink-0" aria-label="Remove">✕</button>` : '';
-    return `<div class="flex items-center gap-2 tap py-1.5" role="checkbox" aria-checked="${item.checked}" tabindex="0" onclick="togglePackingItem(${ci},${item.idx},'${item.src}')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();togglePackingItem(${ci},${item.idx},'${item.src}')}">
+    return `<div class="pack-item flex items-center gap-2 tap py-1.5" draggable="true" data-ci="${ci}" data-ai="${ai}" role="checkbox" aria-checked="${item.checked}" tabindex="0" onclick="togglePackingItem(${ci},${item.idx},'${item.src}')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();togglePackingItem(${ci},${item.idx},'${item.src}')}">
+      <span class="pack-drag-handle" onclick="event.stopPropagation()" ontouchstart="event.stopPropagation()">⠿</span>
       <div class="check-box ${item.checked ? 'checked' : ''}" aria-hidden="true"></div>
       <span class="text-sm ${item.checked ? 'line-through text-gray-400' : ''} flex-1 min-w-0">${escHtml(item.text)}</span>
       ${delBtn}
-      <span class="flex gap-1">${upBtn}${downBtn}</span>
     </div>`;
   }).join('');
 
@@ -1752,30 +1754,134 @@ function removePackingItem(ci, ii) {
   restorePackingCats(expanded);
 }
 
-function movePackingItem(ci, unifiedIdx, direction) {
+function reorderPackingItem(ci, fromIdx, toIdx) {
+  if (fromIdx === toIdx) return;
   const cat = state.packingList[ci];
-  // Build unified list matching renderPackingCategory order
-  const unified = [...cat.items.map((it, i) => ({src: 'items', idx: i})), ...cat.customItems.map((it, i) => ({src: 'customItems', idx: i}))];
-  const targetIdx = unifiedIdx + direction;
-  if (targetIdx < 0 || targetIdx >= unified.length) return;
-  const from = unified[unifiedIdx];
-  const to = unified[targetIdx];
-  if (from.src === to.src) {
-    // Same array — simple swap
-    const arr = cat[from.src];
-    [arr[from.idx], arr[to.idx]] = [arr[to.idx], arr[from.idx]];
-  } else {
-    // Cross-boundary: remove from source, insert into target array at correct position
-    const fromArr = cat[from.src];
-    const toArr = cat[to.src];
-    const item = fromArr.splice(from.idx, 1)[0];
-    const insertAt = direction > 0 ? to.idx + 1 : to.idx;
-    toArr.splice(insertAt, 0, item);
-  }
+  // Build unified flat array in render order
+  const unified = [...cat.items.map((it, i) => ({...it, src: 'items', idx: i})), ...cat.customItems.map((it, i) => ({...it, src: 'customItems', idx: i}))];
+  // Remove the dragged item and reinsert at the new position
+  const [moved] = unified.splice(fromIdx, 1);
+  unified.splice(toIdx, 0, moved);
+  // Rebuild the items and customItems arrays from the new order
+  cat.items = [];
+  cat.customItems = [];
+  unified.forEach(u => {
+    const entry = { text: u.text, checked: u.checked };
+    if (u.src === 'customItems') cat.customItems.push(entry);
+    else cat.items.push(entry);
+  });
   saveState();
   const expanded = getExpandedPackingCats();
   renderPacking();
   restorePackingCats(expanded);
+}
+
+// --- Drag-and-drop for packing items (mouse + touch) ---
+let packDragState = null;
+
+function initPackingDrag() {
+  document.querySelectorAll('.pack-item[draggable]').forEach(el => {
+    // Mouse drag
+    el.addEventListener('dragstart', packDragStart);
+    el.addEventListener('dragover', packDragOver);
+    el.addEventListener('dragenter', packDragEnter);
+    el.addEventListener('dragleave', packDragLeave);
+    el.addEventListener('drop', packDrop);
+    el.addEventListener('dragend', packDragEnd);
+    // Touch drag — only initiated from the handle
+    const handle = el.querySelector('.pack-drag-handle');
+    if (handle) {
+      handle.addEventListener('touchstart', packTouchStart, { passive: false });
+    }
+  });
+}
+
+function packDragStart(e) {
+  const el = e.currentTarget;
+  packDragState = { ci: +el.dataset.ci, ai: +el.dataset.ai };
+  el.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', '');
+}
+
+function packDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }
+
+function packDragEnter(e) {
+  e.preventDefault();
+  const el = e.currentTarget;
+  if (!packDragState || +el.dataset.ci !== packDragState.ci) return;
+  document.querySelectorAll('.pack-item.drag-over').forEach(d => d.classList.remove('drag-over'));
+  if (+el.dataset.ai !== packDragState.ai) el.classList.add('drag-over');
+}
+
+function packDragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
+
+function packDrop(e) {
+  e.preventDefault();
+  const el = e.currentTarget;
+  document.querySelectorAll('.pack-item.drag-over').forEach(d => d.classList.remove('drag-over'));
+  if (!packDragState || +el.dataset.ci !== packDragState.ci) return;
+  reorderPackingItem(packDragState.ci, packDragState.ai, +el.dataset.ai);
+  packDragState = null;
+}
+
+function packDragEnd() {
+  document.querySelectorAll('.pack-item.dragging').forEach(d => d.classList.remove('dragging'));
+  document.querySelectorAll('.pack-item.drag-over').forEach(d => d.classList.remove('drag-over'));
+  packDragState = null;
+}
+
+// Touch drag support
+function packTouchStart(e) {
+  const item = e.target.closest('.pack-item');
+  if (!item) return;
+  e.preventDefault();
+  const ci = +item.dataset.ci;
+  const ai = +item.dataset.ai;
+  const rect = item.getBoundingClientRect();
+
+  // Create a floating clone
+  const ghost = item.cloneNode(true);
+  ghost.id = 'packDragGhost';
+  ghost.style.cssText = 'position:fixed;z-index:9999;pointer-events:none;opacity:0.85;width:' + rect.width + 'px;box-shadow:0 8px 24px rgba(0,0,0,0.2);border-radius:8px;background:var(--paper,#fff);';
+  document.body.appendChild(ghost);
+  item.classList.add('dragging');
+
+  const startY = e.touches[0].clientY;
+  const offsetY = startY - rect.top;
+  ghost.style.left = rect.left + 'px';
+  ghost.style.top = (startY - offsetY) + 'px';
+
+  let currentOver = ai;
+
+  function onMove(ev) {
+    ev.preventDefault();
+    const y = ev.touches[0].clientY;
+    ghost.style.top = (y - offsetY) + 'px';
+    // Find which item we're over
+    const siblings = item.parentElement.querySelectorAll('.pack-item[data-ci="' + ci + '"]');
+    document.querySelectorAll('.pack-item.drag-over').forEach(d => d.classList.remove('drag-over'));
+    siblings.forEach(sib => {
+      const r = sib.getBoundingClientRect();
+      if (y > r.top && y < r.bottom && +sib.dataset.ai !== ai) {
+        sib.classList.add('drag-over');
+        currentOver = +sib.dataset.ai;
+      }
+    });
+  }
+
+  function onEnd() {
+    document.removeEventListener('touchmove', onMove);
+    document.removeEventListener('touchend', onEnd);
+    const g = document.getElementById('packDragGhost');
+    if (g) g.remove();
+    document.querySelectorAll('.pack-item.dragging').forEach(d => d.classList.remove('dragging'));
+    document.querySelectorAll('.pack-item.drag-over').forEach(d => d.classList.remove('drag-over'));
+    if (currentOver !== ai) reorderPackingItem(ci, ai, currentOver);
+  }
+
+  document.addEventListener('touchmove', onMove, { passive: false });
+  document.addEventListener('touchend', onEnd);
 }
 
 function uncheckAllPacking() {
