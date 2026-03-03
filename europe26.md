@@ -253,8 +253,11 @@ This is a phone app used one-handed in European cities and moving cars.
 
 ---
 
-### DAY 1 — Mar 23 (Sun) 🇦🇹 — "Arrival → Salzburg"
+### DAY 1 — Mar 23 (Mon) 🇦🇹 — "Arrival → Salzburg"
 - **Phase**: austria
+- ✈️ **Flights** (Confirmation: ZGD5EE):
+  - AF 0062: New York (EWR) → Paris (CDG) — Depart 5:05 PM ET (Mar 22) → Arrive 6:10 AM CET (Mar 23)
+  - AF 1722: Paris (CDG) → Munich (MUC) — Depart 9:30 AM CET → Arrive 11:00 AM CET
 - ☀️ AM: Land Munich (11 AM) → Pick up rental car → 1.5 hr scenic drive to Salzburg
 - 🌙 PM: Salzburg Old Town stroll + early family dinner
 - 🛏 Sleep: Salzburg (🏰)
@@ -278,7 +281,7 @@ This is a phone app used one-handed in European cities and moving cars.
 
 ---
 
-### DAY 2 — Mar 24 (Mon) 🏔 — "Grossarl Check-in"
+### DAY 2 — Mar 24 (Tue) 🏔 — "Grossarl Check-in"
 - **Phase**: austria
 - ☀️ AM: Breakfast in Salzburg → 1 hr drive to Grossarl Valley
 - 🌙 PM: Check-in at Das Edelweiss → Spa, waterpark & pool time!
@@ -299,7 +302,7 @@ This is a phone app used one-handed in European cities and moving cars.
 
 ---
 
-### DAY 3 — Mar 25 (Tue) 🏔 — "Alpine Adventure Day"
+### DAY 3 — Mar 25 (Wed) 🏔 — "Alpine Adventure Day"
 - **Phase**: austria
 - ☀️ AM: Cable car ride up Panoramabahn → Alpine walk or valley exploration
 - 🌙 PM: Mountain dinner at the resort + evening swim
@@ -314,7 +317,7 @@ This is a phone app used one-handed in European cities and moving cars.
 
 ---
 
-### DAY 4 — Mar 26 (Wed) 🏔 — "Relax or Explore"
+### DAY 4 — Mar 26 (Thu) 🏔 — "Relax or Explore"
 - **Phase**: austria
 - ☀️ AM: Slow mountain morning OR half-day Salzburg trip
 - 🌙 PM: Final spa evening — soak it all in
@@ -329,7 +332,7 @@ This is a phone app used one-handed in European cities and moving cars.
 
 ---
 
-### DAY 5 — Mar 27 (Thu) 🚗 — "Alps to Tuscany" ⭐ Big Drive Day
+### DAY 5 — Mar 27 (Fri) 🚗 — "Alps to Tuscany" ⭐ Big Drive Day
 - **Phase**: transition
 - ☀️ AM: Scenic 5 hr drive south → Coffee stop in Innsbruck + Brenner Pass into Italy
 - 🌙 PM: Arrive Val d'Orcia — Tuscan countryside welcome!
@@ -360,7 +363,7 @@ This is a phone app used one-handed in European cities and moving cars.
 
 ---
 
-### DAY 6 — Mar 28 (Fri) 🇮🇹 — "Pienza & Montepulciano"
+### DAY 6 — Mar 28 (Sat) 🇮🇹 — "Pienza & Montepulciano"
 - **Phase**: italy
 - ☀️ AM: Pienza — cheese tasting, Renaissance streets, panoramic views
 - 🌙 PM: Montepulciano — tower climb + vineyard dinner
@@ -378,7 +381,7 @@ This is a phone app used one-handed in European cities and moving cars.
 
 ---
 
-### DAY 7 — Mar 29 (Sat) 🇮🇹 — "Tuscan Slow Day"
+### DAY 7 — Mar 29 (Sun) 🇮🇹 — "Tuscan Slow Day"
 - **Phase**: italy
 - ☀️ AM: Farm visit or countryside drive — gelato stops mandatory
 - 🌙 PM: Sunset dinner with Val d'Orcia views
@@ -396,7 +399,7 @@ This is a phone app used one-handed in European cities and moving cars.
 
 ---
 
-### DAY 8 — Mar 30 (Sun) 🇮🇹 — "Verona — Romeo & Juliet City"
+### DAY 8 — Mar 30 (Mon) 🇮🇹 — "Verona — Romeo & Juliet City"
 - **Phase**: italy
 - ☀️ AM: 2.5–3 hr drive Val d'Orcia → Verona
 - 🌙 PM: Arena di Verona (older than the Colosseum!) + Piazza evening stroll
@@ -423,7 +426,7 @@ This is a phone app used one-handed in European cities and moving cars.
 
 ---
 
-### DAY 9 — Mar 31 (Mon) 🇮🇹 — "Verona → Florence Area"
+### DAY 9 — Mar 31 (Tue) 🇮🇹 — "Verona → Florence Area"
 - **Phase**: italy
 - ☀️ AM: Morning Verona stroll — last gelato!
 - 🌙 PM: 2.5 hr drive to Florence airport area
@@ -441,7 +444,7 @@ This is a phone app used one-handed in European cities and moving cars.
 
 ---
 
-### DAY 10 — Apr 1 (Tue) 📦 — "Buffer Day — Relax & Pack"
+### DAY 10 — Apr 1 (Wed) 📦 — "Buffer Day — Relax & Pack"
 - **Phase**: italy
 - ☀️ AM: Sleep in! Buffer morning. Kids play at hotel.
 - 🌙 PM: Relaxed final Italian dinner — no rush
@@ -452,9 +455,12 @@ This is a phone app used one-handed in European cities and moving cars.
 
 ---
 
-### DAY 11 — Apr 2 (Wed) ✈️ — "Fly Home!"
+### DAY 11 — Apr 2 (Thu) ✈️ — "Fly Home!"
 - **Phase**: departure
-- ☀️ AM: Early departure — 6:30 AM flight. Return rental car at Florence Airport.
+- ✈️ **Flights** (Confirmation: ZGD5EE):
+  - AF 1267: Florence (FLR) → Paris (CDG) — Depart 6:50 AM CEST → Arrive 8:40 AM CEST
+  - AF 0062: Paris (CDG) → New York (EWR) — Depart 12:15 PM CEST → Arrive 2:35 PM EDT
+- ☀️ AM: Return rental car → AF 1267 departs 6:50 AM → Paris CDG → AF 0062 departs 12:15 PM → Land Newark 2:35 PM
 - 🌙 PM: —
 - 🛏 Sleep: Home sweet home (🏠)
 - 🚗 Parking: ✅ Return car at airport

@@ -344,6 +344,9 @@ tailwind.config = {
     <button onclick="switchTab('packing')" class="desktop-tab-btn flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-heading font-600 transition hover:bg-gray-100 dark:hover:bg-gray-700 text-left w-full" data-tab="packing">
       <span class="text-lg">🧳</span> Packing List
     </button>
+    <button onclick="switchTab('guide')" class="desktop-tab-btn flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-heading font-600 transition hover:bg-gray-100 dark:hover:bg-gray-700 text-left w-full" data-tab="guide">
+      <span class="text-lg">🌍</span> Travel Guide
+    </button>
     <button onclick="switchTab('notes')" class="desktop-tab-btn flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-heading font-600 transition hover:bg-gray-100 dark:hover:bg-gray-700 text-left w-full" data-tab="notes">
       <span class="text-lg">📝</span> Notes & Lists
     </button>
@@ -377,19 +380,21 @@ tailwind.config = {
       <div class="max-w-lg mx-auto px-4 py-4" id="packingContent"></div>
     </div>
 
+    <!-- Tab: Travel Guide -->
+    <div id="tab-guide" class="tab-panel" role="tabpanel" aria-label="Travel Guide">
+      <div class="max-w-lg mx-auto px-4 py-4" id="guideContent"></div>
+    </div>
+
     <!-- Tab: Notes & Lists -->
     <div id="tab-notes" class="tab-panel" role="tabpanel" aria-label="Notes">
       <div class="max-w-lg mx-auto px-4 py-4">
         <!-- Sub-nav pills -->
         <div class="flex gap-2 mb-4 overflow-x-auto">
           <button onclick="switchNotesTab('journal')" class="notes-pill tap px-4 py-2 rounded-full text-sm font-heading font-600 whitespace-nowrap transition" data-pill="journal">📝 Journal</button>
-          <button onclick="switchNotesTab('checklists')" class="notes-pill tap px-4 py-2 rounded-full text-sm font-heading font-600 whitespace-nowrap transition" data-pill="checklists">✅ Checklists</button>
           <button onclick="switchNotesTab('expenses')" class="notes-pill tap px-4 py-2 rounded-full text-sm font-heading font-600 whitespace-nowrap transition" data-pill="expenses">💰 Expenses</button>
         </div>
         <!-- Journal -->
         <div id="notes-journal" class="notes-section"></div>
-        <!-- Checklists -->
-        <div id="notes-checklists" class="notes-section hidden"></div>
         <!-- Expenses -->
         <div id="notes-expenses" class="notes-section hidden"></div>
       </div>
@@ -418,6 +423,10 @@ tailwind.config = {
     <button onclick="switchTab('packing')" class="tab-btn tap flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition" data-tab="packing">
       <span class="text-xl">🧳</span>
       <span class="text-xs font-heading font-600">Pack</span>
+    </button>
+    <button onclick="switchTab('guide')" class="tab-btn tap flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition" data-tab="guide">
+      <span class="text-xl">🌍</span>
+      <span class="text-xs font-heading font-600">Guide</span>
     </button>
     <button onclick="switchTab('notes')" class="tab-btn tap flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition" data-tab="notes">
       <span class="text-xl">📝</span>
@@ -450,7 +459,7 @@ const TRIP_END = new Date('2026-04-02');
 
 const DAYS = [
   {
-    day: 1, date: 'Mar 23', weekday: 'Sun', flag: '🇦🇹', phase: 'austria',
+    day: 1, date: 'Mar 23', weekday: 'Mon', flag: '🇦🇹', phase: 'austria',
     title: 'Arrival → Salzburg',
     cityDesc: 'Mozart\'s birthplace and a baroque masterpiece. Famous for its hilltop fortress, Sound of Music locations, golden Getreidegasse shopping lane, and apple strudel with a view of the Alps.',
     reminders: [
@@ -458,6 +467,10 @@ const DAYS = [
       { text: 'Get International Driving Permit from AAA ($20) before trip. Required in Austria, strongly recommended in Italy. Carry with US license at all times.', url: 'https://www.aaa.com/vacation/idpf.html', label: '📋 AAA IDP Info' },
       { text: 'At rental pickup: Verify car has winter tires (mandatory until Apr 15, fine up to €5,000), reflective vest in cabin (not trunk), warning triangle, and first aid kit.' },
       { text: 'No right turn on red — illegal everywhere in Europe. Wait for green signal.' }
+    ],
+    flights: [
+      { flight: 'AF 0062', route: 'New York (EWR) → Paris (CDG)', depart: '5:05 PM ET (Mar 22)', arrive: '6:10 AM CET (Mar 23)', confirmation: 'ZGD5EE' },
+      { flight: 'AF 1722', route: 'Paris (CDG) → Munich (MUC)', depart: '9:30 AM CET', arrive: '11:00 AM CET', confirmation: 'ZGD5EE' }
     ],
     am: 'Land Munich (11 AM) → Pick up rental car → 1.5 hr scenic drive to Salzburg',
     pm: 'Salzburg Old Town stroll + early family dinner',
@@ -482,7 +495,7 @@ const DAYS = [
     ]
   },
   {
-    day: 2, date: 'Mar 24', weekday: 'Mon', flag: '🏔', phase: 'austria',
+    day: 2, date: 'Mar 24', weekday: 'Tue', flag: '🏔', phase: 'austria',
     title: 'Grossarl Check-in',
     cityDesc: 'The "Valley of Alpine Huts" — a peaceful Austrian valley with 40+ traditional mountain huts, family-friendly trails, and towering Alpine peaks. Home to Das Edelweiss, one of Austria\'s top family resorts.',
     am: 'Breakfast in Salzburg → 1 hr drive to Grossarl Valley',
@@ -501,7 +514,7 @@ const DAYS = [
     ]
   },
   {
-    day: 3, date: 'Mar 25', weekday: 'Tue', flag: '🏔', phase: 'austria',
+    day: 3, date: 'Mar 25', weekday: 'Wed', flag: '🏔', phase: 'austria',
     title: 'Alpine Adventure Day',
     cityDesc: 'High up in the Austrian Alps. Cable cars lift you above the treeline to panoramic ridges, while cozy mountain huts below serve Kaiserschmarrn and hot chocolate by roaring fires.',
     am: 'Cable car ride up Panoramabahn → Alpine walk or valley exploration',
@@ -517,7 +530,7 @@ const DAYS = [
     hotels: []
   },
   {
-    day: 4, date: 'Mar 26', weekday: 'Wed', flag: '🏔', phase: 'austria',
+    day: 4, date: 'Mar 26', weekday: 'Thu', flag: '🏔', phase: 'austria',
     title: 'Relax or Explore',
     cityDesc: 'Your flex day in the Alps. Unwind at the resort spa and waterpark, or day-trip to Hellbrunn Palace — a 17th-century estate famous for its trick water fountains that surprise and soak visitors.',
     am: 'Slow mountain morning OR half-day Salzburg trip',
@@ -533,7 +546,7 @@ const DAYS = [
     hotels: []
   },
   {
-    day: 5, date: 'Mar 27', weekday: 'Thu', flag: '🚗', phase: 'transition',
+    day: 5, date: 'Mar 27', weekday: 'Fri', flag: '🚗', phase: 'transition',
     title: 'Big Drive Day ⭐ Alps to Tuscany',
     cityDesc: 'An epic road trip across the Alps into Italy. You\'ll cross the dramatic Brenner Pass, stop in Innsbruck under its golden roof, and descend into Tuscany\'s UNESCO Val d\'Orcia — rolling hills, cypress trees, and golden light.',
     reminders: [
@@ -674,7 +687,7 @@ const DAYS = [
     ]
   },
   {
-    day: 6, date: 'Mar 28', weekday: 'Fri', flag: '🇮🇹', phase: 'italy',
+    day: 6, date: 'Mar 28', weekday: 'Sat', flag: '🇮🇹', phase: 'italy',
     title: 'Pienza & Montepulciano',
     cityDesc: 'Two jewel-box hilltop towns perched above the Tuscan countryside. Pienza is the "Ideal Renaissance City" and pecorino cheese capital. Montepulciano is famous for Vino Nobile wine, a medieval tower with 360° views, and streets named Love, Kiss, and Good Luck.',
     reminders: [
@@ -734,7 +747,7 @@ const DAYS = [
     ]
   },
   {
-    day: 7, date: 'Mar 29', weekday: 'Sat', flag: '🇮🇹', phase: 'italy',
+    day: 7, date: 'Mar 29', weekday: 'Sun', flag: '🇮🇹', phase: 'italy',
     title: 'Tuscan Slow Day',
     cityDesc: 'The Val d\'Orcia is a UNESCO World Heritage landscape — Italy\'s most photographed countryside. Rolling golden hills, lone cypress trees, medieval villages, and vineyards stretching to the horizon. Famous for Brunello wine, pecorino cheese, and thermal springs.',
     am: 'Farm visit or countryside drive — gelato stops mandatory',
@@ -789,7 +802,7 @@ const DAYS = [
     ]
   },
   {
-    day: 8, date: 'Mar 30', weekday: 'Sun', flag: '🇮🇹', phase: 'italy',
+    day: 8, date: 'Mar 30', weekday: 'Mon', flag: '🇮🇹', phase: 'italy',
     title: 'Verona — Romeo & Juliet City',
     cityDesc: 'Shakespeare\'s city of star-crossed lovers. Verona is home to the Arena — a Roman amphitheater older than the Colosseum that still hosts opera. Famous for Juliet\'s balcony, pastel-colored piazzas, and some of the best risotto in northern Italy.',
     reminders: [
@@ -873,7 +886,7 @@ const DAYS = [
     ]
   },
   {
-    day: 9, date: 'Mar 31', weekday: 'Mon', flag: '🇮🇹', phase: 'italy',
+    day: 9, date: 'Mar 31', weekday: 'Tue', flag: '🇮🇹', phase: 'italy',
     title: 'Bologna — Italy\'s Food Capital 🍝',
     cityDesc: 'Italy\'s undisputed food capital — birthplace of ragù, tortellini, mortadella, and Parmigiano Reggiano. Home to the world\'s oldest university (1088 AD), 40km of UNESCO covered porticoes, and the iconic leaning Two Towers.',
     reminders: [
@@ -933,7 +946,7 @@ const DAYS = [
     ]
   },
   {
-    day: 10, date: 'Apr 1', weekday: 'Tue', flag: '📦', phase: 'italy',
+    day: 10, date: 'Apr 1', weekday: 'Wed', flag: '📦', phase: 'italy',
     title: 'Buffer Day → Florence Airport',
     cityDesc: 'Florence — the cradle of the Renaissance. Birthplace of Michelangelo\'s David, Brunelleschi\'s Dome, and the Uffizi Gallery. You\'re staying near the airport (skip the ZTL!), but the city\'s magic is just a tram ride away.',
     reminders: [
@@ -961,10 +974,14 @@ const DAYS = [
     ]
   },
   {
-    day: 11, date: 'Apr 2', weekday: 'Wed', flag: '✈️', phase: 'departure',
+    day: 11, date: 'Apr 2', weekday: 'Thu', flag: '✈️', phase: 'departure',
     title: 'Fly Home!',
     cityDesc: 'Arrivederci, Europe! 11 days of Alpine peaks, Tuscan sunsets, Roman arenas, and the best food on Earth. Time to head home with a suitcase full of memories (and probably too much cheese).',
-    am: 'Early departure — 6:30 AM flight. Return rental car at Florence Airport.',
+    flights: [
+      { flight: 'AF 1267', route: 'Florence (FLR) → Paris (CDG)', depart: '6:50 AM CEST', arrive: '8:40 AM CEST', confirmation: 'ZGD5EE' },
+      { flight: 'AF 0062', route: 'Paris (CDG) → New York (EWR)', depart: '12:15 PM CEST', arrive: '2:35 PM EDT', confirmation: 'ZGD5EE' }
+    ],
+    am: 'Return rental car → AF 1267 departs 6:50 AM → Paris CDG → AF 0062 departs 12:15 PM → Land Newark 2:35 PM',
     pm: '—',
     sleep: 'Home sweet home', sleepIcon: '🏠',
     parking: '✅ Return car at airport', parkingStatus: 'ok',
@@ -1731,6 +1748,7 @@ function switchTab(tab) {
   if (tab === 'days') renderDays();
   if (tab === 'hotels') renderHotels();
   if (tab === 'packing') renderPacking();
+  if (tab === 'guide') renderGuide();
   if (tab === 'notes') renderNotes();
   if (tab === 'settings') renderSettings();
 }
@@ -2050,6 +2068,11 @@ function renderCollapsibleDay(d) {
 
   const driveRouteBody = d.driveRoute ? `<ul class="text-sm space-y-1">${d.driveRoute.map(r => `<li class="flex gap-2"><span class="text-amber-500">→</span><span>${escHtml(r)}</span></li>`).join('')}</ul>` : '';
   const parkingBody = d.parkingStrategy ? `<p class="text-sm">${escHtml(d.parkingStrategy)}</p>` : '';
+  const flightsBody = d.flights ? `<div class="space-y-2">${d.flights.map(f => `<div class="glass rounded-xl p-3">
+    <div class="flex items-center justify-between mb-1"><span class="font-heading font-700 text-sm">✈️ ${escHtml(f.flight)}</span><span class="text-xs px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 font-mono">${escHtml(f.confirmation)}</span></div>
+    <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">${escHtml(f.route)}</p>
+    <div class="flex gap-4 text-xs"><span>🛫 ${escHtml(f.depart)}</span><span>🛬 ${escHtml(f.arrive)}</span></div>
+  </div>`).join('')}</div>` : '';
   const destsBody = d.destinations && d.destinations.length > 0
     ? `<div class="dest-grid" style="gap:0.5rem">${d.destinations.map(dest => renderDestCard(dest, d.day)).join('')}</div>` : '';
 
@@ -2087,6 +2110,7 @@ function renderCollapsibleDay(d) {
     <div id="dayBody-${d.day}" class="bg-white dark:bg-gray-800 ${isExpanded ? '' : 'hidden'}">
       <div class="p-4 ${isExpanded ? 'anim-slide' : ''}">
         ${d.reminders ? d.reminders.map(r => `<div class="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded-xl p-3 mb-3"><p class="font-heading font-600 text-sm text-amber-800 dark:text-amber-200">⚠️ ${escHtml(r.text)}</p>${r.url ? `<a href="${escHtml(r.url)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 mt-2 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-heading font-600 transition tap">${escHtml(r.label)}</a>` : ''}</div>`).join('') : ''}
+        ${d.flights ? `<div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-3 mb-3"><p class="font-heading font-600 text-sm text-blue-800 dark:text-blue-200 mb-2">✈️ Flight Information</p>${d.flights.map(f => `<div class="flex flex-col gap-0.5 mb-2 last:mb-0"><div class="flex items-center justify-between"><span class="font-heading font-600 text-xs text-blue-700 dark:text-blue-300">${escHtml(f.flight)} · ${escHtml(f.route)}</span></div><div class="flex gap-3 text-xs text-gray-600 dark:text-gray-400"><span>🛫 ${escHtml(f.depart)}</span><span>🛬 ${escHtml(f.arrive)}</span></div></div>`).join('')}<p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Confirmation: <span class="font-mono font-600">${escHtml(d.flights[0].confirmation)}</span></p></div>` : ''}
         ${ztlBanner}
         <div class="grid grid-cols-1 gap-2 mb-3">
           <div class="flex gap-2 items-start"><span class="text-amber-400 flex-shrink-0">☀️</span><p class="text-sm"><strong>AM:</strong> ${escHtml(d.am)}</p></div>
@@ -2514,6 +2538,355 @@ function exportExpenses() {
     document.body.removeChild(ta);
     showToast('Expense report copied!', 'success');
   });
+}
+
+// ============================================================
+// RENDER: TRAVEL GUIDE
+// ============================================================
+function renderGuide() {
+  const el = document.getElementById('guideContent');
+  el.innerHTML = `
+    <h2 class="font-heading font-700 text-xl mb-4">🌍 Travel Guide</h2>
+
+    <!-- Weather Widget -->
+    <div class="glass rounded-2xl p-4 mb-4" id="weatherWidget">
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="font-heading font-700 text-base">🌤 Current Weather</h3>
+        <button onclick="refreshWeather()" class="tap text-xs px-3 py-1 bg-teal-600 text-white rounded-full font-600 hover:bg-teal-700 transition" id="weatherRefreshBtn">Refresh</button>
+      </div>
+      <div id="weatherData" class="text-center py-4">
+        <p class="text-sm text-gray-400">Tap Refresh to get weather for your location</p>
+      </div>
+    </div>
+
+    <!-- Key Phrases -->
+    <div class="glass rounded-2xl overflow-hidden mb-4">
+      <button onclick="toggleGuideSection('phrases')" class="w-full tap flex items-center justify-between p-4 text-left">
+        <h3 class="font-heading font-700 text-base">🗣 Key Phrases</h3>
+        <span class="chevron text-xs text-gray-400" id="guideChev-phrases">▼</span>
+      </button>
+      <div id="guideBody-phrases" class="hidden px-4 pb-4">
+        <!-- Sub-pills for language -->
+        <div class="flex gap-2 mb-3">
+          <button onclick="switchPhraseLang('de')" class="phrase-lang-pill tap px-3 py-1.5 rounded-full text-xs font-600 transition" data-lang="de">🇦🇹 German</button>
+          <button onclick="switchPhraseLang('it')" class="phrase-lang-pill tap px-3 py-1.5 rounded-full text-xs font-600 transition" data-lang="it">🇮🇹 Italian</button>
+        </div>
+        <div id="phraseList"></div>
+      </div>
+    </div>
+
+    <!-- Tipping Guide -->
+    <div class="glass rounded-2xl overflow-hidden mb-4">
+      <button onclick="toggleGuideSection('tipping')" class="w-full tap flex items-center justify-between p-4 text-left">
+        <h3 class="font-heading font-700 text-base">💶 Tipping Guide</h3>
+        <span class="chevron text-xs text-gray-400" id="guideChev-tipping">▼</span>
+      </button>
+      <div id="guideBody-tipping" class="hidden px-4 pb-4">
+        <div class="space-y-3">
+          <div class="bg-teal-50 dark:bg-teal-900/20 rounded-xl p-3">
+            <p class="font-heading font-700 text-sm mb-1">🇦🇹 Austria</p>
+            <div class="space-y-1.5 text-sm">
+              <p><strong>Restaurants:</strong> Round up 5–10%. Say the total you want to pay when handing over cash (e.g., "Make it 40").</p>
+              <p><strong>Cafes:</strong> Round up to nearest euro.</p>
+              <p><strong>Taxis:</strong> Round up to nearest euro.</p>
+              <p><strong>Hotels:</strong> €1–2 per bag for porters. Housekeeping: €1–2/day optional.</p>
+            </div>
+          </div>
+          <div class="bg-orange-50 dark:bg-orange-900/20 rounded-xl p-3">
+            <p class="font-heading font-700 text-sm mb-1">🇮🇹 Italy</p>
+            <div class="space-y-1.5 text-sm">
+              <p><strong>Restaurants:</strong> "Coperto" (€1–3/person cover charge) is normal — that IS the tip. No extra tip expected. Leave €1–2 for exceptional service.</p>
+              <p><strong>Cafes:</strong> No tip needed. Standing at the bar is cheaper than sitting at a table.</p>
+              <p><strong>Taxis:</strong> Round up to nearest euro. No percentage expected.</p>
+              <p><strong>Hotels:</strong> €1 per bag. Housekeeping: €1/day optional.</p>
+            </div>
+          </div>
+          <div class="family-tip rounded-xl p-3">
+            <p class="font-heading font-600 text-sm mb-1">💡 Pro Tip</p>
+            <p class="text-sm">In Italy, if a receipt shows "servizio" (service charge), you're already covered — don't double-tip. Americans often over-tip in Europe which can actually be awkward!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Useful Numbers -->
+    <div class="glass rounded-2xl overflow-hidden mb-4">
+      <button onclick="toggleGuideSection('numbers')" class="w-full tap flex items-center justify-between p-4 text-left">
+        <h3 class="font-heading font-700 text-base">📞 Useful Numbers</h3>
+        <span class="chevron text-xs text-gray-400" id="guideChev-numbers">▼</span>
+      </button>
+      <div id="guideBody-numbers" class="hidden px-4 pb-4">
+        <div class="space-y-2">
+          <div class="flex items-center gap-3 p-2.5 bg-red-50 dark:bg-red-900/20 rounded-xl">
+            <span class="text-lg">🆘</span>
+            <div class="flex-1"><p class="text-sm font-700">EU Emergency</p><p class="text-xs text-gray-500 dark:text-gray-400">Police, fire, ambulance — all EU countries</p></div>
+            <a href="tel:112" class="tap px-3 py-1.5 bg-red-600 text-white rounded-full text-xs font-700">112</a>
+          </div>
+          <div class="flex items-center gap-3 p-2.5 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+            <span class="text-lg">🇺🇸</span>
+            <div class="flex-1"><p class="text-sm font-700">US Embassy Austria</p><p class="text-xs text-gray-500 dark:text-gray-400">Vienna — 24/7 for emergencies</p></div>
+            <a href="tel:+43-1-31339-0" class="tap px-3 py-1.5 bg-blue-600 text-white rounded-full text-xs font-700">Call</a>
+          </div>
+          <div class="flex items-center gap-3 p-2.5 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+            <span class="text-lg">🇺🇸</span>
+            <div class="flex-1"><p class="text-sm font-700">US Embassy Italy</p><p class="text-xs text-gray-500 dark:text-gray-400">Rome — 24/7 for emergencies</p></div>
+            <a href="tel:+39-06-46741" class="tap px-3 py-1.5 bg-blue-600 text-white rounded-full text-xs font-700">Call</a>
+          </div>
+          <div class="flex items-center gap-3 p-2.5 bg-amber-50 dark:bg-amber-900/20 rounded-xl">
+            <span class="text-lg">🚗</span>
+            <div class="flex-1"><p class="text-sm font-700">Austria Roadside (ÖAMTC)</p><p class="text-xs text-gray-500 dark:text-gray-400">Breakdowns, accidents, towing</p></div>
+            <a href="tel:120" class="tap px-3 py-1.5 bg-amber-600 text-white rounded-full text-xs font-700">120</a>
+          </div>
+          <div class="flex items-center gap-3 p-2.5 bg-amber-50 dark:bg-amber-900/20 rounded-xl">
+            <span class="text-lg">🚗</span>
+            <div class="flex-1"><p class="text-sm font-700">Italy Roadside (ACI)</p><p class="text-xs text-gray-500 dark:text-gray-400">Breakdowns, accidents, towing</p></div>
+            <a href="tel:803116" class="tap px-3 py-1.5 bg-amber-600 text-white rounded-full text-xs font-700">803 116</a>
+          </div>
+          <div class="flex items-center gap-3 p-2.5 bg-green-50 dark:bg-green-900/20 rounded-xl">
+            <span class="text-lg">🅿️</span>
+            <div class="flex-1"><p class="text-sm font-700">Parcheggio Cittadella (Verona)</p><p class="text-xs text-gray-500 dark:text-gray-400">Underground parking near Arena — safe from ZTL</p></div>
+            <a href="tel:+39-045-8001896" class="tap px-3 py-1.5 bg-green-600 text-white rounded-full text-xs font-700">Call</a>
+          </div>
+          <div class="family-tip rounded-xl p-3 mt-2">
+            <p class="font-heading font-600 text-sm mb-1">💡 Save These</p>
+            <p class="text-sm">Add your rental car company's 24/7 roadside number from your rental agreement. Also save your hotel phone numbers as you book them!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timezone & Jet Lag -->
+    <div class="glass rounded-2xl overflow-hidden mb-4">
+      <button onclick="toggleGuideSection('timezone')" class="w-full tap flex items-center justify-between p-4 text-left">
+        <h3 class="font-heading font-700 text-base">🕐 Time Zones & Jet Lag</h3>
+        <span class="chevron text-xs text-gray-400" id="guideChev-timezone">▼</span>
+      </button>
+      <div id="guideBody-timezone" class="hidden px-4 pb-4">
+        <div id="timezoneClocks" class="grid grid-cols-2 gap-3 mb-3"></div>
+        <div class="space-y-3">
+          <div class="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl p-3">
+            <p class="font-heading font-700 text-sm mb-1">🇦🇹🇮🇹 Central European Time (CET)</p>
+            <div class="text-sm space-y-1">
+              <p><strong>UTC+1</strong> (UTC+2 during summer/CEST — starts Mar 29!)</p>
+              <p>US Pacific: <strong>+9 hours</strong> → Your 8 AM = their 11 PM (previous night)</p>
+              <p>US Eastern: <strong>+6 hours</strong> → Your 8 AM = their 2 AM</p>
+              <p>US Central: <strong>+7 hours</strong> → Your 8 AM = their 1 AM</p>
+            </div>
+          </div>
+          <div class="family-tip rounded-xl p-3">
+            <p class="font-heading font-600 text-sm mb-1">👶 Jet Lag Tips for Kids</p>
+            <div class="text-sm space-y-1">
+              <p><strong>Day 1–2:</strong> Kids will crash early and wake at 4 AM. Plan light mornings, no early reservations.</p>
+              <p><strong>Day 3–4:</strong> Mostly adjusted. Push bedtime 30 min later each night.</p>
+              <p><strong>Melatonin:</strong> 0.5mg for kids at local bedtime can help (check with pediatrician).</p>
+              <p><strong>Sunlight:</strong> Get outside in morning sun — it resets the body clock fastest.</p>
+            </div>
+          </div>
+          <div class="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-3">
+            <p class="font-heading font-600 text-sm mb-1">⏰ Europe Daylight Saving</p>
+            <p class="text-sm">Clocks spring forward <strong>Mar 29</strong> (during your trip!). You'll be on CEST (UTC+2) from Day 7 onward. Phones update automatically.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Render phrases (default to German)
+  switchPhraseLang(state._guideLang || 'de');
+  // Render timezone clocks
+  updateTimezoneClocks();
+}
+
+function toggleGuideSection(id) {
+  const body = document.getElementById('guideBody-' + id);
+  const chev = document.getElementById('guideChev-' + id);
+  if (body) body.classList.toggle('hidden');
+  if (chev) chev.classList.toggle('open');
+}
+
+// --- Phrases ---
+const PHRASES = {
+  de: [
+    { cat: 'Basics', items: [
+      ['Hello / Goodbye', 'Grüß Gott / Auf Wiedersehen', 'Grews Got / Owf VEE-der-zay-en'],
+      ['Please / Thank you', 'Bitte / Danke', 'BIT-uh / DAHN-kuh'],
+      ['Yes / No', 'Ja / Nein', 'Yah / Nine'],
+      ['Excuse me', 'Entschuldigung', 'Ent-SHOOL-dee-goong'],
+      ['Do you speak English?', 'Sprechen Sie Englisch?', 'SHPREH-en zee ENG-lish'],
+      ['I don\'t understand', 'Ich verstehe nicht', 'Ikh fer-SHTAY-uh nikht']
+    ]},
+    { cat: 'Restaurant', items: [
+      ['A table for 4 please', 'Einen Tisch für vier bitte', 'EYE-nen TISH foor feer BIT-uh'],
+      ['The menu please', 'Die Speisekarte bitte', 'Dee SHPY-zeh-kar-tuh BIT-uh'],
+      ['The check please', 'Die Rechnung bitte', 'Dee REKH-noong BIT-uh'],
+      ['Do you have a kids menu?', 'Haben Sie eine Kinderkarte?', 'HAH-ben zee EYE-nuh KIN-der-kar-tuh'],
+      ['Water (still/sparkling)', 'Wasser (still/mit Gas)', 'VAH-ser (shtil/mit Gahs)'],
+      ['No peanuts/nuts please', 'Keine Nüsse bitte', 'KYE-nuh NUH-suh BIT-uh'],
+      ['Delicious!', 'Lecker!', 'LEK-er']
+    ]},
+    { cat: 'Getting Around', items: [
+      ['Where is...?', 'Wo ist...?', 'Vo ist'],
+      ['The bathroom', 'Die Toilette', 'Dee toy-LET-uh'],
+      ['The train station', 'Der Bahnhof', 'Dair BAHN-hof'],
+      ['I need help', 'Ich brauche Hilfe', 'Ikh BROW-khuh HIL-fuh'],
+      ['How much does it cost?', 'Was kostet das?', 'Vahs KOS-tet dahs']
+    ]},
+    { cat: 'With Kids', items: [
+      ['My child is sick', 'Mein Kind ist krank', 'Mine Kint ist krahnk'],
+      ['Where is a pharmacy?', 'Wo ist eine Apotheke?', 'Vo ist EYE-nuh ah-po-TAY-kuh'],
+      ['Is there a playground?', 'Gibt es einen Spielplatz?', 'Gipt es EYE-nen SHPEEL-plahts']
+    ]}
+  ],
+  it: [
+    { cat: 'Basics', items: [
+      ['Hello / Goodbye', 'Ciao / Arrivederci', 'CHOW / ah-ree-veh-DAIR-chee'],
+      ['Please / Thank you', 'Per favore / Grazie', 'Pair fah-VOR-ay / GRAH-tsee-ay'],
+      ['Yes / No', 'Sì / No', 'See / Noh'],
+      ['Excuse me', 'Scusi', 'SKOO-zee'],
+      ['Do you speak English?', 'Parla inglese?', 'PAR-lah in-GLAY-zay'],
+      ['I don\'t understand', 'Non capisco', 'Non kah-PEES-ko']
+    ]},
+    { cat: 'Restaurant', items: [
+      ['A table for 4 please', 'Un tavolo per quattro per favore', 'Oon TAH-vo-lo pair KWAT-tro pair fah-VOR-ay'],
+      ['The menu please', 'Il menù per favore', 'Eel meh-NOO pair fah-VOR-ay'],
+      ['The check please', 'Il conto per favore', 'Eel KON-to pair fah-VOR-ay'],
+      ['Do you have a kids menu?', 'Avete un menù per bambini?', 'Ah-VAY-tay oon meh-NOO pair bam-BEE-nee'],
+      ['Water (still/sparkling)', 'Acqua (naturale/frizzante)', 'AH-kwah (nah-too-RAH-lay/free-TSAHN-tay)'],
+      ['No peanuts/nuts please', 'Senza noci per favore', 'SEN-tsah NO-chee pair fah-VOR-ay'],
+      ['Delicious!', 'Buonissimo!', 'Bwo-NEE-see-mo']
+    ]},
+    { cat: 'Getting Around', items: [
+      ['Where is...?', 'Dov\'è...?', 'Do-VEH'],
+      ['The bathroom', 'Il bagno', 'Eel BAHN-yo'],
+      ['The train station', 'La stazione', 'Lah stah-tsee-OH-nay'],
+      ['I need help', 'Ho bisogno di aiuto', 'Oh bee-ZOHN-yo dee ah-YOO-toh'],
+      ['How much does it cost?', 'Quanto costa?', 'KWAN-toh KOS-tah']
+    ]},
+    { cat: 'With Kids', items: [
+      ['My child is sick', 'Il mio bambino è malato', 'Eel MEE-oh bam-BEE-no eh mah-LAH-toh'],
+      ['Where is a pharmacy?', 'Dov\'è una farmacia?', 'Do-VEH OO-nah far-mah-CHEE-ah'],
+      ['Is there a playground?', 'C\'è un parco giochi?', 'Cheh oon PAR-ko JO-kee']
+    ]}
+  ]
+};
+
+function switchPhraseLang(lang) {
+  state._guideLang = lang;
+  document.querySelectorAll('.phrase-lang-pill').forEach(p => {
+    const active = p.dataset.lang === lang;
+    if (active) {
+      p.classList.add('bg-teal-600', 'text-white');
+      p.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+    } else {
+      p.classList.remove('bg-teal-600', 'text-white');
+      p.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+    }
+  });
+  const el = document.getElementById('phraseList');
+  if (!el) return;
+  const phrases = PHRASES[lang] || PHRASES.de;
+  el.innerHTML = phrases.map(cat => `<div class="mb-3">
+    <p class="font-heading font-600 text-xs text-gray-400 uppercase tracking-wide mb-2">${escHtml(cat.cat)}</p>
+    <div class="space-y-1.5">${cat.items.map(([en, local, pron]) => `<div class="bg-gray-50 dark:bg-gray-800 rounded-xl p-2.5">
+      <p class="text-sm font-600">${escHtml(en)}</p>
+      <p class="text-sm text-teal-700 dark:text-teal-400 font-700">${escHtml(local)}</p>
+      <p class="text-xs text-gray-400 italic">${escHtml(pron)}</p>
+    </div>`).join('')}</div>
+  </div>`).join('');
+}
+
+// --- Timezone Clocks ---
+function updateTimezoneClocks() {
+  const el = document.getElementById('timezoneClocks');
+  if (!el) return;
+  const now = new Date();
+  const zones = [
+    { label: '🇦🇹🇮🇹 Europe', tz: 'Europe/Vienna' },
+    { label: '🇺🇸 Pacific', tz: 'America/Los_Angeles' },
+    { label: '🇺🇸 Eastern', tz: 'America/New_York' },
+    { label: '🇺🇸 Central', tz: 'America/Chicago' }
+  ];
+  el.innerHTML = zones.map(z => {
+    const time = now.toLocaleTimeString('en-US', { timeZone: z.tz, hour: 'numeric', minute: '2-digit', hour12: true });
+    const day = now.toLocaleDateString('en-US', { timeZone: z.tz, weekday: 'short', month: 'short', day: 'numeric' });
+    return `<div class="bg-gray-50 dark:bg-gray-800 rounded-xl p-3 text-center">
+      <p class="text-xs text-gray-400">${z.label}</p>
+      <p class="font-heading font-700 text-lg">${time}</p>
+      <p class="text-xs text-gray-400">${day}</p>
+    </div>`;
+  }).join('');
+}
+
+// --- Weather Widget ---
+function refreshWeather() {
+  const btn = document.getElementById('weatherRefreshBtn');
+  const dataEl = document.getElementById('weatherData');
+  if (btn) btn.textContent = 'Loading...';
+  if (!navigator.geolocation) {
+    dataEl.innerHTML = '<p class="text-sm text-red-500">Geolocation not supported by your browser.</p>';
+    if (btn) btn.textContent = 'Refresh';
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      const lat = pos.coords.latitude.toFixed(4);
+      const lon = pos.coords.longitude.toFixed(4);
+      fetch('https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + '&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,weather_code,precipitation_probability_max&timezone=auto&forecast_days=3')
+        .then(r => r.json())
+        .then(data => {
+          const c = data.current;
+          const d = data.daily;
+          const loc = data.timezone || '';
+          const tempC = Math.round(c.temperature_2m);
+          const tempF = Math.round(c.temperature_2m * 9/5 + 32);
+          const feelsC = Math.round(c.apparent_temperature);
+          const feelsF = Math.round(c.apparent_temperature * 9/5 + 32);
+          const icon = weatherIcon(c.weather_code);
+          const humidity = c.relative_humidity_2m;
+          const wind = Math.round(c.wind_speed_10m);
+
+          let forecastHtml = d.time.map((day, i) => {
+            const hi = Math.round(d.temperature_2m_max[i]);
+            const lo = Math.round(d.temperature_2m_min[i]);
+            const hiF = Math.round(hi * 9/5 + 32);
+            const loF = Math.round(lo * 9/5 + 32);
+            const rain = d.precipitation_probability_max[i];
+            const dIcon = weatherIcon(d.weather_code[i]);
+            const label = i === 0 ? 'Today' : new Date(day).toLocaleDateString('en-US', { weekday: 'short' });
+            return '<div class="text-center"><p class="text-xs text-gray-400">' + label + '</p><p class="text-lg">' + dIcon + '</p><p class="text-xs font-600">' + hiF + '°/' + loF + '°F</p>' + (rain > 20 ? '<p class="text-xs text-blue-500">💧' + rain + '%</p>' : '') + '</div>';
+          }).join('');
+
+          dataEl.innerHTML = '<div class="flex items-center justify-center gap-4 mb-3">' +
+            '<span class="text-4xl">' + icon + '</span>' +
+            '<div class="text-left"><p class="font-heading font-800 text-2xl">' + tempF + '°F <span class="text-sm font-400 text-gray-400">(' + tempC + '°C)</span></p>' +
+            '<p class="text-xs text-gray-500 dark:text-gray-400">Feels ' + feelsF + '°F · Humidity ' + humidity + '% · Wind ' + wind + ' km/h</p></div></div>' +
+            '<div class="grid grid-cols-3 gap-3 mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">' + forecastHtml + '</div>';
+          if (btn) btn.textContent = 'Refresh';
+        })
+        .catch(function(err) {
+          dataEl.innerHTML = '<p class="text-sm text-red-500">Failed to load weather. Check connection.</p>';
+          if (btn) btn.textContent = 'Refresh';
+        });
+    },
+    function(err) {
+      dataEl.innerHTML = '<p class="text-sm text-red-500">Location access denied. Enable location in your browser settings.</p>';
+      if (btn) btn.textContent = 'Refresh';
+    },
+    { timeout: 10000 }
+  );
+}
+
+function weatherIcon(code) {
+  if (code === 0) return '☀️';
+  if (code <= 3) return '⛅';
+  if (code <= 48) return '🌫';
+  if (code <= 57) return '🌧';
+  if (code <= 67) return '🌧';
+  if (code <= 77) return '🌨';
+  if (code <= 82) return '🌧';
+  if (code <= 86) return '🌨';
+  if (code >= 95) return '⛈';
+  return '🌤';
 }
 
 // ============================================================
