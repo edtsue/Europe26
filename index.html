@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="referrer" content="no-referrer">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta http-equiv="X-Frame-Options" content="DENY">
@@ -102,6 +102,9 @@ tailwind.config = {
   .check-box.checked { background: #059669; border-color: #059669; }
   .check-box.checked::after { content: '✓'; color: white; font-size: 14px; font-weight: 700; }
 
+  /* Safe area: header top inset for notch/dynamic island */
+  #appHeader { padding-top: env(safe-area-inset-top, 0px); }
+
   /* Bottom tab bar */
   .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; padding-bottom: env(safe-area-inset-bottom, 0px); }
 
@@ -171,9 +174,11 @@ tailwind.config = {
 
   /* Alternative/midway city cards */
   .alt-city-card { border: 1px solid rgba(194,65,12,0.2); transition: all 0.3s ease; cursor: pointer; }
-  .alt-city-card:hover { border-color: rgba(194,65,12,0.5); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
   .dark .alt-city-card { border-color: rgba(251,146,60,0.2); }
-  .dark .alt-city-card:hover { border-color: rgba(251,146,60,0.5); }
+  @media (hover: hover) and (pointer: fine) {
+    .alt-city-card:hover { border-color: rgba(194,65,12,0.5); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .dark .alt-city-card:hover { border-color: rgba(251,146,60,0.5); }
+  }
   .alt-city-card.expanded { border-color: #c2410c; background: rgba(255,237,213,0.3); }
   .dark .alt-city-card.expanded { border-color: #fb923c; background: rgba(124,45,18,0.3); }
 
@@ -319,8 +324,8 @@ tailwind.config = {
 
 
   /* Back to top */
-  .back-to-top { position: fixed; bottom: 80px; right: 16px; z-index: 90; width: 44px; height: 44px; border-radius: 50%; background: rgba(13,148,136,0.9); color: white; display: none; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer; transition: all 0.2s; -webkit-tap-highlight-color: transparent; }
-  .back-to-top:hover { background: #0d9488; transform: scale(1.1); }
+  .back-to-top { position: fixed; bottom: calc(80px + env(safe-area-inset-bottom, 0px)); right: 16px; z-index: 90; width: 44px; height: 44px; border-radius: 50%; background: rgba(13,148,136,0.9); color: white; display: none; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer; transition: all 0.2s; -webkit-tap-highlight-color: transparent; }
+  @media (hover: hover) and (pointer: fine) { .back-to-top:hover { background: #0d9488; transform: scale(1.1); } }
   @media (min-width: 768px) { .back-to-top { bottom: 24px; right: 24px; } }
 
   /* Hotel filter bar */
@@ -1109,7 +1114,7 @@ let expenseFilterCat = 'all';
 function getDefaultState() {
   return {
     version: 1,
-    darkMode: true,
+    darkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
     expenses: [],
     expandedDays: [getTripDay().dayNum],
     activeTab: 'days',
@@ -2131,14 +2136,17 @@ function scrollToDay(dayNum) {
     requestAnimationFrame(() => {
       const el = document.getElementById('day-' + dayNum);
       if (!el) return;
-      // On desktop, the tab panel is the scroll container; on mobile, it's the window
+      const isDesktop = window.matchMedia('(min-width: 768px)').matches;
       const panel = document.getElementById('tab-days');
-      const isDesktop = panel && panel.scrollHeight > panel.clientHeight;
-      if (isDesktop) {
+      if (isDesktop && panel) {
+        // Desktop: tab panel is the scroll container, day nav sticky at top:0
+        const panelRect = panel.getBoundingClientRect();
+        const elRect = el.getBoundingClientRect();
         const navH = document.getElementById('dayNav')?.offsetHeight || 40;
-        const top = el.offsetTop - navH - 12;
+        const top = elRect.top - panelRect.top + panel.scrollTop - navH - 12;
         panel.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
       } else {
+        // Mobile: window is the scroll container, header + nav are sticky
         const headerH = document.getElementById('appHeader')?.offsetHeight || 48;
         const navH = document.getElementById('dayNav')?.offsetHeight || 40;
         const offset = headerH + navH + 12;
