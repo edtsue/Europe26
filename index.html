@@ -1741,7 +1741,7 @@ function renderSModeDays() {
 }
 
 function renderSModeDayCard(d) {
-  // Hard constraints
+  // Hard constraints (flights, rental)
   let hardHtml = '';
   if (d.flights) {
     hardHtml += d.flights.map(f => `<div class="flex items-center gap-2 mb-2">
@@ -1761,28 +1761,25 @@ function renderSModeDayCard(d) {
     <p class="text-xs text-gray-500 dark:text-gray-400 mb-3 ml-1">${escHtml(d.rentalCar.pickup)} → ${escHtml(d.rentalCar.dropoff)}</p>`;
   }
 
-  // The plan — AM/PM one-liners
+  // The plan — AM/PM
   const planHtml = `<div class="mb-3">
-    <p class="text-xs font-600 text-gray-400 uppercase tracking-wider mb-2">What's the plan?</p>
-    <div class="flex gap-2 items-start mb-1.5"><span class="s-badge-flex">🔄 AM</span><p class="text-sm">${escHtml(d.am)}</p></div>
-    <div class="flex gap-2 items-start"><span class="s-badge-flex">🔄 PM</span><p class="text-sm">${escHtml(d.pm)}</p></div>
+    <div class="flex gap-2 items-start mb-1.5"><span class="s-badge-flex">AM</span><p class="text-sm">${escHtml(d.am)}</p></div>
+    <div class="flex gap-2 items-start"><span class="s-badge-flex">PM</span><p class="text-sm">${escHtml(d.pm)}</p></div>
   </div>`;
 
-  // Must-know box
-  const mustKnow = [];
-  mustKnow.push(`🛏 ${escHtml(d.sleep)} ${d.sleepIcon}`);
-  if (d.parking && d.parkingStatus === 'warn') mustKnow.push(`🅿️ ${escHtml(d.parking)}`);
+  // Warnings only — skip "must-know" box if there are no actual warnings
+  const warnings = [];
+  if (d.parking && d.parkingStatus === 'warn') warnings.push(`🅿️ ${escHtml(d.parking)}`);
   if (d.ztl && d.ztl !== '—' && (d.ztlStatus === 'warn' || d.ztlStatus === 'danger')) {
-    mustKnow.push(`🚦 ${escHtml(d.ztl)}`);
+    warnings.push(`🚦 ${escHtml(d.ztl)}`);
   }
-  const mustKnowHtml = `<div class="rounded-xl p-3 mb-3" style="background:rgba(166,142,106,0.06);border:1px solid rgba(166,142,106,0.12)">
-    <p class="text-xs font-600 text-gray-400 uppercase tracking-wider mb-2">Must-know</p>
-    ${mustKnow.map(m => `<p class="text-xs mb-1">${m}</p>`).join('')}
-  </div>`;
+  const warningsHtml = warnings.length > 0 ? `<div class="rounded-xl p-3 mb-3" style="background:rgba(176,115,88,0.05);border:1px solid rgba(176,115,88,0.12)">
+    ${warnings.map(w => `<p class="text-xs mb-0.5">${w}</p>`).join('')}
+  </div>` : '';
 
-  // Top 3 starred destinations — names only, no descriptions
+  // Top spots — only show if 4+ destinations (on resort/simple days the plan covers it)
   let destsHtml = '';
-  if (d.destinations && d.destinations.length > 0) {
+  if (d.destinations && d.destinations.length >= 4) {
     const starred = d.destinations.filter(x => x.star).slice(0, 3);
     const rest = d.destinations.length - starred.length;
     if (starred.length > 0) {
@@ -1801,19 +1798,16 @@ function renderSModeDayCard(d) {
     }
   }
 
-  // Heads-up — collapsed behind count
+  // Heads-up reminders — exclude ZTL (already in warnings above)
   let headsUpHtml = '';
   const headsUpItems = [];
   if (d.reminders) d.reminders.forEach(r => headsUpItems.push(r.text));
-  if ((d.ztlStatus === 'warn' || d.ztlStatus === 'danger') && d.ztl && d.ztl !== '—') {
-    headsUpItems.push('ZTL: ' + d.ztl);
-  }
   if (headsUpItems.length > 0) {
     headsUpHtml = `<button class="s-more-btn mb-3" onclick="toggleSModeSection(this, 'headsup-${d.day}')">⚠️ ${headsUpItems.length} reminder${headsUpItems.length > 1 ? 's' : ''} →</button>
     <div id="s-headsup-${d.day}" class="hidden mb-3 space-y-2">${headsUpItems.map(t => `<div class="rounded-lg p-2.5" style="background:rgba(176,115,88,0.06);border:1px solid rgba(176,115,88,0.12)"><p class="text-xs">⚠️ ${escHtml(t.length > 150 ? t.substring(0, 150) + '...' : t)}</p></div>`).join('')}</div>`;
   }
 
-  // Full details escape hatch (alternatives + midway)
+  // Full details escape hatch
   let fullDetailsHtml = '';
   const hasAlts = d.alternatives && d.alternatives.length > 0;
   const hasMidway = d.midwayStops && d.midwayStops.length > 0;
@@ -1827,11 +1821,12 @@ function renderSModeDayCard(d) {
       <div class="flex-1">
         <p class="s-day-num">Day ${d.day} · ${d.date} (${d.weekday})</p>
         <p class="s-day-title">${escHtml(d.title)}</p>
+        <p class="text-xs text-gray-400 mt-0.5">🛏 ${escHtml(d.sleep)} ${d.sleepIcon}</p>
       </div>
     </div>
     ${hardHtml}
     ${planHtml}
-    ${mustKnowHtml}
+    ${warningsHtml}
     ${destsHtml}
     ${headsUpHtml}
     ${fullDetailsHtml}
