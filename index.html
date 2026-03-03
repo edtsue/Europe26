@@ -155,6 +155,13 @@ tailwind.config = {
   .pack-item.dragging { opacity: 0.4; background: rgba(13,148,136,0.1); }
   .pack-item.drag-over { background: rgba(13,148,136,0.12); box-shadow: 0 0 0 2px #0d9488; }
   .dark .pack-item.drag-over { background: rgba(45,212,191,0.12); box-shadow: 0 0 0 2px #2dd4bf; }
+  .pack-cat-handle { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; color: #94a3b8; font-size: 14px; cursor: grab; flex-shrink: 0; -webkit-tap-highlight-color: transparent; touch-action: none; user-select: none; }
+  .pack-cat-handle:active { cursor: grabbing; }
+  .dark .pack-cat-handle { color: #64748b; }
+  .pack-cat-wrap { transition: transform 0.15s ease, opacity 0.15s ease; }
+  .pack-cat-wrap.cat-dragging { opacity: 0.4; }
+  .pack-cat-wrap.cat-drag-over { box-shadow: 0 0 0 2px #0d9488; border-radius: 16px; }
+  .dark .pack-cat-wrap.cat-drag-over { box-shadow: 0 0 0 2px #2dd4bf; }
 
   /* Expense category colors */
   .cat-food { background: #fef3c7; color: #92400e; }
@@ -1032,6 +1039,20 @@ const CATEGORIES = [
 ];
 
 const DEFAULT_PACKING = [
+  { cat: '📋 Pre-Trip To-Do', items: [
+    'Book Salzburg hotel',
+    'Book Val d\'Orcia hotel',
+    'Book Verona hotel',
+    'Book Florence airport hotel',
+    'Reserve rental car',
+    'Notify bank of travel dates',
+    'Buy Arena di Verona tickets online (skip the line!)',
+    'Confirm Das Edelweiss reservation',
+    'Book Bologna Two Towers climb (timed entry)',
+    'Book restaurant: Trattoria Anna Maria (Bologna)',
+    'Set GPS to avoid city centers in Italy',
+    'Save Parcheggio Cittadella (Verona) in Maps'
+  ]},
   { cat: '📄 Documents & Money', items: [
     'Passports (all family members)',
     'Travel insurance docs (printed + digital)',
@@ -1091,20 +1112,6 @@ const DEFAULT_PACKING = [
     'Neck pillows for kids',
     'USB car charger',
     'Printed ZTL rules for Italy'
-  ]},
-  { cat: '📋 Pre-Trip To-Do', items: [
-    'Book Salzburg hotel',
-    'Book Val d\'Orcia hotel',
-    'Book Verona hotel',
-    'Book Florence airport hotel',
-    'Reserve rental car',
-    'Notify bank of travel dates',
-    'Buy Arena di Verona tickets online (skip the line!)',
-    'Confirm Das Edelweiss reservation',
-    'Book Bologna Two Towers climb (timed entry)',
-    'Book restaurant: Trattoria Anna Maria (Bologna)',
-    'Set GPS to avoid city centers in Italy',
-    'Save Parcheggio Cittadella (Verona) in Maps'
   ]}
 ];
 
@@ -1674,17 +1681,20 @@ function renderPackingCategory(cat, ci) {
     </div>`;
   }).join('');
 
-  return `<div class="glass rounded-2xl overflow-hidden">
-    <button onclick="togglePackingCat(${ci})" class="w-full tap flex items-center justify-between p-4 text-left" aria-expanded="false" aria-controls="packBody-${ci}">
-      <div class="flex items-center gap-2">
-        <span class="font-heading font-700 text-sm ${isDone ? 'line-through text-gray-400' : ''}">${escHtml(cat.cat)}</span>
-        ${isDone ? '<span class="text-green-500 text-xs">✅</span>' : ''}
-      </div>
-      <div class="flex items-center gap-2">
-        <span class="text-xs text-gray-400">${checked}/${total}</span>
-        <span class="chevron text-xs text-gray-400" id="packChev-${ci}">▼</span>
-      </div>
-    </button>
+  return `<div class="pack-cat-wrap glass rounded-2xl overflow-hidden" data-ci="${ci}">
+    <div class="flex items-center">
+      <span class="pack-cat-handle ml-2" onpointerdown="startCatDrag(event,${ci})">⠿</span>
+      <button onclick="togglePackingCat(${ci})" class="flex-1 tap flex items-center justify-between p-4 pl-2 text-left" aria-expanded="false" aria-controls="packBody-${ci}">
+        <div class="flex items-center gap-2">
+          <span class="font-heading font-700 text-sm ${isDone ? 'line-through text-gray-400' : ''}">${escHtml(cat.cat)}</span>
+          ${isDone ? '<span class="text-green-500 text-xs">✅</span>' : ''}
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-gray-400">${checked}/${total}</span>
+          <span class="chevron text-xs text-gray-400" id="packChev-${ci}">▼</span>
+        </div>
+      </button>
+    </div>
     <div id="packBody-${ci}" class="px-4 pb-4 hidden">
       <div class="progress-track mb-3"><div class="progress-fill ${isDone ? 'bg-green-500' : 'bg-teal-500'}" style="width:${pct}%"></div></div>
       <div class="space-y-1.5">${itemsHtml}</div>
@@ -1707,19 +1717,21 @@ function togglePackingCat(ci) {
 
 function getExpandedPackingCats() {
   const expanded = [];
-  state.packingList.forEach((_, ci) => {
+  state.packingList.forEach((cat, ci) => {
     const body = document.getElementById('packBody-' + ci);
-    if (body && !body.classList.contains('hidden')) expanded.push(ci);
+    if (body && !body.classList.contains('hidden')) expanded.push(cat.cat);
   });
   return expanded;
 }
 
-function restorePackingCats(expanded) {
-  expanded.forEach(ci => {
-    const body = document.getElementById('packBody-' + ci);
-    const chev = document.getElementById('packChev-' + ci);
-    if (body) body.classList.remove('hidden');
-    if (chev) chev.classList.add('open');
+function restorePackingCats(expandedNames) {
+  state.packingList.forEach((cat, ci) => {
+    if (expandedNames.includes(cat.cat)) {
+      const body = document.getElementById('packBody-' + ci);
+      const chev = document.getElementById('packChev-' + ci);
+      if (body) body.classList.remove('hidden');
+      if (chev) chev.classList.add('open');
+    }
   });
 }
 
@@ -1835,6 +1847,72 @@ function startPackDrag(e, ci, ai) {
     if (moved && currentOver !== ai) reorderPackingItem(ci, ai, currentOver);
     // Release click lock after browser fires the click event
     setTimeout(() => { packDragLock = false; }, 300);
+  }
+
+  document.addEventListener('pointermove', onMove);
+  document.addEventListener('pointerup', onUp);
+  document.addEventListener('pointercancel', onUp);
+}
+
+// --- Pointer-based drag reordering for packing categories ---
+function reorderPackingCategory(fromCi, toCi) {
+  if (fromCi === toCi) return;
+  const [moved] = state.packingList.splice(fromCi, 1);
+  state.packingList.splice(toCi, 0, moved);
+  saveState();
+  const expanded = getExpandedPackingCats();
+  renderPacking();
+  restorePackingCats(expanded);
+}
+
+function startCatDrag(e, ci) {
+  e.preventDefault();
+  e.stopPropagation();
+  const catEl = e.target.closest('.pack-cat-wrap');
+  if (!catEl) return;
+  const container = catEl.parentElement;
+  const rect = catEl.getBoundingClientRect();
+  const startY = e.clientY;
+  const offsetY = startY - rect.top;
+  let currentOver = ci;
+  let moved = false;
+
+  const ghost = catEl.cloneNode(true);
+  ghost.id = 'catDragGhost';
+  ghost.style.cssText = `position:fixed;z-index:9999;pointer-events:none;opacity:0.85;width:${rect.width}px;left:${rect.left}px;top:${rect.top}px;box-shadow:0 8px 24px rgba(0,0,0,0.2);border-radius:16px;background:${document.documentElement.classList.contains('dark') ? '#1e293b' : '#fff'};`;
+  document.body.appendChild(ghost);
+  catEl.classList.add('cat-dragging');
+
+  function onMove(ev) {
+    ev.preventDefault();
+    const y = ev.clientY;
+    if (!moved && Math.abs(y - startY) > 3) moved = true;
+    ghost.style.top = (y - offsetY) + 'px';
+    const siblings = Array.from(container.querySelectorAll('.pack-cat-wrap'));
+    document.querySelectorAll('.pack-cat-wrap.cat-drag-over').forEach(d => d.classList.remove('cat-drag-over'));
+    const others = siblings
+      .filter(s => +s.dataset.ci !== ci)
+      .map(s => { const r = s.getBoundingClientRect(); return { el: s, ci: +s.dataset.ci, mid: r.top + r.height / 2 }; })
+      .sort((a, b) => a.mid - b.mid);
+    if (others.length === 0) return;
+    let target = others[0];
+    for (const o of others) {
+      if (y > o.mid) target = o;
+      else break;
+    }
+    target.el.classList.add('cat-drag-over');
+    currentOver = target.ci;
+  }
+
+  function onUp(ev) {
+    document.removeEventListener('pointermove', onMove);
+    document.removeEventListener('pointerup', onUp);
+    document.removeEventListener('pointercancel', onUp);
+    const g = document.getElementById('catDragGhost');
+    if (g) g.remove();
+    document.querySelectorAll('.pack-cat-wrap.cat-dragging').forEach(d => d.classList.remove('cat-dragging'));
+    document.querySelectorAll('.pack-cat-wrap.cat-drag-over').forEach(d => d.classList.remove('cat-drag-over'));
+    if (moved && currentOver !== ci) reorderPackingCategory(ci, currentOver);
   }
 
   document.addEventListener('pointermove', onMove);
