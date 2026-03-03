@@ -353,10 +353,6 @@ tailwind.config = {
         <h1 class="font-heading font-800 text-xl leading-tight">Family Europe 2026</h1>
         <p class="text-xs text-gray-500 dark:text-gray-400 font-body">Mar 23 – Apr 2, 2026</p>
       </div>
-      <div id="headerWeather" class="hidden items-center gap-1 px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-800 cursor-pointer" onclick="switchTab('guide')" title="View full weather">
-        <span id="headerWeatherIcon" class="text-sm"></span>
-        <span id="headerWeatherTemp" class="font-heading font-700 text-sm"></span>
-      </div>
       <div class="flex items-center gap-1">
         <button onclick="quickCloudPush()" id="cloudSyncBtn" class="tap flex items-center justify-center w-11 h-11 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="Sync to cloud" title="Push to cloud">
           <span id="cloudSyncIcon" class="text-lg">☁️</span>
@@ -2335,17 +2331,6 @@ function renderGuide() {
   el.innerHTML = `
     <h2 class="font-heading font-700 text-xl mb-4">🌍 Travel Guide</h2>
 
-    <!-- Weather Widget -->
-    <div class="glass rounded-2xl p-4 mb-4" id="weatherWidget">
-      <div class="flex justify-between items-center mb-3">
-        <h3 class="font-heading font-700 text-base">🌤 Current Weather</h3>
-        <button onclick="refreshWeather()" class="tap text-xs px-3 py-1 bg-teal-600 text-white rounded-full font-600 hover:bg-teal-700 transition" id="weatherRefreshBtn">Refresh</button>
-      </div>
-      <div id="weatherData" class="text-center py-4">
-        <p class="text-sm text-gray-400">Loading weather...</p>
-      </div>
-    </div>
-
     <!-- Key Phrases -->
     <div class="glass rounded-2xl overflow-hidden mb-4">
       <button onclick="toggleGuideSection('phrases')" class="w-full tap flex items-center justify-between p-4 text-left">
@@ -2603,110 +2588,6 @@ function updateTimezoneClocks() {
       <p class="text-xs text-gray-400">${day}</p>
     </div>`;
   }).join('');
-}
-
-// --- Weather Widget ---
-let weatherCache = null;
-let weatherCacheTime = 0;
-const WEATHER_CACHE_MS = 10 * 60 * 1000; // 10 min cache
-
-function updateHeaderWeather(tempF, icon) {
-  const wrap = document.getElementById('headerWeather');
-  const iconEl = document.getElementById('headerWeatherIcon');
-  const tempEl = document.getElementById('headerWeatherTemp');
-  if (wrap && iconEl && tempEl) {
-    iconEl.textContent = icon;
-    tempEl.textContent = tempF + '°F';
-    wrap.classList.remove('hidden');
-    wrap.classList.add('flex');
-  }
-}
-
-function refreshWeather(silent) {
-  const btn = document.getElementById('weatherRefreshBtn');
-  const dataEl = document.getElementById('weatherData');
-  if (btn) btn.textContent = 'Loading...';
-
-  // Use cache if fresh
-  if (weatherCache && (Date.now() - weatherCacheTime < WEATHER_CACHE_MS)) {
-    renderWeatherData(weatherCache);
-    if (btn) btn.textContent = 'Refresh';
-    return;
-  }
-
-  if (!navigator.geolocation) {
-    if (!silent && dataEl) dataEl.innerHTML = '<p class="text-sm text-red-500">Geolocation not supported by your browser.</p>';
-    if (btn) btn.textContent = 'Refresh';
-    return;
-  }
-  navigator.geolocation.getCurrentPosition(
-    function(pos) {
-      const lat = pos.coords.latitude.toFixed(4);
-      const lon = pos.coords.longitude.toFixed(4);
-      fetch('https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + '&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,weather_code,precipitation_probability_max&timezone=auto&forecast_days=3')
-        .then(r => r.json())
-        .then(data => {
-          weatherCache = data;
-          weatherCacheTime = Date.now();
-          renderWeatherData(data);
-          if (btn) btn.textContent = 'Refresh';
-        })
-        .catch(function() {
-          if (dataEl) dataEl.innerHTML = '<p class="text-sm text-red-500">Failed to load weather. Check connection.</p>';
-          if (btn) btn.textContent = 'Refresh';
-        });
-    },
-    function() {
-      if (!silent && dataEl) dataEl.innerHTML = '<p class="text-sm text-red-500">Location access denied. Enable location in your browser settings.</p>';
-      if (btn) btn.textContent = 'Refresh';
-    },
-    { timeout: 10000 }
-  );
-}
-
-function renderWeatherData(data) {
-  const dataEl = document.getElementById('weatherData');
-  const c = data.current;
-  const d = data.daily;
-  const tempC = Math.round(c.temperature_2m);
-  const tempF = Math.round(c.temperature_2m * 9/5 + 32);
-  const feelsF = Math.round(c.apparent_temperature * 9/5 + 32);
-  const icon = weatherIcon(c.weather_code);
-  const humidity = c.relative_humidity_2m;
-  const wind = Math.round(c.wind_speed_10m);
-
-  // Update header badge
-  updateHeaderWeather(tempF, icon);
-
-  // Update guide widget if visible
-  if (!dataEl) return;
-  let forecastHtml = d.time.map((day, i) => {
-    const hiF = Math.round(d.temperature_2m_max[i] * 9/5 + 32);
-    const loF = Math.round(d.temperature_2m_min[i] * 9/5 + 32);
-    const rain = d.precipitation_probability_max[i];
-    const dIcon = weatherIcon(d.weather_code[i]);
-    const label = i === 0 ? 'Today' : new Date(day).toLocaleDateString('en-US', { weekday: 'short' });
-    return '<div class="text-center"><p class="text-xs text-gray-400">' + label + '</p><p class="text-lg">' + dIcon + '</p><p class="text-xs font-600">' + hiF + '°/' + loF + '°F</p>' + (rain > 20 ? '<p class="text-xs text-blue-500">\u{1F4A7}' + rain + '%</p>' : '') + '</div>';
-  }).join('');
-
-  dataEl.innerHTML = '<div class="flex items-center justify-center gap-4 mb-3">' +
-    '<span class="text-4xl">' + icon + '</span>' +
-    '<div class="text-left"><p class="font-heading font-800 text-2xl">' + tempF + '\u00B0F <span class="text-sm font-400 text-gray-400">(' + tempC + '\u00B0C)</span></p>' +
-    '<p class="text-xs text-gray-500 dark:text-gray-400">Feels ' + feelsF + '\u00B0F \u00B7 Humidity ' + humidity + '% \u00B7 Wind ' + wind + ' km/h</p></div></div>' +
-    '<div class="grid grid-cols-3 gap-3 mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">' + forecastHtml + '</div>';
-}
-
-function weatherIcon(code) {
-  if (code === 0) return '☀️';
-  if (code <= 3) return '⛅';
-  if (code <= 48) return '🌫';
-  if (code <= 57) return '🌧';
-  if (code <= 67) return '🌧';
-  if (code <= 77) return '🌨';
-  if (code <= 82) return '🌧';
-  if (code <= 86) return '🌨';
-  if (code >= 95) return '⛈';
-  return '🌤';
 }
 
 // ============================================================
@@ -3140,8 +3021,6 @@ function init() {
   checkAutoNightMode();
   // Check auto night mode every minute
   setInterval(checkAutoNightMode, 60000);
-  // Auto-fetch weather (silent — no error shown if location denied)
-  setTimeout(() => refreshWeather(true), 500);
   // Offline indicator
   window.addEventListener('online', function() { document.getElementById('offlineBanner').classList.remove('show'); showToast('Back online!', 'success'); });
   window.addEventListener('offline', function() { document.getElementById('offlineBanner').classList.add('show'); });
