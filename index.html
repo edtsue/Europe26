@@ -1136,7 +1136,7 @@ function loadState() {
       // Ensure all keys exist (merge with defaults)
       const def = getDefaultState();
       if (!state.expenses) state.expenses = def.expenses;
-      if (!state.expandedDays) state.expandedDays = def.expandedDays;
+      state.expandedDays = [getTripDay().dayNum];
       if (state.activeTab === undefined || state.activeTab === 'today' || state.activeTab === 'notes') state.activeTab = 'days';
       if (state.budget === undefined) state.budget = 15000;
       if (state.currency === undefined) state.currency = 'EUR';
@@ -1801,11 +1801,7 @@ let dayObserver = null;
 let isPillScrolling = false;
 
 function renderDays() {
-  // Ensure current day is always expanded
   const currentDay = getTripDay().dayNum;
-  if (!state.expandedDays.includes(currentDay)) {
-    state.expandedDays.push(currentDay);
-  }
 
   // Day nav
   const nav = document.getElementById('dayNav');
