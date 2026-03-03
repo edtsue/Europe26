@@ -153,8 +153,8 @@ tailwind.config = {
   .dark .pack-drag-handle { color: #64748b; }
   .pack-item { transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease; border-radius: 8px; }
   .pack-item.dragging { opacity: 0.4; background: rgba(13,148,136,0.1); }
-  .pack-item.drag-over { border-top: 2px solid #0d9488; margin-top: -2px; }
-  .dark .pack-item.drag-over { border-top-color: #2dd4bf; }
+  .pack-item.drag-over { background: rgba(13,148,136,0.12); box-shadow: 0 0 0 2px #0d9488; }
+  .dark .pack-item.drag-over { background: rgba(45,212,191,0.12); box-shadow: 0 0 0 2px #2dd4bf; }
 
   /* Expense category colors */
   .cat-food { background: #fef3c7; color: #92400e; }
