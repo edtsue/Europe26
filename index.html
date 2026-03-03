@@ -2113,13 +2113,31 @@ function toggleDay(dayNum) {
 }
 
 function scrollToDay(dayNum) {
-  const el = document.getElementById('day-' + dayNum);
-  if (!el) return;
-  const headerH = document.getElementById('appHeader')?.offsetHeight || 48;
-  const navH = document.getElementById('dayNav')?.offsetHeight || 40;
-  const offset = headerH + navH + 12;
-  const top = el.getBoundingClientRect().top + window.scrollY - offset;
-  window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+  // Expand the day if it's collapsed
+  const needsExpand = !state.expandedDays.includes(dayNum);
+  if (needsExpand) {
+    // Directly expand without toggle (don't collapse if already open)
+    state.expandedDays.push(dayNum);
+    saveState();
+    const body = document.getElementById('dayBody-' + dayNum);
+    const chev = document.getElementById('chev-' + dayNum);
+    if (body) {
+      body.classList.remove('hidden');
+      body.querySelector('div')?.classList.add('anim-slide');
+    }
+    if (chev) chev.classList.add('open');
+  }
+  // Wait for layout to settle after expanding, then scroll
+  requestAnimationFrame(() => {
+    const el = document.getElementById('day-' + dayNum);
+    if (!el) return;
+    const headerH = document.getElementById('appHeader')?.offsetHeight || 48;
+    const navH = document.getElementById('dayNav')?.offsetHeight || 40;
+    const offset = headerH + navH + 12;
+    const top = el.getBoundingClientRect().top + window.scrollY - offset;
+    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+  });
+  highlightDayNav(dayNum);
 }
 
 function highlightDayNav(dayNum) {
