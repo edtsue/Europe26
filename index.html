@@ -1921,24 +1921,29 @@ function renderDays() {
   const cards = document.getElementById('dayCards');
   cards.innerHTML = DAYS.map(d => renderCollapsibleDay(d)).join('');
 
-  // Auto-scroll to current day
+  // Highlight current day pill immediately
+  highlightDayNav(currentDay);
+
+  // Auto-scroll to current day, then start observer after scroll settles
   setTimeout(() => {
-    const el = document.getElementById('day-' + currentDay);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    scrollToDay(currentDay);
+    // Delay observer setup so it doesn't fight the initial scroll
+    setTimeout(() => {
+      if (dayObserver) dayObserver.disconnect();
+      const headerH = document.getElementById('appHeader')?.offsetHeight || 48;
+      const navH = document.getElementById('dayNav')?.offsetHeight || 40;
+      const topMargin = -(headerH + navH + 20);
+      dayObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const dayNum = parseInt(entry.target.dataset.day);
+            highlightDayNav(dayNum);
+          }
+        });
+      }, { threshold: 0.3, rootMargin: topMargin + 'px 0px -40% 0px' });
+      document.querySelectorAll('[data-day-card]').forEach(el => dayObserver.observe(el));
+    }, 600);
   }, 100);
-
-  // IntersectionObserver
-  if (dayObserver) dayObserver.disconnect();
-  dayObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const dayNum = parseInt(entry.target.dataset.day);
-        highlightDayNav(dayNum);
-      }
-    });
-  }, { threshold: 0.3, rootMargin: '-60px 0px -40% 0px' });
-
-  document.querySelectorAll('[data-day-card]').forEach(el => dayObserver.observe(el));
 }
 
 function renderDestCard(dest, dayNum) {
@@ -2151,14 +2156,21 @@ function toggleDay(dayNum) {
 
 function scrollToDay(dayNum) {
   const el = document.getElementById('day-' + dayNum);
-  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (!el) return;
+  const headerH = document.getElementById('appHeader')?.offsetHeight || 48;
+  const navH = document.getElementById('dayNav')?.offsetHeight || 40;
+  const offset = headerH + navH + 12;
+  const top = el.getBoundingClientRect().top + window.scrollY - offset;
+  window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
 }
 
 function highlightDayNav(dayNum) {
+  let activeBtn = null;
   document.querySelectorAll('.day-nav-btn').forEach(btn => {
     const d = parseInt(btn.dataset.day);
     const dayData = DAYS[d - 1];
     if (d === dayNum) {
+      activeBtn = btn;
       btn.style.background = phaseColor(dayData.phase);
       btn.style.color = '#fff';
     } else {
@@ -2166,6 +2178,8 @@ function highlightDayNav(dayNum) {
       btn.style.color = phaseColor(dayData.phase);
     }
   });
+  // Scroll active pill into view in the nav bar
+  if (activeBtn) activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
 }
 
 // ============================================================
