@@ -32,7 +32,7 @@ window.addEventListener('pageshow', function(e) {
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
 tailwind.config = {
@@ -349,6 +349,76 @@ tailwind.config = {
   .hotel-filter-pill.active { background: #0d9488; color: white; }
   .hotel-filter-pill:not(.active) { background: #f1f5f9; color: #475569; }
   .dark .hotel-filter-pill:not(.active) { background: #1e293b; color: #94a3b8; }
+
+  /* ====== S MODE — Premium ADHD-Optimized ====== */
+  body.s-mode { font-family: 'Lexend', system-ui, sans-serif; background: #FDFBF7; color: #2D3436; line-height: 1.65; letter-spacing: 0.02em; }
+  body.s-mode .font-heading, body.s-mode .font-body { font-family: 'Lexend', system-ui, sans-serif; }
+  body.s-mode .glass { background: rgba(253,251,247,0.92); border: 1px solid rgba(201,169,110,0.12); box-shadow: 0 2px 16px rgba(201,169,110,0.08); border-radius: 20px; }
+  body.s-mode .phase-austria { background: #87A08B; }
+  body.s-mode .phase-transition { background: #B8956A; }
+  body.s-mode .phase-italy { background: #C07856; }
+  body.s-mode .phase-departure { background: #7B8794; }
+
+  /* S MODE toggle button */
+  .s-mode-toggle { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 9999px; font-size: 20px; cursor: pointer; transition: all 0.3s; border: none; background: transparent; -webkit-tap-highlight-color: transparent; }
+  .s-mode-toggle:hover { background: rgba(201,169,110,0.12); }
+  .s-mode-toggle.active { background: linear-gradient(135deg, #C9A96E, #D4B97A); box-shadow: 0 0 12px rgba(201,169,110,0.4); }
+
+  /* S MODE cards */
+  body.s-mode .s-card { background: rgba(253,251,247,0.95); border: 1px solid rgba(201,169,110,0.15); border-radius: 20px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 20px rgba(201,169,110,0.06); }
+  body.s-mode .s-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  body.s-mode .s-day-num { font-size: 13px; font-weight: 600; color: #C9A96E; letter-spacing: 0.08em; text-transform: uppercase; }
+  body.s-mode .s-day-title { font-size: 20px; font-weight: 700; color: #2D3436; }
+  body.s-mode .s-day-subtitle { font-size: 13px; color: #7B8794; margin-top: 2px; }
+
+  /* S MODE badges */
+  body.s-mode .s-badge-fixed { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border-radius: 999px; font-size: 11px; font-weight: 600; background: linear-gradient(135deg, #C9A96E, #D4B97A); color: white; }
+  body.s-mode .s-badge-flex { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border-radius: 999px; font-size: 11px; font-weight: 600; background: #87A08B; color: white; }
+  body.s-mode .s-badge-warn { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; background: #C07856; color: white; }
+
+  /* S MODE "more" buttons */
+  body.s-mode .s-more-btn { display: inline-flex; align-items: center; gap: 4px; padding: 8px 18px; border-radius: 999px; font-size: 13px; font-weight: 500; color: #C9A96E; background: rgba(201,169,110,0.08); border: 1px solid rgba(201,169,110,0.2); cursor: pointer; transition: all 0.2s; }
+  body.s-mode .s-more-btn:hover { background: rgba(201,169,110,0.15); }
+
+  /* S MODE top-pick badge */
+  body.s-mode .s-top-pick { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; background: linear-gradient(135deg, #C9A96E, #D4B97A); color: white; }
+
+  /* S MODE section divider */
+  body.s-mode .s-divider { height: 1px; background: linear-gradient(to right, transparent, rgba(201,169,110,0.3), transparent); margin: 16px 0; }
+
+  /* S MODE progress */
+  body.s-mode .s-progress-ring { width: 80px; height: 80px; }
+  body.s-mode .s-budget-signal { font-size: 48px; line-height: 1; }
+
+  /* S MODE packing categories */
+  body.s-mode .s-pack-priority { border-left: 3px solid #C9A96E; }
+  body.s-mode .s-pack-kids { border-left: 3px solid #C4A4A7; }
+
+  /* S MODE phrase card */
+  body.s-mode .s-phrase-card { background: rgba(253,251,247,0.95); border: 1px solid rgba(201,169,110,0.12); border-radius: 16px; padding: 16px; margin-bottom: 10px; }
+  body.s-mode .s-phrase-local { font-size: 17px; font-weight: 600; color: #2D3436; }
+  body.s-mode .s-phrase-pron { font-size: 13px; color: #87A08B; font-style: italic; }
+  body.s-mode .s-phrase-kr { font-size: 13px; color: #C4A4A7; }
+
+  /* S MODE settings info card */
+  body.s-mode .s-info-card { background: linear-gradient(135deg, rgba(201,169,110,0.08), rgba(135,160,139,0.08)); border: 1px solid rgba(201,169,110,0.2); border-radius: 20px; padding: 20px; margin-bottom: 20px; }
+
+  /* S MODE dark mode combo */
+  body.s-mode.dark { background: #1a1d2e; color: #F5F0E8; }
+  body.s-mode.dark .glass { background: rgba(26,29,46,0.92); border-color: rgba(201,169,110,0.15); }
+  body.s-mode.dark .s-card { background: rgba(26,29,46,0.95); border-color: rgba(201,169,110,0.18); }
+  body.s-mode.dark .s-day-title { color: #F5F0E8; }
+  body.s-mode.dark .s-phrase-local { color: #F5F0E8; }
+  body.s-mode.dark .s-more-btn { color: #D4B97A; background: rgba(201,169,110,0.1); border-color: rgba(201,169,110,0.25); }
+  body.s-mode.dark .s-info-card { background: linear-gradient(135deg, rgba(201,169,110,0.06), rgba(135,160,139,0.06)); }
+
+  /* S MODE header tweak */
+  body.s-mode header.glass { background: rgba(253,251,247,0.95); backdrop-filter: blur(12px); }
+  body.s-mode.dark header.glass { background: rgba(26,29,46,0.95); }
+
+  /* S MODE bottom nav */
+  body.s-mode .mobile-nav { background: rgba(253,251,247,0.95); border-color: rgba(201,169,110,0.15); }
+  body.s-mode.dark .mobile-nav { background: rgba(26,29,46,0.95); }
 </style>
 </head>
 <body class="bg-gray-50 text-gray-900 font-body min-h-screen pb-20">
@@ -364,6 +434,7 @@ tailwind.config = {
         <p class="text-xs text-gray-500 dark:text-gray-400 font-body">Mar 23 – Apr 2, 2026</p>
       </div>
       <div class="flex items-center gap-1">
+        <button onclick="toggleSMode()" id="sModeToggle" class="s-mode-toggle" aria-label="Toggle S Mode" title="S Mode">🌸</button>
         <button onclick="quickCloudPush()" id="cloudSyncBtn" class="tap flex items-center justify-center w-11 h-11 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="Sync to cloud" title="Push to cloud">
           <span id="cloudSyncIcon" class="text-lg">☁️</span>
         </button>
@@ -1134,6 +1205,7 @@ function getDefaultState() {
     activeTab: 'days',
     budget: 15000,
     fontSize: 0,
+    sMode: false,
     packingList: initPackingList()
   };
 }
@@ -1154,6 +1226,7 @@ function loadState() {
       if (!state.visitedDests) state.visitedDests = [];
       if (state.autoNightMode === undefined) state.autoNightMode = false;
       if (!state.packingList) state.packingList = initPackingList();
+      if (state.sMode === undefined) state.sMode = false;
     } else {
       state = getDefaultState();
     }
@@ -1238,6 +1311,7 @@ function sanitizeState(s) {
   if (typeof s.budget !== 'number' || s.budget < 0 || s.budget > 9999999) s.budget = 15000;
   if (!['EUR','USD'].includes(s.currency)) s.currency = 'EUR';
   if (typeof s.fontSize !== 'number' || s.fontSize < 0 || s.fontSize > 2) s.fontSize = 0;
+  if (typeof s.sMode !== 'boolean') s.sMode = false;
   // Sanitize expense amounts
   s.expenses = s.expenses.filter(e => e && typeof e === 'object').map(e => ({
     ...e,
@@ -1413,6 +1487,7 @@ function renderHotelCard(h, isMain) {
 }
 
 function renderHotels() {
+  if (state.sMode) return renderSModeHotels();
   const container = document.getElementById('hotelsContent');
 
   // Build filter bar
@@ -1559,9 +1634,9 @@ function toggleDarkMode() {
 // FONT SIZE
 // ============================================================
 const FONT_SIZES = [
-  { level: 0, scale: 100, label: 'A', desc: 'Default' },
-  { level: 1, scale: 115, label: 'A+', desc: 'Large' },
-  { level: 2, scale: 130, label: 'A++', desc: 'Extra Large' }
+  { level: 0, scale: 115, label: 'A', desc: 'Default' },
+  { level: 1, scale: 130, label: 'A+', desc: 'Large' },
+  { level: 2, scale: 145, label: 'A++', desc: 'Extra Large' }
 ];
 
 function applyFontSize() {
@@ -1582,6 +1657,436 @@ function cycleFontSize() {
   applyFontSize();
   saveState();
   renderSettings();
+}
+
+// ============================================================
+// S MODE
+// ============================================================
+function applySMode() {
+  if (state.sMode) {
+    document.body.classList.add('s-mode');
+  } else {
+    document.body.classList.remove('s-mode');
+  }
+  const btn = document.getElementById('sModeToggle');
+  if (btn) {
+    btn.classList.toggle('active', !!state.sMode);
+  }
+}
+
+function toggleSMode() {
+  state.sMode = !state.sMode;
+  applySMode();
+  saveState();
+  // Re-render current tab
+  const tab = state.activeTab || 'days';
+  if (tab === 'days') renderDays();
+  else if (tab === 'hotels') renderHotels();
+  else if (tab === 'packing') renderPacking();
+  else if (tab === 'guide') renderGuide();
+  else if (tab === 'expenses') renderExpensesTab();
+  else if (tab === 'settings') renderSettings();
+  showToast(state.sMode ? '🌸 S Mode on' : 'S Mode off', 'success');
+}
+
+// ============================================================
+// S MODE RENDER: DAYS
+// ============================================================
+function renderSModeDays() {
+  const currentDay = getTripDay().dayNum;
+  const nav = document.getElementById('dayNav');
+  nav.innerHTML = DAYS.map(d => `<button onclick="scrollToDay(${d.day})" class="day-nav-btn tap flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-heading font-600 transition whitespace-nowrap" data-day="${d.day}" style="background:${phaseColor(d.phase)}20;color:${phaseColor(d.phase)}">${d.flag} ${d.day}</button>`).join('');
+
+  const cards = document.getElementById('dayCards');
+  cards.innerHTML = DAYS.map(d => renderSModeDayCard(d)).join('');
+  highlightDayNav(currentDay);
+  setTimeout(() => { scrollToDay(currentDay); }, 50);
+}
+
+function renderSModeDayCard(d) {
+  // Hard constraints
+  let hardHtml = '';
+  if (d.flights) {
+    hardHtml += d.flights.map(f => `<div class="flex items-center gap-2 mb-2">
+      <span class="s-badge-fixed">🔒 Flight</span>
+      <span class="text-sm font-600">✈️ ${escHtml(f.flight)}</span>
+      <span class="text-xs px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 font-mono">${escHtml(f.confirmation)}</span>
+    </div>
+    <p class="text-xs text-gray-500 dark:text-gray-400 mb-1 ml-1">${escHtml(f.route)}</p>
+    <p class="text-xs text-gray-500 dark:text-gray-400 mb-3 ml-1">🛫 ${escHtml(f.depart)} → 🛬 ${escHtml(f.arrive)}</p>`).join('');
+  }
+  if (d.rentalCar) {
+    hardHtml += `<div class="flex items-center gap-2 mb-2">
+      <span class="s-badge-fixed">🔒 Rental</span>
+      <span class="text-sm font-600">🚗 ${escHtml(d.rentalCar.company)}</span>
+      <span class="text-xs px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 font-mono">${escHtml(d.rentalCar.confirmation)}</span>
+    </div>
+    <p class="text-xs text-gray-500 dark:text-gray-400 mb-3 ml-1">${escHtml(d.rentalCar.pickup)} → ${escHtml(d.rentalCar.dropoff)}</p>`;
+  }
+
+  // The plan — AM/PM one-liners
+  const planHtml = `<div class="mb-3">
+    <p class="text-xs font-600 text-gray-400 uppercase tracking-wider mb-2">What's the plan?</p>
+    <div class="flex gap-2 items-start mb-1.5"><span class="s-badge-flex">🔄 AM</span><p class="text-sm">${escHtml(d.am)}</p></div>
+    <div class="flex gap-2 items-start"><span class="s-badge-flex">🔄 PM</span><p class="text-sm">${escHtml(d.pm)}</p></div>
+  </div>`;
+
+  // Must-know box
+  const mustKnow = [];
+  mustKnow.push(`🛏 ${escHtml(d.sleep)} ${d.sleepIcon}`);
+  if (d.parking && d.parkingStatus === 'warn') mustKnow.push(`🅿️ ${escHtml(d.parking)}`);
+  if (d.ztl && d.ztl !== '—' && (d.ztlStatus === 'warn' || d.ztlStatus === 'danger')) {
+    mustKnow.push(`🚦 ${escHtml(d.ztl)}`);
+  }
+  const mustKnowHtml = `<div class="rounded-xl p-3 mb-3" style="background:rgba(201,169,110,0.06);border:1px solid rgba(201,169,110,0.12)">
+    <p class="text-xs font-600 text-gray-400 uppercase tracking-wider mb-2">Must-know</p>
+    ${mustKnow.map(m => `<p class="text-xs mb-1">${m}</p>`).join('')}
+  </div>`;
+
+  // Top 3 starred destinations — names only, no descriptions
+  let destsHtml = '';
+  if (d.destinations && d.destinations.length > 0) {
+    const starred = d.destinations.filter(x => x.star).slice(0, 3);
+    const rest = d.destinations.length - starred.length;
+    if (starred.length > 0) {
+      destsHtml = `<div class="mb-3">
+        <p class="text-xs font-600 text-gray-400 uppercase tracking-wider mb-2">Top spots</p>
+        ${starred.map(dest => `<div class="flex items-center gap-2 mb-1.5">
+          <span class="text-amber-500 flex-shrink-0 text-xs">⭐</span>
+          <p class="text-sm font-600">${escHtml(dest.name)}</p>
+        </div>`).join('')}
+        ${rest > 0 ? `<button class="s-more-btn" onclick="toggleSModeSection(this, 'dests-${d.day}')">+${rest} more →</button>
+        <div id="s-dests-${d.day}" class="hidden mt-2">${d.destinations.filter(x => !x.star || d.destinations.filter(y => y.star).indexOf(x) >= 3).map(dest => `<div class="flex items-center gap-2 mb-1.5">
+          <span class="text-gray-300 flex-shrink-0 text-xs">•</span>
+          <p class="text-sm">${escHtml(dest.name)}</p>
+        </div>`).join('')}</div>` : ''}
+      </div>`;
+    }
+  }
+
+  // Heads-up — collapsed behind count
+  let headsUpHtml = '';
+  const headsUpItems = [];
+  if (d.reminders) d.reminders.forEach(r => headsUpItems.push(r.text));
+  if ((d.ztlStatus === 'warn' || d.ztlStatus === 'danger') && d.ztl && d.ztl !== '—') {
+    headsUpItems.push('ZTL: ' + d.ztl);
+  }
+  if (headsUpItems.length > 0) {
+    headsUpHtml = `<button class="s-more-btn mb-3" onclick="toggleSModeSection(this, 'headsup-${d.day}')">⚠️ ${headsUpItems.length} reminder${headsUpItems.length > 1 ? 's' : ''} →</button>
+    <div id="s-headsup-${d.day}" class="hidden mb-3 space-y-2">${headsUpItems.map(t => `<div class="rounded-lg p-2.5" style="background:rgba(192,120,86,0.06);border:1px solid rgba(192,120,86,0.12)"><p class="text-xs">⚠️ ${escHtml(t.length > 150 ? t.substring(0, 150) + '...' : t)}</p></div>`).join('')}</div>`;
+  }
+
+  // Full details escape hatch (alternatives + midway)
+  let fullDetailsHtml = '';
+  const hasAlts = d.alternatives && d.alternatives.length > 0;
+  const hasMidway = d.midwayStops && d.midwayStops.length > 0;
+  if (hasAlts || hasMidway) {
+    fullDetailsHtml = `<button class="s-more-btn" onclick="state.sMode=false;applySMode();saveState();renderDays();showToast('Showing full details','success')">Full details →</button>`;
+  }
+
+  return `<div data-day-card data-day="${d.day}" id="day-${d.day}" class="s-card">
+    <div class="s-card-header">
+      <div class="w-10 h-10 rounded-full flex items-center justify-center text-white text-lg" style="background:${phaseColor(d.phase)}">${d.flag}</div>
+      <div class="flex-1">
+        <p class="s-day-num">Day ${d.day} · ${d.date} (${d.weekday})</p>
+        <p class="s-day-title">${escHtml(d.title)}</p>
+      </div>
+    </div>
+    ${hardHtml}
+    ${planHtml}
+    ${mustKnowHtml}
+    ${destsHtml}
+    ${headsUpHtml}
+    ${fullDetailsHtml}
+  </div>`;
+}
+
+function toggleSModeSection(btn, id) {
+  const el = document.getElementById('s-' + id);
+  if (!el) return;
+  el.classList.toggle('hidden');
+  if (el.classList.contains('hidden')) {
+    btn.style.opacity = '1';
+  } else {
+    btn.style.opacity = '0.5';
+  }
+}
+
+// ============================================================
+// S MODE RENDER: HOTELS
+// ============================================================
+function renderSModeHotels() {
+  const container = document.getElementById('hotelsContent');
+  let html = `<div class="mb-4">
+    <h1 class="font-heading font-700 text-xl mb-1" style="color:#C9A96E">🏨 Where to Stay</h1>
+    <p class="text-sm text-gray-500 dark:text-gray-400">Top pick for each destination</p>
+  </div>`;
+
+  DAYS.forEach(d => {
+    if (!d.hotels || d.hotels.length === 0) return;
+    const top = d.hotels[0];
+    const rest = d.hotels.length - 1;
+
+    html += `<div class="s-card">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm" style="background:${phaseColor(d.phase)}">${d.flag}</div>
+        <div>
+          <p class="text-xs font-600 text-gray-400">Day ${d.day}</p>
+          <p class="font-600 text-sm">${escHtml(d.sleep)}</p>
+        </div>
+      </div>
+      <div class="rounded-xl p-3 mb-2" style="background:rgba(201,169,110,0.04);border:1px solid rgba(201,169,110,0.1)">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="s-top-pick">⭐ Top Pick</span>
+          ${top.perk && top.perk.toLowerCase().includes('kid') ? '<span class="s-top-pick" style="background:#C4A4A7">👶 Kid-friendly</span>' : ''}
+          <span class="text-xs text-amber-600 dark:text-amber-400 font-600 ml-auto">${top.price}</span>
+        </div>
+        <p class="text-sm font-600 mt-1">${escHtml(top.name)}</p>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${escHtml(top.perk)}</p>
+        <div class="flex items-center gap-3 mt-2 text-xs">
+          <span>🅿️ ${escHtml(top.parking)}</span>
+          <a href="${top.url}" target="_blank" rel="noopener noreferrer" class="font-600" style="color:#C9A96E">View →</a>
+        </div>
+      </div>
+      ${rest > 0 ? `<button class="s-more-btn" onclick="toggleSModeSection(this, 'hoteltab-${d.day}')">See alternatives (${rest}) →</button>
+      <div id="s-hoteltab-${d.day}" class="hidden mt-2 space-y-2">${d.hotels.slice(1).map(h => `<div class="rounded-xl p-3" style="border:1px solid rgba(201,169,110,0.08)">
+        <div class="flex justify-between items-start"><p class="text-sm font-600">${escHtml(h.name)}</p><span class="text-xs text-amber-600 font-600">${h.price}</span></div>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${escHtml(h.perk || h.why)}</p>
+        <div class="flex gap-3 mt-1 text-xs">
+          <span>🅿️ ${escHtml(h.parking)}</span>
+          <a href="${h.url}" target="_blank" rel="noopener noreferrer" class="font-600" style="color:#C9A96E">View →</a>
+        </div>
+      </div>`).join('')}</div>` : ''}
+    </div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+// ============================================================
+// S MODE RENDER: PACKING
+// ============================================================
+function renderSModePacking() {
+  const el = document.getElementById('packingContent');
+  const list = state.packingList;
+  const totalItems = list.reduce((s, c) => s + c.items.length + c.customItems.length, 0);
+  const checkedItems = list.reduce((s, c) => s + c.items.filter(i => i.checked).length + c.customItems.filter(i => i.checked).length, 0);
+  const pct = totalItems > 0 ? Math.round((checkedItems / totalItems) * 100) : 0;
+
+  const circumference = 2 * Math.PI * 34;
+  const offset = circumference - (pct / 100) * circumference;
+  const ringColor = pct === 100 ? '#87A08B' : '#C9A96E';
+
+  let catsHtml = list.map((cat, ci) => {
+    const allItems = [...cat.items.map((it, i) => ({...it, src: 'items', idx: i})), ...cat.customItems.map((it, i) => ({...it, src: 'customItems', idx: i}))];
+    const checked = allItems.filter(i => i.checked).length;
+    const total = allItems.length;
+    const isDone = checked === total && total > 0;
+    const isPriority = cat.cat.includes('Pre-Trip') || cat.cat.includes('To-Do');
+    const isKids = cat.cat.includes('Kids') || cat.cat.includes('Baby') || cat.cat.includes('Toddler');
+    const borderClass = isPriority ? 's-pack-priority' : isKids ? 's-pack-kids' : '';
+
+    const catPct = total > 0 ? Math.round((checked / total) * 100) : 0;
+    const itemsHtml = allItems.map((item, ai) => {
+      return `<div class="pack-item flex items-center gap-2 tap py-1.5" onclick="togglePackingItem(${ci},${item.idx},'${item.src}')">
+        <div class="check-box ${item.checked ? 'checked' : ''}" aria-hidden="true"></div>
+        <span class="text-sm ${item.checked ? 'line-through text-gray-400' : ''} flex-1 min-w-0">${escHtml(item.text)}</span>
+      </div>`;
+    }).join('');
+
+    return `<div class="s-card ${borderClass}" style="padding:14px;margin-bottom:10px">
+      <button onclick="togglePackingCat(${ci})" class="w-full flex items-center justify-between text-left tap">
+        <span class="text-sm font-600 ${isDone ? 'line-through text-gray-400' : ''}">${escHtml(cat.cat)} ${isDone ? '✅' : ''}</span>
+        <div class="flex items-center gap-2">
+          <span class="text-xs" style="color:#C9A96E">${checked}/${total}</span>
+          <span class="chevron text-xs text-gray-400" id="packChev-${ci}">▼</span>
+        </div>
+      </button>
+      <div id="packBody-${ci}" class="hidden mt-3">
+        <div class="progress-track mb-3"><div class="progress-fill ${isDone ? 'bg-green-500' : ''}" style="width:${catPct}%;${isDone ? '' : 'background:#C9A96E'};"></div></div>
+        <div class="space-y-1">${itemsHtml}</div>
+        <div class="flex gap-2 mt-3">
+          <input type="text" id="packAdd-${ci}" class="flex-1 border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2" style="border-color:rgba(201,169,110,0.2);focus:ring-color:#C9A96E" placeholder="Add item..." onkeydown="if(event.key==='Enter')addPackingItem(${ci})">
+          <button onclick="addPackingItem(${ci})" class="tap px-4 py-2 rounded-lg text-sm font-600 text-white" style="background:#C9A96E">Add</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div class="flex flex-col items-center mb-4">
+      <svg class="s-progress-ring" viewBox="0 0 80 80">
+        <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(201,169,110,0.15)" stroke-width="6"/>
+        <circle cx="40" cy="40" r="34" fill="none" stroke="${ringColor}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" transform="rotate(-90 40 40)" style="transition:stroke-dashoffset 0.5s"/>
+        <text x="40" y="44" text-anchor="middle" font-size="18" font-weight="700" fill="${ringColor}" font-family="Lexend">${pct}%</text>
+      </svg>
+      <p class="text-sm mt-2 font-500 text-gray-500">${checkedItems} of ${totalItems} packed</p>
+    </div>
+    ${catsHtml}
+    <div class="mt-4 flex gap-3">
+      <button onclick="uncheckAllPacking()" class="tap flex-1 py-3 rounded-xl border font-600 text-sm transition" style="border-color:rgba(201,169,110,0.2)">Uncheck All</button>
+      <button onclick="resetPacking()" class="tap flex-1 py-3 rounded-xl font-600 text-sm transition" style="background:rgba(192,120,86,0.08);color:#C07856">Reset List</button>
+    </div>`;
+}
+
+// ============================================================
+// S MODE RENDER: GUIDE
+// ============================================================
+const S_MODE_PHRASES = {
+  de: [
+    { en: 'Hello', local: 'Grüß Gott', pron: 'Grews Got', kr: '안녕하세요 (annyeonghaseyo)' },
+    { en: 'Thank you', local: 'Danke', pron: 'DAHN-kuh', kr: '감사합니다 (gamsahamnida)' },
+    { en: 'Do you speak English?', local: 'Sprechen Sie Englisch?', pron: 'SHPREH-en zee ENG-lish', kr: '영어 하시나요? (yeongeo hasinayo?)' },
+    { en: 'The check please', local: 'Die Rechnung bitte', pron: 'Dee REKH-noong BIT-uh', kr: '계산서 주세요 (gyesanseo juseyo)' },
+    { en: 'Where is the bathroom?', local: 'Wo ist die Toilette?', pron: 'Vo ist dee toy-LET-uh', kr: '화장실이 어디예요? (hwajangsiri eodiyeyo?)' }
+  ],
+  it: [
+    { en: 'Hello', local: 'Ciao', pron: 'CHOW', kr: '안녕하세요 (annyeonghaseyo)' },
+    { en: 'Thank you', local: 'Grazie', pron: 'GRAH-tsee-ay', kr: '감사합니다 (gamsahamnida)' },
+    { en: 'Do you speak English?', local: 'Parla inglese?', pron: 'PAR-lah in-GLAY-zay', kr: '영어 하시나요? (yeongeo hasinayo?)' },
+    { en: 'The check please', local: 'Il conto per favore', pron: 'Eel KON-to pair fah-VOR-ay', kr: '계산서 주세요 (gyesanseo juseyo)' },
+    { en: 'Where is the bathroom?', local: 'Dov\'è il bagno?', pron: 'Doh-VEH eel BAHN-yo', kr: '화장실이 어디예요? (hwajangsiri eodiyeyo?)' }
+  ]
+};
+
+function renderSModeGuide() {
+  const el = document.getElementById('guideContent');
+  const lang = state._guideLang || 'de';
+  const phrases = S_MODE_PHRASES[lang] || S_MODE_PHRASES.de;
+
+  const phrasesHtml = phrases.map(p => `<div class="s-phrase-card">
+    <p class="text-xs text-gray-400 mb-1">${escHtml(p.en)}</p>
+    <p class="s-phrase-local">${escHtml(p.local)}</p>
+    <p class="s-phrase-pron">${escHtml(p.pron)}</p>
+    <p class="s-phrase-kr">🇰🇷 ${escHtml(p.kr)}</p>
+  </div>`).join('');
+
+  el.innerHTML = `
+    <h2 class="font-heading font-700 text-xl mb-4" style="color:#C9A96E">🌍 Travel Guide</h2>
+
+    <!-- Essential Phrases -->
+    <div class="s-card">
+      <p class="text-xs font-600 text-gray-400 uppercase tracking-wider mb-3">🗣 Essential Phrases</p>
+      <div class="flex gap-2 mb-3">
+        <button onclick="state._guideLang='de';saveState();renderGuide()" class="tap px-4 py-2 rounded-full text-xs font-600 transition ${lang === 'de' ? '' : 'opacity-50'}" style="background:${lang === 'de' ? '#C9A96E' : 'rgba(201,169,110,0.1)'};color:${lang === 'de' ? 'white' : '#C9A96E'}">🇦🇹 German</button>
+        <button onclick="state._guideLang='it';saveState();renderGuide()" class="tap px-4 py-2 rounded-full text-xs font-600 transition ${lang === 'it' ? '' : 'opacity-50'}" style="background:${lang === 'it' ? '#C9A96E' : 'rgba(201,169,110,0.1)'};color:${lang === 'it' ? 'white' : '#C9A96E'}">🇮🇹 Italian</button>
+      </div>
+      ${phrasesHtml}
+      <button class="s-more-btn mt-2" onclick="state.sMode=false;applySMode();saveState();renderGuide();showToast('Showing all phrases','success')">See all phrases →</button>
+    </div>
+
+    <!-- Emergency Numbers -->
+    <div class="s-card">
+      <p class="text-xs font-600 text-gray-400 uppercase tracking-wider mb-3">🆘 Emergency</p>
+      <div class="space-y-2">
+        <div class="flex items-center gap-3 p-3 rounded-xl" style="background:rgba(192,120,86,0.06);border:1px solid rgba(192,120,86,0.12)">
+          <div class="flex-1"><p class="text-sm font-700">EU Emergency</p><p class="text-xs text-gray-400">Police, fire, ambulance</p></div>
+          <a href="tel:112" class="tap px-4 py-2 rounded-full text-sm font-700 text-white" style="background:#C07856">112</a>
+        </div>
+        <div class="flex items-center gap-3 p-3 rounded-xl" style="background:rgba(201,169,110,0.06);border:1px solid rgba(201,169,110,0.12)">
+          <div class="flex-1"><p class="text-sm font-700">Austria Roadside</p><p class="text-xs text-gray-400">ÖAMTC breakdown</p></div>
+          <a href="tel:120" class="tap px-4 py-2 rounded-full text-sm font-700 text-white" style="background:#C9A96E">120</a>
+        </div>
+        <div class="flex items-center gap-3 p-3 rounded-xl" style="background:rgba(201,169,110,0.06);border:1px solid rgba(201,169,110,0.12)">
+          <div class="flex-1"><p class="text-sm font-700">Italy Roadside</p><p class="text-xs text-gray-400">ACI breakdown</p></div>
+          <a href="tel:803116" class="tap px-4 py-2 rounded-full text-sm font-700 text-white" style="background:#C9A96E">803 116</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tipping & Time — collapsed -->
+    <button class="s-more-btn w-full justify-center" onclick="toggleSModeSection(this, 'guide-extra')">💶 Tipping & 🕐 Time info →</button>
+    <div id="s-guide-extra" class="hidden mt-2 space-y-3">
+      <div class="s-card">
+        <p class="text-xs font-600 text-gray-400 uppercase tracking-wider mb-2">💶 Tipping</p>
+        <p class="text-sm mb-1"><strong>🇦🇹 Austria:</strong> Round up 5–10%</p>
+        <p class="text-sm"><strong>🇮🇹 Italy:</strong> Coperto covers it — no extra tip</p>
+      </div>
+      <div class="s-card">
+        <p class="text-xs font-600 text-gray-400 uppercase tracking-wider mb-2">🕐 Time</p>
+        <p class="text-sm font-600">+6 hours from US East</p>
+        <p class="text-xs text-gray-500 mt-1">Clocks spring forward Mar 29 (Day 7). Phones auto-update.</p>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================
+// S MODE RENDER: EXPENSES
+// ============================================================
+function renderSModeExpenses() {
+  const el = document.getElementById('expensesContent');
+  const expenses = state.expenses;
+  const total = expenses.reduce((s, e) => s + e.amount, 0);
+  const budget = state.budget || 15000;
+  const remaining = budget - total;
+  const budgetPct = Math.min(100, Math.round((total / budget) * 100));
+  const isOverBudget = total > budget;
+
+  // Traffic light
+  let signal, signalColor, signalLabel;
+  if (isOverBudget) {
+    signal = '🔴'; signalColor = '#C07856'; signalLabel = 'Over budget';
+  } else if (budgetPct > 80) {
+    signal = '🟡'; signalColor = '#C9A96E'; signalLabel = 'Watch it';
+  } else {
+    signal = '🟢'; signalColor = '#87A08B'; signalLabel = 'On track';
+  }
+
+  // Won approximation (1 EUR ≈ 1,450 KRW)
+  const wonApprox = Math.round(total * 1450);
+
+  // Last 10 expenses
+  const recent = expenses.slice().reverse().slice(0, 10);
+  const hasMore = expenses.length > 10;
+
+  el.innerHTML = `
+    <div class="s-card" style="text-align:center">
+      <p class="s-budget-signal">${signal}</p>
+      <p class="text-lg font-700 mt-2" style="color:${signalColor}">${signalLabel}</p>
+      <p class="font-700 text-2xl mt-2">${fmtMoney(total)}</p>
+      <p class="text-xs text-gray-400 mt-1">≈ ₩${wonApprox.toLocaleString()} KRW · ${currSym()}${budget.toLocaleString()} budget</p>
+      <div class="s-divider"></div>
+      <p class="text-sm font-600" style="color:${signalColor}">${fmtMoney(Math.abs(remaining))} ${isOverBudget ? 'over' : 'left'}</p>
+    </div>
+
+    <button onclick="showAddExpenseModal()" class="tap w-full py-3 px-4 rounded-xl mb-4 font-600 text-sm text-white transition" style="background:#C9A96E">+ Add Expense</button>
+
+    ${recent.length > 0 ? `<div class="space-y-2">
+      ${recent.map(e => {
+        const cat = CATEGORIES.find(c => c.id === e.category) || CATEGORIES[7];
+        return `<div class="s-card" style="padding:12px;margin-bottom:8px;cursor:pointer" onclick="showEditExpenseModal('${e.id}')">
+          <div class="flex items-center gap-3">
+            <span class="text-lg">${cat.label.split(' ')[0]}</span>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-600 truncate">${e.note ? escHtml(e.note) : cat.label}</p>
+              <p class="text-xs text-gray-400">Day ${e.day}</p>
+            </div>
+            <span class="font-600 text-sm" style="color:#C9A96E">${fmtMoney(e.amount)}</span>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>` : '<p class="text-center text-gray-400 py-8 text-sm">No expenses yet</p>'}
+
+    ${hasMore ? `<button class="s-more-btn mt-3 w-full justify-center" onclick="state.sMode=false;applySMode();saveState();renderExpensesTab();showToast('Showing all expenses','success')">See all expenses (${expenses.length}) →</button>` : ''}
+  `;
+}
+
+// ============================================================
+// S MODE RENDER: SETTINGS INFO CARD
+// ============================================================
+function renderSModeSettingsCard() {
+  return `<div class="s-info-card">
+    <div class="flex items-center gap-3 mb-3">
+      <span class="text-2xl">🌸</span>
+      <div>
+        <p class="font-700 text-sm">S Mode Active</p>
+        <p class="text-xs text-gray-500 dark:text-gray-400">Premium view — simplified & calming</p>
+      </div>
+    </div>
+    <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Showing simplified views with essential info first. Tap "More" buttons to reveal details, or turn off S Mode for the full experience.</p>
+    <button onclick="toggleSMode()" class="tap px-4 py-2 rounded-xl text-xs font-600 transition" style="border:1px solid rgba(201,169,110,0.3);color:#C9A96E">Turn Off S Mode</button>
+  </div>`;
 }
 
 // ============================================================
@@ -1641,6 +2146,7 @@ function initPackingList() {
 }
 
 function renderPacking() {
+  if (state.sMode) return renderSModePacking();
   const el = document.getElementById('packingContent');
   const list = state.packingList;
   const totalItems = list.reduce((s, c) => s + c.items.length + c.customItems.length, 0);
@@ -1943,6 +2449,7 @@ let dayObserver = null;
 let isPillScrolling = false;
 
 function renderDays() {
+  if (state.sMode) return renderSModeDays();
   const currentDay = getTripDay().dayNum;
 
   // Day nav
@@ -2247,6 +2754,7 @@ function closeModal() {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
 function renderExpensesTab() {
+  if (state.sMode) return renderSModeExpenses();
   const el = document.getElementById('expensesContent');
   const expenses = state.expenses;
   const total = expenses.reduce((s, e) => s + e.amount, 0);
@@ -2465,6 +2973,7 @@ function exportExpenses() {
 // RENDER: TRAVEL GUIDE
 // ============================================================
 function renderGuide() {
+  if (state.sMode) return renderSModeGuide();
   const el = document.getElementById('guideContent');
   el.innerHTML = `
     <h2 class="font-heading font-700 text-xl mb-4">🌍 Travel Guide</h2>
@@ -2737,6 +3246,7 @@ function renderSettings() {
   const totalSpent = state.expenses.reduce((s, e) => s + e.amount, 0);
 
   el.innerHTML = `
+    ${state.sMode ? renderSModeSettingsCard() : ''}
     <h2 class="font-heading font-700 text-xl mb-4">⚙️ Settings</h2>
 
     <!-- Travel Details (collapsible) -->
@@ -3154,6 +3664,7 @@ function init() {
   loadState();
   applyDarkMode();
   applyFontSize();
+  applySMode();
   switchTab(state.activeTab || 'days');
   setupBackToTop();
   checkAutoNightMode();
