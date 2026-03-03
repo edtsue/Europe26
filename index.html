@@ -137,8 +137,14 @@ tailwind.config = {
   .day-badge { display: inline-flex; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
   /* Count badge for collapsible sections */
-  .sec-count { display: inline-flex; padding: 1px 8px; border-radius: 999px; font-size: 0.65rem; font-weight: 600; background: rgba(0,0,0,0.06); color: #6b7280; margin-left: 6px; }
+  .sec-count { display: inline-flex; padding: 2px 8px; border-radius: 999px; font-size: 0.7rem; font-weight: 600; background: rgba(0,0,0,0.06); color: #6b7280; margin-left: 6px; }
   .dark .sec-count { background: rgba(255,255,255,0.08); color: #9ca3af; }
+
+  /* Packing reorder buttons */
+  .pack-move { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 8px; border: none; background: rgba(0,0,0,0.04); color: #94a3b8; font-size: 13px; cursor: pointer; transition: all 0.15s; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+  .pack-move:active { background: rgba(13,148,136,0.2); color: #0d9488; transform: scale(0.92); }
+  .dark .pack-move { background: rgba(255,255,255,0.06); }
+  .dark .pack-move:active { background: rgba(45,212,191,0.2); color: #2dd4bf; }
 
   /* Expense category colors */
   .cat-food { background: #fef3c7; color: #92400e; }
@@ -173,7 +179,9 @@ tailwind.config = {
 
   /* Modal overlay */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; display: flex; align-items: flex-end; justify-content: center; }
-  .modal-content { width: 100%; max-width: 500px; max-height: 85vh; overflow-y: auto; border-radius: 16px 16px 0 0; padding: 24px; padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)); }
+  .modal-content { width: 100%; max-width: 500px; max-height: 85vh; overflow-y: auto; border-radius: 16px 16px 0 0; padding: 20px; padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px)); }
+  .modal-content input, .modal-content select, .modal-content textarea { min-height: 44px; }
+  .modal-content .flex.gap-3 button { min-height: 48px; }
 
   /* Scrollbar styling */
   ::-webkit-scrollbar { width: 4px; }
@@ -283,13 +291,13 @@ tailwind.config = {
   @keyframes toastOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-20px); } }
 
   /* Offline banner */
-  .offline-banner { position: fixed; top: 0; left: 0; right: 0; z-index: 400; background: #dc2626; color: white; text-align: center; padding: 8px; font-size: 13px; font-weight: 600; transform: translateY(-100%); transition: transform 0.3s ease; }
+  .offline-banner { position: fixed; top: 0; left: 0; right: 0; z-index: 400; background: #dc2626; color: white; text-align: center; padding: 8px; font-size: 14px; font-weight: 600; transform: translateY(-100%); transition: transform 0.3s ease; }
   .offline-banner.show { transform: translateY(0); }
 
   /* Quick action bar */
   .quick-actions { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
   .quick-actions::-webkit-scrollbar { display: none; }
-  .quick-action-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 12px; font-size: 13px; font-weight: 600; white-space: nowrap; transition: all 0.2s; border: 1px solid rgba(0,0,0,0.08); cursor: pointer; }
+  .quick-action-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; white-space: nowrap; transition: all 0.2s; border: 1px solid rgba(0,0,0,0.08); cursor: pointer; min-height: 40px; }
   .dark .quick-action-btn { border-color: rgba(255,255,255,0.1); }
 
   /* Trip progress dots */
@@ -299,13 +307,13 @@ tailwind.config = {
   .dest-visited .font-heading { text-decoration: line-through; }
 
   /* Collapsible section toggle */
-  .sec-toggle { display: flex; align-items: center; justify-content: space-between; width: 100%; text-align: left; padding: 10px 12px; min-height: 44px; cursor: pointer; -webkit-tap-highlight-color: transparent; border-radius: 8px; }
+  .sec-toggle { display: flex; align-items: center; justify-content: space-between; width: 100%; text-align: left; padding: 12px 14px; min-height: 48px; cursor: pointer; -webkit-tap-highlight-color: transparent; border-radius: 8px; }
   .sec-toggle:active { opacity: 0.7; }
 
   /* Section jump menu */
   .section-jump { display: flex; gap: 6px; overflow-x: auto; padding: 8px 0; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
   .section-jump::-webkit-scrollbar { display: none; }
-  .section-jump-pill { padding: 4px 12px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap; border: 1px solid rgba(0,0,0,0.08); cursor: pointer; transition: all 0.2s; background: rgba(0,0,0,0.03); }
+  .section-jump-pill { padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; border: 1px solid rgba(0,0,0,0.08); cursor: pointer; transition: all 0.2s; background: rgba(0,0,0,0.03); min-height: 32px; }
   .dark .section-jump-pill { border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); }
   .section-jump-pill:active { transform: scale(0.95); }
 
@@ -337,13 +345,13 @@ tailwind.config = {
         <p class="text-xs text-gray-500 dark:text-gray-400 font-body">Mar 23 – Apr 2, 2026</p>
       </div>
       <div class="flex items-center gap-1">
-        <button onclick="quickCloudPush()" id="cloudSyncBtn" class="tap flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="Sync to cloud" title="Push to cloud">
+        <button onclick="quickCloudPush()" id="cloudSyncBtn" class="tap flex items-center justify-center w-11 h-11 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="Sync to cloud" title="Push to cloud">
           <span id="cloudSyncIcon" class="text-lg">☁️</span>
         </button>
-        <button onclick="cycleFontSize()" class="tap flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="Change font size" title="Font size">
+        <button onclick="cycleFontSize()" class="tap flex items-center justify-center w-11 h-11 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="Change font size" title="Font size">
           <span id="fontSizeIcon" class="font-heading font-700 text-sm">A</span>
         </button>
-        <button id="darkToggleHeader" onclick="toggleDarkMode()" class="tap flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="Toggle dark mode">
+        <button id="darkToggleHeader" onclick="toggleDarkMode()" class="tap flex items-center justify-center w-11 h-11 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="Toggle dark mode">
           <span id="darkIconHeader" class="text-xl">🌙</span>
         </button>
       </div>
@@ -364,8 +372,8 @@ tailwind.config = {
     <button onclick="switchTab('guide')" class="desktop-tab-btn flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-heading font-600 transition hover:bg-gray-100 dark:hover:bg-gray-700 text-left w-full" data-tab="guide">
       <span class="text-lg">🌍</span> Travel Guide
     </button>
-    <button onclick="switchTab('notes')" class="desktop-tab-btn flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-heading font-600 transition hover:bg-gray-100 dark:hover:bg-gray-700 text-left w-full" data-tab="notes">
-      <span class="text-lg">📝</span> Notes & Lists
+    <button onclick="switchTab('expenses')" class="desktop-tab-btn flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-heading font-600 transition hover:bg-gray-100 dark:hover:bg-gray-700 text-left w-full" data-tab="expenses">
+      <span class="text-lg">💰</span> Expenses
     </button>
     <button onclick="switchTab('settings')" class="desktop-tab-btn flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-heading font-600 transition hover:bg-gray-100 dark:hover:bg-gray-700 text-left w-full" data-tab="settings">
       <span class="text-lg">⚙️</span> Settings
@@ -402,19 +410,9 @@ tailwind.config = {
       <div class="max-w-lg mx-auto px-4 py-4" id="guideContent"></div>
     </div>
 
-    <!-- Tab: Notes & Lists -->
-    <div id="tab-notes" class="tab-panel" role="tabpanel" aria-label="Notes">
-      <div class="max-w-lg mx-auto px-4 py-4">
-        <!-- Sub-nav pills -->
-        <div class="flex gap-2 mb-4 overflow-x-auto">
-          <button onclick="switchNotesTab('journal')" class="notes-pill tap px-4 py-2 rounded-full text-sm font-heading font-600 whitespace-nowrap transition" data-pill="journal">📝 Journal</button>
-          <button onclick="switchNotesTab('expenses')" class="notes-pill tap px-4 py-2 rounded-full text-sm font-heading font-600 whitespace-nowrap transition" data-pill="expenses">💰 Expenses</button>
-        </div>
-        <!-- Journal -->
-        <div id="notes-journal" class="notes-section"></div>
-        <!-- Expenses -->
-        <div id="notes-expenses" class="notes-section hidden"></div>
-      </div>
+    <!-- Tab: Expenses -->
+    <div id="tab-expenses" class="tab-panel" role="tabpanel" aria-label="Expenses">
+      <div class="max-w-lg mx-auto px-4 py-4" id="expensesContent"></div>
     </div>
 
     <!-- Tab: Settings -->
@@ -429,29 +427,29 @@ tailwind.config = {
 <!-- Bottom Tab Bar -->
 <nav class="bottom-bar glass shadow-lg border-t border-gray-200 dark:border-gray-700" aria-label="Main navigation">
   <div class="max-w-lg mx-auto flex justify-around items-center py-2" role="tablist">
-    <button onclick="switchTab('days')" class="tab-btn tap flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition" data-tab="days">
-      <span class="text-xl">🗺</span>
-      <span class="text-xs font-heading font-600">Days</span>
+    <button onclick="switchTab('days')" class="tab-btn tap flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition" data-tab="days">
+      <span class="text-lg">🗺</span>
+      <span class="tab-label text-xs font-heading font-600">Days</span>
     </button>
-    <button onclick="switchTab('hotels')" class="tab-btn tap flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition" data-tab="hotels">
-      <span class="text-xl">🏨</span>
-      <span class="text-xs font-heading font-600">Hotels</span>
+    <button onclick="switchTab('hotels')" class="tab-btn tap flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition" data-tab="hotels">
+      <span class="text-lg">🏨</span>
+      <span class="tab-label text-xs font-heading font-600">Hotels</span>
     </button>
-    <button onclick="switchTab('packing')" class="tab-btn tap flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition" data-tab="packing">
-      <span class="text-xl">🧳</span>
-      <span class="text-xs font-heading font-600">Pack</span>
+    <button onclick="switchTab('packing')" class="tab-btn tap flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition" data-tab="packing">
+      <span class="text-lg">🧳</span>
+      <span class="tab-label text-xs font-heading font-600">Pack</span>
     </button>
-    <button onclick="switchTab('guide')" class="tab-btn tap flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition" data-tab="guide">
-      <span class="text-xl">🌍</span>
-      <span class="text-xs font-heading font-600">Guide</span>
+    <button onclick="switchTab('guide')" class="tab-btn tap flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition" data-tab="guide">
+      <span class="text-lg">🌍</span>
+      <span class="tab-label text-xs font-heading font-600">Guide</span>
     </button>
-    <button onclick="switchTab('notes')" class="tab-btn tap flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition" data-tab="notes">
-      <span class="text-xl">📝</span>
-      <span class="text-xs font-heading font-600">Notes</span>
+    <button onclick="switchTab('expenses')" class="tab-btn tap flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition" data-tab="expenses">
+      <span class="text-lg">💰</span>
+      <span class="tab-label text-xs font-heading font-600">$</span>
     </button>
-    <button onclick="switchTab('settings')" class="tab-btn tap flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition" data-tab="settings">
-      <span class="text-xl">⚙️</span>
-      <span class="text-xs font-heading font-600">Settings</span>
+    <button onclick="switchTab('settings')" class="tab-btn tap flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition" data-tab="settings">
+      <span class="text-lg">⚙️</span>
+      <span class="tab-label text-xs font-heading font-600">More</span>
     </button>
   </div>
 </nav>
@@ -1098,45 +1096,6 @@ const DEFAULT_PACKING = [
   ]}
 ];
 
-const DEFAULT_CHECKLISTS = {
-  pretip: {
-    title: '📋 Pre-Trip To-Do',
-    items: [
-      { text: 'Book Salzburg hotel', checked: false },
-      { text: 'Book Val d\'Orcia hotel', checked: false },
-      { text: 'Book Verona hotel', checked: false },
-      { text: 'Book Florence airport hotel', checked: false },
-      { text: 'Reserve rental car (Munich pickup → Florence drop-off)', checked: false },
-      { text: 'Buy Austria Vignette (motorway sticker) online', checked: false },
-      { text: 'Download offline maps', checked: false },
-      { text: 'Notify bank of travel dates', checked: false },
-      { text: 'Buy Arena di Verona tickets online', checked: false },
-      { text: 'Book Bologna Two Towers climb (timed entry)', checked: false },
-      { text: 'Book restaurant: Trattoria Anna Maria (Bologna)', checked: false },
-      { text: 'Pack kids\' entertainment for flights + drives', checked: false },
-      { text: 'Confirm Das Edelweiss reservation', checked: false }
-    ]
-  },
-  ztl: {
-    title: '🇮🇹 ZTL Survival Checklist',
-    items: [
-      { text: 'Read ZTL rules before entering Italy', checked: false },
-      { text: 'Download ZTL map for Florence', checked: false },
-      { text: 'Confirm Verona hotel is OUTSIDE ZTL', checked: false },
-      { text: 'Confirm Florence hotel is OUTSIDE ZTL', checked: false },
-      { text: 'Set GPS to "avoid city centers" in Italy', checked: false },
-      { text: 'Save Parcheggio Cittadella (Verona) address in Maps', checked: false },
-      { text: 'DO NOT follow GPS into walled Tuscan towns', checked: false }
-    ]
-  }
-};
-
-const DEFAULT_NOTE = {
-  id: 'default-1',
-  text: '✈️ Trip starts Mar 23! Don\'t forget to download offline maps for Austria & Italy.',
-  day: 'general',
-  timestamp: new Date('2026-02-25T10:00:00').toISOString()
-};
 
 // ============================================================
 // STATE MANAGEMENT
@@ -1151,12 +1110,9 @@ function getDefaultState() {
   return {
     version: 1,
     darkMode: true,
-    notes: [{ ...DEFAULT_NOTE }],
-    checklists: JSON.parse(JSON.stringify(DEFAULT_CHECKLISTS)),
     expenses: [],
     expandedDays: [getTripDay().dayNum],
     activeTab: 'days',
-    activeNotesTab: 'journal',
     budget: 15000,
     fontSize: 0,
     packingList: initPackingList()
@@ -1170,12 +1126,9 @@ function loadState() {
       state = JSON.parse(raw);
       // Ensure all keys exist (merge with defaults)
       const def = getDefaultState();
-      if (!state.notes) state.notes = def.notes;
-      if (!state.checklists) state.checklists = def.checklists;
       if (!state.expenses) state.expenses = def.expenses;
       if (!state.expandedDays) state.expandedDays = def.expandedDays;
-      if (state.activeTab === undefined || state.activeTab === 'today') state.activeTab = 'days';
-      if (state.activeNotesTab === undefined) state.activeNotesTab = 'journal';
+      if (state.activeTab === undefined || state.activeTab === 'today' || state.activeTab === 'notes') state.activeTab = 'days';
       if (state.budget === undefined) state.budget = 15000;
       if (state.currency === undefined) state.currency = 'EUR';
       if (state.fontSize === undefined) state.fontSize = 0;
@@ -1235,7 +1188,7 @@ function fmtMoney(n) { return currSym() + n.toLocaleString('en-US', {minimumFrac
 function toggleCurrency() {
   state.currency = state.currency === 'EUR' ? 'USD' : 'EUR';
   saveState();
-  renderExpenses();
+  renderExpensesTab();
   if (document.getElementById('settingsContent')?.innerHTML) renderSettings();
 }
 
@@ -1261,7 +1214,6 @@ function sanitizeState(s) {
   if (!s || typeof s !== 'object') return getDefaultState();
   // Validate critical fields to prevent poisoned state from cloud
   if (typeof s.darkMode !== 'boolean') s.darkMode = true;
-  if (!Array.isArray(s.notes)) s.notes = [{ ...DEFAULT_NOTE }];
   if (!Array.isArray(s.expenses)) s.expenses = [];
   if (!Array.isArray(s.expandedDays)) s.expandedDays = [];
   if (typeof s.budget !== 'number' || s.budget < 0 || s.budget > 9999999) s.budget = 15000;
@@ -1274,11 +1226,6 @@ function sanitizeState(s) {
     note: typeof e.note === 'string' ? e.note.substring(0, 500) : '',
     category: typeof e.category === 'string' ? e.category : 'other',
     day: typeof e.day === 'number' && e.day >= 1 && e.day <= 11 ? e.day : 1
-  }));
-  // Sanitize notes length
-  s.notes = s.notes.filter(n => n && typeof n === 'object').map(n => ({
-    ...n,
-    text: typeof n.text === 'string' ? n.text.substring(0, 10000) : ''
   }));
   return s;
 }
@@ -1655,29 +1602,10 @@ function switchTab(tab) {
   if (tab === 'hotels') renderHotels();
   if (tab === 'packing') renderPacking();
   if (tab === 'guide') renderGuide();
-  if (tab === 'notes') renderNotes();
+  if (tab === 'expenses') renderExpensesTab();
   if (tab === 'settings') renderSettings();
 }
 
-// ============================================================
-// NOTES TAB SWITCHING
-// ============================================================
-function switchNotesTab(sub) {
-  state.activeNotesTab = sub;
-  saveState();
-  document.querySelectorAll('.notes-section').forEach(s => s.classList.add('hidden'));
-  document.getElementById('notes-' + sub).classList.remove('hidden');
-  document.querySelectorAll('.notes-pill').forEach(p => {
-    const isActive = p.dataset.pill === sub;
-    if (isActive) {
-      p.classList.add('bg-teal-600', 'text-white');
-      p.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-    } else {
-      p.classList.remove('bg-teal-600', 'text-white');
-      p.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-    }
-  });
-}
 
 // ============================================================
 // RENDER: PACKING LIST
@@ -1715,11 +1643,25 @@ function renderPacking() {
 }
 
 function renderPackingCategory(cat, ci) {
-  const allItems = [...cat.items, ...cat.customItems];
+  // Unified item list: default items then custom items
+  const allItems = [...cat.items.map((it, i) => ({...it, src: 'items', idx: i})), ...cat.customItems.map((it, i) => ({...it, src: 'customItems', idx: i}))];
   const checked = allItems.filter(i => i.checked).length;
   const total = allItems.length;
   const pct = total > 0 ? Math.round((checked / total) * 100) : 0;
   const isDone = checked === total && total > 0;
+
+  const itemsHtml = allItems.map((item, ai) => {
+    const isCustom = item.src === 'customItems';
+    const upBtn = ai > 0 ? `<button onclick="event.stopPropagation();movePackingItem(${ci},${ai},-1)" class="pack-move" aria-label="Move up">&#9650;</button>` : '<span class="pack-move" style="visibility:hidden"></span>';
+    const downBtn = ai < total - 1 ? `<button onclick="event.stopPropagation();movePackingItem(${ci},${ai},1)" class="pack-move" aria-label="Move down">&#9660;</button>` : '<span class="pack-move" style="visibility:hidden"></span>';
+    const delBtn = isCustom ? `<button onclick="event.stopPropagation();removePackingItem(${ci},${item.idx})" class="tap text-red-400 hover:text-red-600 text-sm p-2 transition flex-shrink-0" aria-label="Remove">✕</button>` : '';
+    return `<div class="flex items-center gap-2 tap py-1.5" role="checkbox" aria-checked="${item.checked}" tabindex="0" onclick="togglePackingItem(${ci},${item.idx},'${item.src}')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();togglePackingItem(${ci},${item.idx},'${item.src}')}">
+      <div class="check-box ${item.checked ? 'checked' : ''}" aria-hidden="true"></div>
+      <span class="text-sm ${item.checked ? 'line-through text-gray-400' : ''} flex-1 min-w-0">${escHtml(item.text)}</span>
+      ${delBtn}
+      <span class="flex gap-1">${upBtn}${downBtn}</span>
+    </div>`;
+  }).join('');
 
   return `<div class="glass rounded-2xl overflow-hidden">
     <button onclick="togglePackingCat(${ci})" class="w-full tap flex items-center justify-between p-4 text-left" aria-expanded="false" aria-controls="packBody-${ci}">
@@ -1734,17 +1676,7 @@ function renderPackingCategory(cat, ci) {
     </button>
     <div id="packBody-${ci}" class="px-4 pb-4 hidden">
       <div class="progress-track mb-3"><div class="progress-fill ${isDone ? 'bg-green-500' : 'bg-teal-500'}" style="width:${pct}%"></div></div>
-      <div class="space-y-1.5">
-        ${cat.items.map((item, ii) => `<div class="flex items-center gap-3 tap py-1" role="checkbox" aria-checked="${item.checked}" tabindex="0" onclick="togglePackingItem(${ci},${ii},'items')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();togglePackingItem(${ci},${ii},'items')}">
-          <div class="check-box ${item.checked ? 'checked' : ''}" aria-hidden="true"></div>
-          <span class="text-sm ${item.checked ? 'line-through text-gray-400' : ''} flex-1">${escHtml(item.text)}</span>
-        </div>`).join('')}
-        ${cat.customItems.map((item, ii) => `<div class="flex items-center gap-3 tap py-1" role="checkbox" aria-checked="${item.checked}" tabindex="0" onclick="togglePackingItem(${ci},${ii},'customItems')" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();togglePackingItem(${ci},${ii},'customItems')}">
-          <div class="check-box ${item.checked ? 'checked' : ''}" aria-hidden="true"></div>
-          <span class="text-sm ${item.checked ? 'line-through text-gray-400' : ''} flex-1">${escHtml(item.text)}</span>
-          <button onclick="event.stopPropagation();removePackingItem(${ci},${ii})" class="text-red-300 hover:text-red-500 text-xs p-1 transition" aria-label="Remove">✕</button>
-        </div>`).join('')}
-      </div>
+      <div class="space-y-1.5">${itemsHtml}</div>
       <div class="flex gap-2 mt-3">
         <input type="text" id="packAdd-${ci}" class="flex-1 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-400" placeholder="Add item..." onkeydown="if(event.key==='Enter')addPackingItem(${ci})">
         <button onclick="addPackingItem(${ci})" class="tap px-4 py-2 bg-teal-600 text-white rounded-lg text-sm font-600 hover:bg-teal-700 transition">Add</button>
@@ -1808,6 +1740,32 @@ function removePackingItem(ci, ii) {
   restorePackingCats(expanded);
 }
 
+function movePackingItem(ci, unifiedIdx, direction) {
+  const cat = state.packingList[ci];
+  // Build unified list matching renderPackingCategory order
+  const unified = [...cat.items.map((it, i) => ({src: 'items', idx: i})), ...cat.customItems.map((it, i) => ({src: 'customItems', idx: i}))];
+  const targetIdx = unifiedIdx + direction;
+  if (targetIdx < 0 || targetIdx >= unified.length) return;
+  const from = unified[unifiedIdx];
+  const to = unified[targetIdx];
+  if (from.src === to.src) {
+    // Same array — simple swap
+    const arr = cat[from.src];
+    [arr[from.idx], arr[to.idx]] = [arr[to.idx], arr[from.idx]];
+  } else {
+    // Cross-boundary: remove from source, insert into target array at correct position
+    const fromArr = cat[from.src];
+    const toArr = cat[to.src];
+    const item = fromArr.splice(from.idx, 1)[0];
+    const insertAt = direction > 0 ? to.idx + 1 : to.idx;
+    toArr.splice(insertAt, 0, item);
+  }
+  saveState();
+  const expanded = getExpandedPackingCats();
+  renderPacking();
+  restorePackingCats(expanded);
+}
+
 function uncheckAllPacking() {
   state.packingList.forEach(cat => {
     cat.items.forEach(i => i.checked = false);
@@ -1856,7 +1814,7 @@ function renderDayExpenses(dayNum) {
   <div class="flex gap-2 mb-3">
     <span class="text-sm font-700 leading-9">${currSym()}</span>
     <input type="number" id="quickExpAmt-${dayNum}" step="0.01" min="0" class="w-20 border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1.5 text-sm outline-none focus:ring-2 focus:ring-teal-400" placeholder="0.00" inputmode="decimal">
-    <select id="quickExpCat-${dayNum}" class="flex-1 border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1.5 text-sm outline-none focus:ring-2 focus:ring-teal-400">
+    <select id="quickExpCat-${dayNum}" class="flex-1 min-w-0 border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1.5 text-sm outline-none focus:ring-2 focus:ring-teal-400">
       ${CATEGORIES.map(c => `<option value="${c.id}">${c.label}</option>`).join('')}
     </select>
     <button onclick="quickAddExpense(${dayNum})" class="tap px-3 py-1.5 bg-teal-600 text-white rounded-lg text-sm font-600 hover:bg-teal-700 transition flex-shrink-0">Add</button>
@@ -2183,161 +2141,15 @@ function highlightDayNav(dayNum) {
 }
 
 // ============================================================
-// RENDER: NOTES & LISTS
+// RENDER: EXPENSES TAB
 // ============================================================
-function renderNotes() {
-  renderJournal();
-  renderChecklists();
-  renderExpenses();
-  switchNotesTab(state.activeNotesTab || 'journal');
-}
-
-// ---- Journal ----
-function renderJournal() {
-  const el = document.getElementById('notes-journal');
-  const notes = state.notes.filter(n => !n.id.startsWith('today-')).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-  el.innerHTML = `
-    <button onclick="showAddNoteModal()" class="tap w-full bg-teal-600 hover:bg-teal-700 text-white font-heading font-600 py-3 px-4 rounded-xl mb-4 transition text-sm">+ Add Note</button>
-    ${notes.length === 0 ? '<p class="text-center text-gray-400 py-8 text-sm">No notes yet. Tap "Add Note" to start your journal!</p>' : ''}
-    <div class="space-y-3">${notes.map(n => `<div class="glass rounded-xl p-3 anim-fade">
-      <div class="flex justify-between items-start">
-        <div class="flex-1">
-          <p class="text-sm whitespace-pre-wrap">${escHtml(n.text)}</p>
-          <div class="flex items-center gap-2 mt-2">
-            <span class="text-xs text-gray-400">${formatTimestamp(n.timestamp)}</span>
-            ${n.day !== 'general' ? `<span class="text-xs px-2 py-0.5 rounded-full bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300">Day ${n.day}</span>` : '<span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-500">General</span>'}
-          </div>
-        </div>
-        <button onclick="deleteNote('${n.id}')" class="tap text-red-400 hover:text-red-600 ml-2 text-lg transition p-1" aria-label="Delete note">🗑</button>
-      </div>
-    </div>`).join('')}</div>`;
-}
-
-function showAddNoteModal() {
-  const modal = document.getElementById('modalContainer');
-  modal.innerHTML = `<div class="modal-overlay" role="dialog" aria-modal="true" onclick="if(event.target===this)closeModal()">
-    <div class="modal-content bg-white dark:bg-gray-800 anim-fade">
-      <h3 class="font-heading font-700 text-lg mb-3">📝 Add Note</h3>
-      <textarea id="noteText" class="w-full border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm resize-none h-28 focus:ring-2 focus:ring-teal-400 outline-none mb-3" placeholder="What's on your mind?" autofocus></textarea>
-      <select id="noteDay" class="w-full border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm mb-4 outline-none focus:ring-2 focus:ring-teal-400">
-        <option value="general">General</option>
-        ${DAYS.map(d => `<option value="${d.day}">Day ${d.day} — ${d.title}</option>`).join('')}
-      </select>
-      <div class="flex gap-3">
-        <button onclick="closeModal()" class="tap flex-1 py-3 rounded-xl border border-gray-200 dark:border-gray-700 font-heading font-600 text-sm transition">Cancel</button>
-        <button onclick="addNote()" class="tap flex-1 py-3 rounded-xl bg-teal-600 text-white font-heading font-600 text-sm hover:bg-teal-700 transition">Save</button>
-      </div>
-    </div>
-  </div>`;
-}
-
-function addNote() {
-  const text = document.getElementById('noteText').value.trim();
-  if (!text) return;
-  const dayVal = document.getElementById('noteDay').value;
-  state.notes.push({
-    id: genId(),
-    text,
-    day: dayVal === 'general' ? 'general' : parseInt(dayVal),
-    timestamp: new Date().toISOString()
-  });
-  saveState();
-  closeModal();
-  renderJournal();
-}
-
-function deleteNote(id) {
-  if (!confirm('Delete this note?')) return;
-  state.notes = state.notes.filter(n => n.id !== id);
-  saveState();
-  renderJournal();
-}
-
 function closeModal() {
   document.getElementById('modalContainer').innerHTML = '';
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-// ---- Checklists ----
-function renderChecklists() {
-  const el = document.getElementById('notes-checklists');
-  const keys = Object.keys(state.checklists);
-  el.innerHTML = `
-    <button onclick="showNewChecklistModal()" class="tap w-full bg-teal-600 hover:bg-teal-700 text-white font-heading font-600 py-3 px-4 rounded-xl mb-4 transition text-sm">+ New Checklist</button>
-    <div class="space-y-4">${keys.map(k => renderChecklist(k, state.checklists[k])).join('')}</div>`;
-}
-
-function renderChecklist(key, cl) {
-  const total = cl.items.length;
-  const checked = cl.items.filter(i => i.checked).length;
-  const pct = total > 0 ? Math.round((checked / total) * 100) : 0;
-  return `<div class="glass rounded-2xl p-4">
-    <div class="flex justify-between items-center mb-2">
-      <h4 class="font-heading font-700 text-base">${escHtml(cl.title)}</h4>
-      <span class="text-xs text-gray-400">${checked}/${total}</span>
-    </div>
-    <div class="progress-track mb-3"><div class="progress-fill bg-teal-500" style="width:${pct}%"></div></div>
-    <div class="space-y-2">${cl.items.map((item, i) => `<div class="flex items-center gap-3 tap" onclick="toggleCheckItem('${key}',${i})">
-      <div class="check-box ${item.checked ? 'checked' : ''}"></div>
-      <span class="text-sm ${item.checked ? 'line-through text-gray-400' : ''} flex-1">${escHtml(item.text)}</span>
-      <button onclick="event.stopPropagation();removeCheckItem('${key}',${i})" class="text-red-300 hover:text-red-500 text-xs p-1 transition" aria-label="Remove item">✕</button>
-    </div>`).join('')}</div>
-    <div class="flex gap-2 mt-3">
-      <input type="text" id="newItem-${key}" class="flex-1 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-400" placeholder="Add item..." onkeydown="if(event.key==='Enter')addCheckItem('${key}')">
-      <button onclick="addCheckItem('${key}')" class="tap px-4 py-2 bg-teal-600 text-white rounded-lg text-sm font-600 hover:bg-teal-700 transition">Add</button>
-    </div>
-  </div>`;
-}
-
-function toggleCheckItem(key, idx) {
-  state.checklists[key].items[idx].checked = !state.checklists[key].items[idx].checked;
-  saveState();
-  renderChecklists();
-}
-
-function removeCheckItem(key, idx) {
-  state.checklists[key].items.splice(idx, 1);
-  saveState();
-  renderChecklists();
-}
-
-function addCheckItem(key) {
-  const input = document.getElementById('newItem-' + key);
-  const text = input.value.trim();
-  if (!text) return;
-  state.checklists[key].items.push({ text, checked: false });
-  input.value = '';
-  saveState();
-  renderChecklists();
-}
-
-function showNewChecklistModal() {
-  const modal = document.getElementById('modalContainer');
-  modal.innerHTML = `<div class="modal-overlay" role="dialog" aria-modal="true" onclick="if(event.target===this)closeModal()">
-    <div class="modal-content bg-white dark:bg-gray-800 anim-fade">
-      <h3 class="font-heading font-700 text-lg mb-3">✅ New Checklist</h3>
-      <input type="text" id="newClTitle" class="w-full border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm mb-4 outline-none focus:ring-2 focus:ring-teal-400" placeholder="Checklist name (e.g., Shopping List)" autofocus>
-      <div class="flex gap-3">
-        <button onclick="closeModal()" class="tap flex-1 py-3 rounded-xl border border-gray-200 dark:border-gray-700 font-heading font-600 text-sm transition">Cancel</button>
-        <button onclick="createChecklist()" class="tap flex-1 py-3 rounded-xl bg-teal-600 text-white font-heading font-600 text-sm hover:bg-teal-700 transition">Create</button>
-      </div>
-    </div>
-  </div>`;
-}
-
-function createChecklist() {
-  const title = document.getElementById('newClTitle').value.trim();
-  if (!title) return;
-  const key = 'custom_' + genId();
-  state.checklists[key] = { title, items: [] };
-  saveState();
-  closeModal();
-  renderChecklists();
-}
-
-// ---- Expenses ----
-function renderExpenses() {
-  const el = document.getElementById('notes-expenses');
+function renderExpensesTab() {
+  const el = document.getElementById('expensesContent');
   const expenses = state.expenses;
   const total = expenses.reduce((s, e) => s + e.amount, 0);
   const budget = state.budget || 15000;
@@ -2403,11 +2215,11 @@ function renderExpenses() {
     ${summaryHtml}
     <button onclick="showAddExpenseModal()" class="tap w-full bg-teal-600 hover:bg-teal-700 text-white font-heading font-600 py-3 px-4 rounded-xl mb-4 transition text-sm">+ Add Expense</button>
     ${expenses.length > 0 ? `<div class="flex gap-2 mb-3">
-      <select onchange="expenseFilterDay=this.value;renderExpenses()" class="flex-1 border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1.5 text-xs outline-none focus:ring-2 focus:ring-teal-400">
+      <select onchange="expenseFilterDay=this.value;renderExpensesTab()" class="flex-1 border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1.5 text-xs outline-none focus:ring-2 focus:ring-teal-400">
         <option value="all" ${expenseFilterDay === 'all' ? 'selected' : ''}>All Days</option>
         ${DAYS.map(d => '<option value="' + d.day + '" ' + (expenseFilterDay == d.day ? 'selected' : '') + '>Day ' + d.day + ' — ' + d.title + '</option>').join('')}
       </select>
-      <select onchange="expenseFilterCat=this.value;renderExpenses()" class="flex-1 border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1.5 text-xs outline-none focus:ring-2 focus:ring-teal-400">
+      <select onchange="expenseFilterCat=this.value;renderExpensesTab()" class="flex-1 border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1.5 text-xs outline-none focus:ring-2 focus:ring-teal-400">
         <option value="all" ${expenseFilterCat === 'all' ? 'selected' : ''}>All Categories</option>
         ${CATEGORIES.map(c => '<option value="' + c.id + '" ' + (expenseFilterCat === c.id ? 'selected' : '') + '>' + c.label + '</option>').join('')}
       </select>
@@ -2453,7 +2265,7 @@ function saveBudget() {
   state.budget = val;
   saveState();
   closeModal();
-  renderExpenses();
+  renderExpensesTab();
 }
 
 function showAddExpenseModal(editId) {
@@ -2507,7 +2319,7 @@ function saveExpense(editId) {
   }
   saveState();
   closeModal();
-  renderExpenses();
+  renderExpensesTab();
 }
 
 function deleteExpense(id) {
@@ -2515,7 +2327,7 @@ function deleteExpense(id) {
   state.expenses = state.expenses.filter(e => e.id !== id);
   saveState();
   closeModal();
-  renderExpenses();
+  renderExpensesTab();
 }
 
 function exportExpenses() {
@@ -2905,11 +2717,8 @@ function weatherIcon(code) {
 // ============================================================
 function renderSettings() {
   const el = document.getElementById('settingsContent');
-  const totalNotes = state.notes.filter(n => !n.id.startsWith('today-')).length;
   const totalExpenses = state.expenses.length;
   const totalSpent = state.expenses.reduce((s, e) => s + e.amount, 0);
-  const checklistItems = Object.values(state.checklists).reduce((s, cl) => s + cl.items.length, 0);
-  const checkedItems = Object.values(state.checklists).reduce((s, cl) => s + cl.items.filter(i => i.checked).length, 0);
 
   el.innerHTML = `
     <h2 class="font-heading font-700 text-xl mb-4">⚙️ Settings</h2>
@@ -2968,7 +2777,7 @@ function renderSettings() {
           <p class="text-xs text-gray-400">${FONT_SIZES[state.fontSize || 0].desc}</p>
         </div>
         <div class="flex items-center gap-1">
-          ${FONT_SIZES.map((f, i) => `<button onclick="state.fontSize=${i};applyFontSize();saveState();renderSettings();" class="tap w-10 h-10 rounded-xl font-heading font-700 text-sm transition ${(state.fontSize || 0) === i ? 'bg-teal-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300'}">${f.label}</button>`).join('')}
+          ${FONT_SIZES.map((f, i) => `<button onclick="state.fontSize=${i};applyFontSize();saveState();renderSettings();" class="tap w-11 h-11 rounded-xl font-heading font-700 text-sm transition ${(state.fontSize || 0) === i ? 'bg-teal-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300'}">${f.label}</button>`).join('')}
         </div>
       </div>
     </div>
@@ -2986,10 +2795,8 @@ function renderSettings() {
         <div class="text-center"><p class="font-heading font-700 text-xl text-teal-600 dark:text-teal-400">2</p><p class="text-xs text-gray-400">Countries</p></div>
       </div>
       <div class="border-t border-gray-200 dark:border-gray-700 mt-3 pt-3 grid grid-cols-2 gap-3 text-center">
-        <div><p class="font-heading font-600 text-sm">${totalNotes}</p><p class="text-xs text-gray-400">Journal Notes</p></div>
         <div><p class="font-heading font-600 text-sm">${fmtMoney(totalSpent)}</p><p class="text-xs text-gray-400">of ${currSym()}${(state.budget || 15000).toLocaleString()} budget</p></div>
         <div><p class="font-heading font-600 text-sm">${totalExpenses}</p><p class="text-xs text-gray-400">Expenses</p></div>
-        <div><p class="font-heading font-600 text-sm">${checkedItems}/${checklistItems}</p><p class="text-xs text-gray-400">Items Checked</p></div>
       </div>
       </div>
     </div>
@@ -3157,15 +2964,12 @@ function exportAllData() {
 }
 
 function clearAllData() {
-  if (!confirm('Are you sure you want to clear ALL data? This will reset notes, expenses, and checklists. This cannot be undone!')) return;
+  if (!confirm('Are you sure you want to clear ALL data? This will reset expenses and packing list. This cannot be undone!')) return;
   if (!confirm('Really clear everything? Last chance!')) return;
-  state.notes = [{ ...DEFAULT_NOTE }];
-  state.checklists = JSON.parse(JSON.stringify(DEFAULT_CHECKLISTS));
   state.expenses = [];
   state.expandedDays = [];
   saveState();
   renderSettings();
-  renderNotes();
   showToast('All data cleared.', 'success');
 }
 
