@@ -2122,7 +2122,6 @@ function scrollToDay(dayNum) {
     const chev = document.getElementById('chev-' + dayNum);
     if (body) {
       body.classList.remove('hidden');
-      // Skip slide animation for pill navigation — just show instantly
     }
     if (chev) chev.classList.add('open');
   }
@@ -2132,11 +2131,20 @@ function scrollToDay(dayNum) {
     requestAnimationFrame(() => {
       const el = document.getElementById('day-' + dayNum);
       if (!el) return;
-      const headerH = document.getElementById('appHeader')?.offsetHeight || 48;
-      const navH = document.getElementById('dayNav')?.offsetHeight || 40;
-      const offset = headerH + navH + 12;
-      const top = el.getBoundingClientRect().top + window.scrollY - offset;
-      window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+      // On desktop, the tab panel is the scroll container; on mobile, it's the window
+      const panel = document.getElementById('tab-days');
+      const isDesktop = panel && panel.scrollHeight > panel.clientHeight;
+      if (isDesktop) {
+        const navH = document.getElementById('dayNav')?.offsetHeight || 40;
+        const top = el.offsetTop - navH - 12;
+        panel.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+      } else {
+        const headerH = document.getElementById('appHeader')?.offsetHeight || 48;
+        const navH = document.getElementById('dayNav')?.offsetHeight || 40;
+        const offset = headerH + navH + 12;
+        const top = el.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+      }
     });
   });
 }
