@@ -108,6 +108,10 @@ tailwind.config = {
   /* Bottom tab bar */
   .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; padding-bottom: env(safe-area-inset-bottom, 0px); }
 
+  /* Day cards: scroll-margin so scrollIntoView clears sticky nav */
+  [data-day-card] { scroll-margin-top: 100px; }
+  @media (min-width: 768px) { [data-day-card] { scroll-margin-top: 56px; } }
+
   /* Day nav */
   .day-nav { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
   .day-nav::-webkit-scrollbar { display: none; }
@@ -1868,6 +1872,7 @@ function removeDayExpense(id, dayNum) {
 // RENDER: ALL DAYS
 // ============================================================
 let dayObserver = null;
+let isPillScrolling = false;
 
 function renderDays() {
   // Ensure current day is always expanded
@@ -1897,6 +1902,7 @@ function renderDays() {
       const navH = document.getElementById('dayNav')?.offsetHeight || 40;
       const topMargin = -(headerH + navH + 20);
       dayObserver = new IntersectionObserver((entries) => {
+        if (isPillScrolling) return;
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             const dayNum = parseInt(entry.target.dataset.day);
@@ -2125,34 +2131,21 @@ function scrollToDay(dayNum) {
     saveState();
     const body = document.getElementById('dayBody-' + dayNum);
     const chev = document.getElementById('chev-' + dayNum);
-    if (body) {
-      body.classList.remove('hidden');
-    }
+    if (body) body.classList.remove('hidden');
     if (chev) chev.classList.add('open');
   }
+  // Suppress IntersectionObserver during programmatic scroll
+  isPillScrolling = true;
   highlightDayNav(dayNum);
   // Double rAF: first for DOM update, second for layout
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       const el = document.getElementById('day-' + dayNum);
       if (!el) return;
-      const isDesktop = window.matchMedia('(min-width: 768px)').matches;
-      const panel = document.getElementById('tab-days');
-      if (isDesktop && panel) {
-        // Desktop: tab panel is the scroll container, day nav sticky at top:0
-        const panelRect = panel.getBoundingClientRect();
-        const elRect = el.getBoundingClientRect();
-        const navH = document.getElementById('dayNav')?.offsetHeight || 40;
-        const top = elRect.top - panelRect.top + panel.scrollTop - navH - 12;
-        panel.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
-      } else {
-        // Mobile: window is the scroll container, header + nav are sticky
-        const headerH = document.getElementById('appHeader')?.offsetHeight || 48;
-        const navH = document.getElementById('dayNav')?.offsetHeight || 40;
-        const offset = headerH + navH + 12;
-        const top = el.getBoundingClientRect().top + window.scrollY - offset;
-        window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
-      }
+      // scrollIntoView respects scroll-margin-top CSS and auto-detects scroll container
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Re-enable observer after scroll settles
+      setTimeout(() => { isPillScrolling = false; }, 1000);
     });
   });
 }
@@ -2171,8 +2164,14 @@ function highlightDayNav(dayNum) {
       btn.style.color = phaseColor(dayData.phase);
     }
   });
-  // Scroll active pill into view in the nav bar
-  if (activeBtn) activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  // Scroll active pill into view horizontally only (avoid scrolling the panel vertically)
+  if (activeBtn) {
+    const nav = document.getElementById('dayNav');
+    if (nav) {
+      const scrollLeft = activeBtn.offsetLeft - nav.clientWidth / 2 + activeBtn.offsetWidth / 2;
+      nav.scrollTo({ left: Math.max(0, scrollLeft), behavior: 'smooth' });
+    }
+  }
 }
 
 // ============================================================
