@@ -1810,23 +1810,22 @@ function startPackDrag(e, ci, ai) {
     const y = ev.clientY;
     if (!moved && Math.abs(y - startY) > 3) moved = true;
     ghost.style.top = (y - offsetY) + 'px';
-    // Find closest item by midpoint distance
+    // Build sorted list of sibling positions (excluding dragged item)
     const siblings = Array.from(container.querySelectorAll('.pack-item[data-ci="' + ci + '"]'));
     document.querySelectorAll('.pack-item.drag-over').forEach(d => d.classList.remove('drag-over'));
-    let closestIdx = ai;
-    let closestDist = Infinity;
-    for (const sib of siblings) {
-      const sibIdx = +sib.dataset.ai;
-      if (sibIdx === ai) continue;
-      const r = sib.getBoundingClientRect();
-      const dist = Math.abs(y - (r.top + r.height / 2));
-      if (dist < closestDist) { closestDist = dist; closestIdx = sibIdx; }
+    const others = siblings
+      .filter(s => +s.dataset.ai !== ai)
+      .map(s => { const r = s.getBoundingClientRect(); return { el: s, ai: +s.dataset.ai, mid: r.top + r.height / 2 }; })
+      .sort((a, b) => a.mid - b.mid);
+    if (others.length === 0) return;
+    // If cursor is above the first item's midpoint, target is the first item
+    let target = others[0];
+    for (const o of others) {
+      if (y > o.mid) target = o;
+      else break;
     }
-    if (closestIdx !== ai) {
-      const target = siblings.find(s => +s.dataset.ai === closestIdx);
-      if (target) target.classList.add('drag-over');
-    }
-    currentOver = closestIdx;
+    target.el.classList.add('drag-over');
+    currentOver = target.ai;
   }
 
   function onUp(ev) {
