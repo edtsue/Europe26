@@ -351,78 +351,103 @@ tailwind.config = {
   .dark .hotel-filter-pill:not(.active) { background: #1e293b; color: #94a3b8; }
 
   /* ====== S MODE — Premium ADHD-Optimized ====== */
-  body.s-mode { font-family: 'Lexend', system-ui, sans-serif; background: #FDFBF7; color: #2D3436; line-height: 1.65; letter-spacing: 0.02em; }
+  body.s-mode { font-family: 'Lexend', system-ui, sans-serif; background: #FAF8F4; color: #3D3A36; line-height: 1.7; letter-spacing: 0.01em; }
   body.s-mode .font-heading, body.s-mode .font-body { font-family: 'Lexend', system-ui, sans-serif; }
-  body.s-mode .glass { background: rgba(253,251,247,0.92); border: 1px solid rgba(201,169,110,0.12); box-shadow: 0 2px 16px rgba(201,169,110,0.08); border-radius: 20px; }
-  body.s-mode .phase-austria { background: #87A08B; }
-  body.s-mode .phase-transition { background: #B8956A; }
-  body.s-mode .phase-italy { background: #C07856; }
-  body.s-mode .phase-departure { background: #7B8794; }
+  body.s-mode .glass { background: rgba(255,255,253,0.88); border: 1px solid rgba(180,165,140,0.1); box-shadow: 0 1px 8px rgba(0,0,0,0.03); border-radius: 16px; }
+  body.s-mode .phase-austria { background: #7D9B82; }
+  body.s-mode .phase-transition { background: #A68E6A; }
+  body.s-mode .phase-italy { background: #B07358; }
+  body.s-mode .phase-departure { background: #8B8E94; }
 
   /* S MODE toggle button */
   .s-mode-toggle { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 9999px; font-size: 20px; cursor: pointer; transition: all 0.3s; border: none; background: transparent; -webkit-tap-highlight-color: transparent; }
-  .s-mode-toggle:hover { background: rgba(201,169,110,0.12); }
-  .s-mode-toggle.active { background: linear-gradient(135deg, #C9A96E, #D4B97A); box-shadow: 0 0 12px rgba(201,169,110,0.4); }
+  .s-mode-toggle:hover { background: rgba(160,140,110,0.1); }
+  .s-mode-toggle.active { background: #A68E6A; box-shadow: 0 0 0 2px rgba(166,142,106,0.25); }
 
   /* S MODE cards */
-  body.s-mode .s-card { background: rgba(253,251,247,0.95); border: 1px solid rgba(201,169,110,0.15); border-radius: 20px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 20px rgba(201,169,110,0.06); }
-  body.s-mode .s-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-  body.s-mode .s-day-num { font-size: 13px; font-weight: 600; color: #C9A96E; letter-spacing: 0.08em; text-transform: uppercase; }
-  body.s-mode .s-day-title { font-size: 20px; font-weight: 700; color: #2D3436; }
-  body.s-mode .s-day-subtitle { font-size: 13px; color: #7B8794; margin-top: 2px; }
+  body.s-mode .s-card { background: #FFFFFF; border: 1px solid rgba(0,0,0,0.05); border-radius: 16px; padding: 20px; margin-bottom: 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+  body.s-mode .s-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  body.s-mode .s-day-num { font-size: 12px; font-weight: 500; color: #A68E6A; letter-spacing: 0.06em; text-transform: uppercase; }
+  body.s-mode .s-day-title { font-size: 19px; font-weight: 700; color: #3D3A36; line-height: 1.25; }
 
   /* S MODE badges */
-  body.s-mode .s-badge-fixed { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border-radius: 999px; font-size: 11px; font-weight: 600; background: linear-gradient(135deg, #C9A96E, #D4B97A); color: white; }
-  body.s-mode .s-badge-flex { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border-radius: 999px; font-size: 11px; font-weight: 600; background: #87A08B; color: white; }
-  body.s-mode .s-badge-warn { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; background: #C07856; color: white; }
+  body.s-mode .s-badge-fixed { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; background: #A68E6A; color: white; }
+  body.s-mode .s-badge-flex { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; background: #7D9B82; color: white; }
+  body.s-mode .s-badge-warn { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; background: #B07358; color: white; }
 
   /* S MODE "more" buttons */
-  body.s-mode .s-more-btn { display: inline-flex; align-items: center; gap: 4px; padding: 8px 18px; border-radius: 999px; font-size: 13px; font-weight: 500; color: #C9A96E; background: rgba(201,169,110,0.08); border: 1px solid rgba(201,169,110,0.2); cursor: pointer; transition: all 0.2s; }
-  body.s-mode .s-more-btn:hover { background: rgba(201,169,110,0.15); }
+  body.s-mode .s-more-btn { display: inline-flex; align-items: center; gap: 4px; padding: 7px 16px; border-radius: 999px; font-size: 13px; font-weight: 500; color: #A68E6A; background: transparent; border: 1px solid rgba(166,142,106,0.25); cursor: pointer; transition: all 0.2s; }
+  body.s-mode .s-more-btn:hover { background: rgba(166,142,106,0.06); }
 
   /* S MODE top-pick badge */
-  body.s-mode .s-top-pick { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; background: linear-gradient(135deg, #C9A96E, #D4B97A); color: white; }
+  body.s-mode .s-top-pick { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; background: #A68E6A; color: white; }
 
   /* S MODE section divider */
-  body.s-mode .s-divider { height: 1px; background: linear-gradient(to right, transparent, rgba(201,169,110,0.3), transparent); margin: 16px 0; }
+  body.s-mode .s-divider { height: 1px; background: rgba(0,0,0,0.06); margin: 16px 0; }
 
   /* S MODE progress */
   body.s-mode .s-progress-ring { width: 80px; height: 80px; }
   body.s-mode .s-budget-signal { font-size: 48px; line-height: 1; }
 
   /* S MODE packing categories */
-  body.s-mode .s-pack-priority { border-left: 3px solid #C9A96E; }
-  body.s-mode .s-pack-kids { border-left: 3px solid #C4A4A7; }
+  body.s-mode .s-pack-priority { border-left: 3px solid #A68E6A; }
+  body.s-mode .s-pack-kids { border-left: 3px solid #B5A0A2; }
 
   /* S MODE phrase card */
-  body.s-mode .s-phrase-card { background: rgba(253,251,247,0.95); border: 1px solid rgba(201,169,110,0.12); border-radius: 16px; padding: 16px; margin-bottom: 10px; }
-  body.s-mode .s-phrase-local { font-size: 17px; font-weight: 600; color: #2D3436; }
-  body.s-mode .s-phrase-pron { font-size: 13px; color: #87A08B; font-style: italic; }
-  body.s-mode .s-phrase-kr { font-size: 13px; color: #C4A4A7; }
+  body.s-mode .s-phrase-card { background: #FFFFFF; border: 1px solid rgba(0,0,0,0.05); border-radius: 14px; padding: 14px 16px; margin-bottom: 8px; }
+  body.s-mode .s-phrase-local { font-size: 17px; font-weight: 600; color: #3D3A36; }
+  body.s-mode .s-phrase-pron { font-size: 13px; color: #7D9B82; font-style: italic; }
+  body.s-mode .s-phrase-kr { font-size: 13px; color: #B5A0A2; }
 
   /* S MODE settings info card */
-  body.s-mode .s-info-card { background: linear-gradient(135deg, rgba(201,169,110,0.08), rgba(135,160,139,0.08)); border: 1px solid rgba(201,169,110,0.2); border-radius: 20px; padding: 20px; margin-bottom: 20px; }
+  body.s-mode .s-info-card { background: #FFFFFF; border: 1px solid rgba(166,142,106,0.2); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
+
+  /* S MODE: hide non-essential tabs — keep only Days, Packing, Guide */
+  body.s-mode .desktop-tab-btn[data-tab="hotels"],
+  body.s-mode .desktop-tab-btn[data-tab="expenses"],
+  body.s-mode .desktop-tab-btn[data-tab="settings"],
+  body.s-mode .tab-btn[data-tab="hotels"],
+  body.s-mode .tab-btn[data-tab="expenses"],
+  body.s-mode .tab-btn[data-tab="settings"] { display: none !important; }
+
+  /* S MODE desktop sidebar */
+  body.s-mode .desktop-nav { background: #FAF8F4; border-color: rgba(0,0,0,0.06); }
+  body.s-mode.dark .desktop-nav { background: #1C1F2B; border-color: rgba(255,255,255,0.06); }
+
+  /* S MODE header */
+  body.s-mode header.glass { background: rgba(250,248,244,0.96); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(0,0,0,0.04); }
+  body.s-mode.dark header.glass { background: rgba(28,31,43,0.96); border-bottom-color: rgba(255,255,255,0.06); }
+
+  /* S MODE bottom nav bar */
+  body.s-mode .bottom-bar { background: rgba(250,248,244,0.96); backdrop-filter: blur(16px); border-color: rgba(0,0,0,0.06); }
+  body.s-mode.dark .bottom-bar { background: rgba(28,31,43,0.96); border-color: rgba(255,255,255,0.06); }
+
+  /* S MODE day nav pills */
+  body.s-mode .day-nav { background: #FAF8F4 !important; }
+  body.s-mode.dark .day-nav { background: #1C1F2B !important; }
 
   /* S MODE dark mode combo */
-  body.s-mode.dark { background: #1a1d2e; color: #F5F0E8; }
-  body.s-mode.dark .glass { background: rgba(26,29,46,0.92); border-color: rgba(201,169,110,0.15); }
-  body.s-mode.dark .s-card { background: rgba(26,29,46,0.95); border-color: rgba(201,169,110,0.18); }
-  body.s-mode.dark .s-day-title { color: #F5F0E8; }
-  body.s-mode.dark .s-phrase-local { color: #F5F0E8; }
-  body.s-mode.dark .s-more-btn { color: #D4B97A; background: rgba(201,169,110,0.1); border-color: rgba(201,169,110,0.25); }
-  body.s-mode.dark .s-info-card { background: linear-gradient(135deg, rgba(201,169,110,0.06), rgba(135,160,139,0.06)); }
+  body.s-mode.dark { background: #1C1F2B; color: #E8E4DC; }
+  body.s-mode.dark .glass { background: rgba(28,31,43,0.88); border-color: rgba(255,255,255,0.06); }
+  body.s-mode.dark .s-card { background: #252836; border-color: rgba(255,255,255,0.06); }
+  body.s-mode.dark .s-day-num { color: #C4B590; }
+  body.s-mode.dark .s-day-title { color: #E8E4DC; }
+  body.s-mode.dark .s-phrase-card { background: #252836; border-color: rgba(255,255,255,0.06); }
+  body.s-mode.dark .s-phrase-local { color: #E8E4DC; }
+  body.s-mode.dark .s-more-btn { color: #C4B590; border-color: rgba(196,181,144,0.25); }
+  body.s-mode.dark .s-info-card { background: #252836; border-color: rgba(196,181,144,0.15); }
+  body.s-mode.dark .s-badge-fixed { background: #A68E6A; }
+  body.s-mode.dark .s-top-pick { background: #A68E6A; }
 
-  /* S MODE: hide expenses tab */
-  body.s-mode .desktop-tab-btn[data-tab="expenses"],
-  body.s-mode .tab-btn[data-tab="expenses"] { display: none; }
-
-  /* S MODE header tweak */
-  body.s-mode header.glass { background: rgba(253,251,247,0.95); backdrop-filter: blur(12px); }
-  body.s-mode.dark header.glass { background: rgba(26,29,46,0.95); }
-
-  /* S MODE bottom nav */
-  body.s-mode .mobile-nav { background: rgba(253,251,247,0.95); border-color: rgba(201,169,110,0.15); }
-  body.s-mode.dark .mobile-nav { background: rgba(26,29,46,0.95); }
+  /* S MODE mobile refinements */
+  @media (max-width: 400px) {
+    body.s-mode .s-card { padding: 16px; border-radius: 14px; }
+    body.s-mode .s-day-title { font-size: 17px; }
+    body.s-mode .s-phrase-local { font-size: 15px; }
+    body.s-mode .s-card-header { gap: 10px; }
+  }
+  body.s-mode .s-card { overflow-wrap: break-word; word-wrap: break-word; }
+  body.s-mode .s-more-btn { -webkit-tap-highlight-color: transparent; min-height: 44px; }
 </style>
 </head>
 <body class="bg-gray-50 text-gray-900 font-body min-h-screen pb-20">
@@ -1678,13 +1703,15 @@ function applySMode() {
   }
 }
 
+const S_MODE_HIDDEN_TABS = ['hotels', 'expenses', 'settings'];
+
 function toggleSMode() {
   state.sMode = !state.sMode;
   applySMode();
   saveState();
-  // If on a hidden tab (expenses), redirect to days
+  // If on a hidden tab, redirect to days
   let tab = state.activeTab || 'days';
-  if (state.sMode && tab === 'expenses') {
+  if (state.sMode && S_MODE_HIDDEN_TABS.includes(tab)) {
     switchTab('days');
     showToast('🌸 S Mode on', 'success');
     return;
@@ -1748,7 +1775,7 @@ function renderSModeDayCard(d) {
   if (d.ztl && d.ztl !== '—' && (d.ztlStatus === 'warn' || d.ztlStatus === 'danger')) {
     mustKnow.push(`🚦 ${escHtml(d.ztl)}`);
   }
-  const mustKnowHtml = `<div class="rounded-xl p-3 mb-3" style="background:rgba(201,169,110,0.06);border:1px solid rgba(201,169,110,0.12)">
+  const mustKnowHtml = `<div class="rounded-xl p-3 mb-3" style="background:rgba(166,142,106,0.06);border:1px solid rgba(166,142,106,0.12)">
     <p class="text-xs font-600 text-gray-400 uppercase tracking-wider mb-2">Must-know</p>
     ${mustKnow.map(m => `<p class="text-xs mb-1">${m}</p>`).join('')}
   </div>`;
@@ -1783,7 +1810,7 @@ function renderSModeDayCard(d) {
   }
   if (headsUpItems.length > 0) {
     headsUpHtml = `<button class="s-more-btn mb-3" onclick="toggleSModeSection(this, 'headsup-${d.day}')">⚠️ ${headsUpItems.length} reminder${headsUpItems.length > 1 ? 's' : ''} →</button>
-    <div id="s-headsup-${d.day}" class="hidden mb-3 space-y-2">${headsUpItems.map(t => `<div class="rounded-lg p-2.5" style="background:rgba(192,120,86,0.06);border:1px solid rgba(192,120,86,0.12)"><p class="text-xs">⚠️ ${escHtml(t.length > 150 ? t.substring(0, 150) + '...' : t)}</p></div>`).join('')}</div>`;
+    <div id="s-headsup-${d.day}" class="hidden mb-3 space-y-2">${headsUpItems.map(t => `<div class="rounded-lg p-2.5" style="background:rgba(176,115,88,0.06);border:1px solid rgba(176,115,88,0.12)"><p class="text-xs">⚠️ ${escHtml(t.length > 150 ? t.substring(0, 150) + '...' : t)}</p></div>`).join('')}</div>`;
   }
 
   // Full details escape hatch (alternatives + midway)
@@ -1828,7 +1855,7 @@ function toggleSModeSection(btn, id) {
 function renderSModeHotels() {
   const container = document.getElementById('hotelsContent');
   let html = `<div class="mb-4">
-    <h1 class="font-heading font-700 text-xl mb-1" style="color:#C9A96E">🏨 Where to Stay</h1>
+    <h1 class="font-heading font-700 text-xl mb-1" style="color:#A68E6A">🏨 Where to Stay</h1>
     <p class="text-sm text-gray-500 dark:text-gray-400">Top pick for each destination</p>
   </div>`;
 
@@ -1845,26 +1872,26 @@ function renderSModeHotels() {
           <p class="font-600 text-sm">${escHtml(d.sleep)}</p>
         </div>
       </div>
-      <div class="rounded-xl p-3 mb-2" style="background:rgba(201,169,110,0.04);border:1px solid rgba(201,169,110,0.1)">
+      <div class="rounded-xl p-3 mb-2" style="background:rgba(166,142,106,0.04);border:1px solid rgba(166,142,106,0.1)">
         <div class="flex items-center gap-2 mb-1">
           <span class="s-top-pick">⭐ Top Pick</span>
-          ${top.perk && top.perk.toLowerCase().includes('kid') ? '<span class="s-top-pick" style="background:#C4A4A7">👶 Kid-friendly</span>' : ''}
+          ${top.perk && top.perk.toLowerCase().includes('kid') ? '<span class="s-top-pick" style="background:#B5A0A2">👶 Kid-friendly</span>' : ''}
           <span class="text-xs text-amber-600 dark:text-amber-400 font-600 ml-auto">${top.price}</span>
         </div>
         <p class="text-sm font-600 mt-1">${escHtml(top.name)}</p>
         <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${escHtml(top.perk)}</p>
         <div class="flex items-center gap-3 mt-2 text-xs">
           <span>🅿️ ${escHtml(top.parking)}</span>
-          <a href="${top.url}" target="_blank" rel="noopener noreferrer" class="font-600" style="color:#C9A96E">View →</a>
+          <a href="${top.url}" target="_blank" rel="noopener noreferrer" class="font-600" style="color:#A68E6A">View →</a>
         </div>
       </div>
       ${rest > 0 ? `<button class="s-more-btn" onclick="toggleSModeSection(this, 'hoteltab-${d.day}')">See alternatives (${rest}) →</button>
-      <div id="s-hoteltab-${d.day}" class="hidden mt-2 space-y-2">${d.hotels.slice(1).map(h => `<div class="rounded-xl p-3" style="border:1px solid rgba(201,169,110,0.08)">
+      <div id="s-hoteltab-${d.day}" class="hidden mt-2 space-y-2">${d.hotels.slice(1).map(h => `<div class="rounded-xl p-3" style="border:1px solid rgba(166,142,106,0.08)">
         <div class="flex justify-between items-start"><p class="text-sm font-600">${escHtml(h.name)}</p><span class="text-xs text-amber-600 font-600">${h.price}</span></div>
         <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${escHtml(h.perk || h.why)}</p>
         <div class="flex gap-3 mt-1 text-xs">
           <span>🅿️ ${escHtml(h.parking)}</span>
-          <a href="${h.url}" target="_blank" rel="noopener noreferrer" class="font-600" style="color:#C9A96E">View →</a>
+          <a href="${h.url}" target="_blank" rel="noopener noreferrer" class="font-600" style="color:#A68E6A">View →</a>
         </div>
       </div>`).join('')}</div>` : ''}
     </div>`;
@@ -1885,7 +1912,7 @@ function renderSModePacking() {
 
   const circumference = 2 * Math.PI * 34;
   const offset = circumference - (pct / 100) * circumference;
-  const ringColor = pct === 100 ? '#87A08B' : '#C9A96E';
+  const ringColor = pct === 100 ? '#7D9B82' : '#A68E6A';
 
   let catsHtml = list.map((cat, ci) => {
     const allItems = [...cat.items.map((it, i) => ({...it, src: 'items', idx: i})), ...cat.customItems.map((it, i) => ({...it, src: 'customItems', idx: i}))];
@@ -1908,16 +1935,16 @@ function renderSModePacking() {
       <button onclick="togglePackingCat(${ci})" class="w-full flex items-center justify-between text-left tap">
         <span class="text-sm font-600 ${isDone ? 'line-through text-gray-400' : ''}">${escHtml(cat.cat)} ${isDone ? '✅' : ''}</span>
         <div class="flex items-center gap-2">
-          <span class="text-xs" style="color:#C9A96E">${checked}/${total}</span>
+          <span class="text-xs" style="color:#A68E6A">${checked}/${total}</span>
           <span class="chevron text-xs text-gray-400" id="packChev-${ci}">▼</span>
         </div>
       </button>
       <div id="packBody-${ci}" class="hidden mt-3">
-        <div class="progress-track mb-3"><div class="progress-fill ${isDone ? 'bg-green-500' : ''}" style="width:${catPct}%;${isDone ? '' : 'background:#C9A96E'};"></div></div>
+        <div class="progress-track mb-3"><div class="progress-fill ${isDone ? 'bg-green-500' : ''}" style="width:${catPct}%;${isDone ? '' : 'background:#A68E6A'};"></div></div>
         <div class="space-y-1">${itemsHtml}</div>
         <div class="flex gap-2 mt-3">
-          <input type="text" id="packAdd-${ci}" class="flex-1 border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2" style="border-color:rgba(201,169,110,0.2);focus:ring-color:#C9A96E" placeholder="Add item..." onkeydown="if(event.key==='Enter')addPackingItem(${ci})">
-          <button onclick="addPackingItem(${ci})" class="tap px-4 py-2 rounded-lg text-sm font-600 text-white" style="background:#C9A96E">Add</button>
+          <input type="text" id="packAdd-${ci}" class="flex-1 border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2" style="border-color:rgba(166,142,106,0.2);focus:ring-color:#A68E6A" placeholder="Add item..." onkeydown="if(event.key==='Enter')addPackingItem(${ci})">
+          <button onclick="addPackingItem(${ci})" class="tap px-4 py-2 rounded-lg text-sm font-600 text-white" style="background:#A68E6A">Add</button>
         </div>
       </div>
     </div>`;
@@ -1926,7 +1953,7 @@ function renderSModePacking() {
   el.innerHTML = `
     <div class="flex flex-col items-center mb-4">
       <svg class="s-progress-ring" viewBox="0 0 80 80">
-        <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(201,169,110,0.15)" stroke-width="6"/>
+        <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(166,142,106,0.15)" stroke-width="6"/>
         <circle cx="40" cy="40" r="34" fill="none" stroke="${ringColor}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" transform="rotate(-90 40 40)" style="transition:stroke-dashoffset 0.5s"/>
         <text x="40" y="44" text-anchor="middle" font-size="18" font-weight="700" fill="${ringColor}" font-family="Lexend">${pct}%</text>
       </svg>
@@ -1934,8 +1961,8 @@ function renderSModePacking() {
     </div>
     ${catsHtml}
     <div class="mt-4 flex gap-3">
-      <button onclick="uncheckAllPacking()" class="tap flex-1 py-3 rounded-xl border font-600 text-sm transition" style="border-color:rgba(201,169,110,0.2)">Uncheck All</button>
-      <button onclick="resetPacking()" class="tap flex-1 py-3 rounded-xl font-600 text-sm transition" style="background:rgba(192,120,86,0.08);color:#C07856">Reset List</button>
+      <button onclick="uncheckAllPacking()" class="tap flex-1 py-3 rounded-xl border font-600 text-sm transition" style="border-color:rgba(166,142,106,0.2)">Uncheck All</button>
+      <button onclick="resetPacking()" class="tap flex-1 py-3 rounded-xl font-600 text-sm transition" style="background:rgba(176,115,88,0.08);color:#B07358">Reset List</button>
     </div>`;
 }
 
@@ -1972,14 +1999,14 @@ function renderSModeGuide() {
   </div>`).join('');
 
   el.innerHTML = `
-    <h2 class="font-heading font-700 text-xl mb-4" style="color:#C9A96E">🌍 Travel Guide</h2>
+    <h2 class="font-heading font-700 text-xl mb-4" style="color:#A68E6A">🌍 Travel Guide</h2>
 
     <!-- Essential Phrases -->
     <div class="s-card">
       <p class="text-xs font-600 text-gray-400 uppercase tracking-wider mb-3">🗣 Essential Phrases</p>
       <div class="flex gap-2 mb-3">
-        <button onclick="state._guideLang='de';saveState();renderGuide()" class="tap px-4 py-2 rounded-full text-xs font-600 transition ${lang === 'de' ? '' : 'opacity-50'}" style="background:${lang === 'de' ? '#C9A96E' : 'rgba(201,169,110,0.1)'};color:${lang === 'de' ? 'white' : '#C9A96E'}">🇦🇹 German</button>
-        <button onclick="state._guideLang='it';saveState();renderGuide()" class="tap px-4 py-2 rounded-full text-xs font-600 transition ${lang === 'it' ? '' : 'opacity-50'}" style="background:${lang === 'it' ? '#C9A96E' : 'rgba(201,169,110,0.1)'};color:${lang === 'it' ? 'white' : '#C9A96E'}">🇮🇹 Italian</button>
+        <button onclick="state._guideLang='de';saveState();renderGuide()" class="tap px-4 py-2 rounded-full text-xs font-600 transition ${lang === 'de' ? '' : 'opacity-50'}" style="background:${lang === 'de' ? '#A68E6A' : 'rgba(166,142,106,0.1)'};color:${lang === 'de' ? 'white' : '#A68E6A'}">🇦🇹 German</button>
+        <button onclick="state._guideLang='it';saveState();renderGuide()" class="tap px-4 py-2 rounded-full text-xs font-600 transition ${lang === 'it' ? '' : 'opacity-50'}" style="background:${lang === 'it' ? '#A68E6A' : 'rgba(166,142,106,0.1)'};color:${lang === 'it' ? 'white' : '#A68E6A'}">🇮🇹 Italian</button>
       </div>
       ${phrasesHtml}
       <button class="s-more-btn mt-2" onclick="state.sMode=false;applySMode();saveState();renderGuide();showToast('Showing all phrases','success')">See all phrases →</button>
@@ -1989,17 +2016,17 @@ function renderSModeGuide() {
     <div class="s-card">
       <p class="text-xs font-600 text-gray-400 uppercase tracking-wider mb-3">🆘 Emergency</p>
       <div class="space-y-2">
-        <div class="flex items-center gap-3 p-3 rounded-xl" style="background:rgba(192,120,86,0.06);border:1px solid rgba(192,120,86,0.12)">
+        <div class="flex items-center gap-3 p-3 rounded-xl" style="background:rgba(176,115,88,0.06);border:1px solid rgba(176,115,88,0.12)">
           <div class="flex-1"><p class="text-sm font-700">EU Emergency</p><p class="text-xs text-gray-400">Police, fire, ambulance</p></div>
-          <a href="tel:112" class="tap px-4 py-2 rounded-full text-sm font-700 text-white" style="background:#C07856">112</a>
+          <a href="tel:112" class="tap px-4 py-2 rounded-full text-sm font-700 text-white" style="background:#B07358">112</a>
         </div>
-        <div class="flex items-center gap-3 p-3 rounded-xl" style="background:rgba(201,169,110,0.06);border:1px solid rgba(201,169,110,0.12)">
+        <div class="flex items-center gap-3 p-3 rounded-xl" style="background:rgba(166,142,106,0.06);border:1px solid rgba(166,142,106,0.12)">
           <div class="flex-1"><p class="text-sm font-700">Austria Roadside</p><p class="text-xs text-gray-400">ÖAMTC breakdown</p></div>
-          <a href="tel:120" class="tap px-4 py-2 rounded-full text-sm font-700 text-white" style="background:#C9A96E">120</a>
+          <a href="tel:120" class="tap px-4 py-2 rounded-full text-sm font-700 text-white" style="background:#A68E6A">120</a>
         </div>
-        <div class="flex items-center gap-3 p-3 rounded-xl" style="background:rgba(201,169,110,0.06);border:1px solid rgba(201,169,110,0.12)">
+        <div class="flex items-center gap-3 p-3 rounded-xl" style="background:rgba(166,142,106,0.06);border:1px solid rgba(166,142,106,0.12)">
           <div class="flex-1"><p class="text-sm font-700">Italy Roadside</p><p class="text-xs text-gray-400">ACI breakdown</p></div>
-          <a href="tel:803116" class="tap px-4 py-2 rounded-full text-sm font-700 text-white" style="background:#C9A96E">803 116</a>
+          <a href="tel:803116" class="tap px-4 py-2 rounded-full text-sm font-700 text-white" style="background:#A68E6A">803 116</a>
         </div>
       </div>
     </div>
@@ -2036,11 +2063,11 @@ function renderSModeExpenses() {
   // Traffic light
   let signal, signalColor, signalLabel;
   if (isOverBudget) {
-    signal = '🔴'; signalColor = '#C07856'; signalLabel = 'Over budget';
+    signal = '🔴'; signalColor = '#B07358'; signalLabel = 'Over budget';
   } else if (budgetPct > 80) {
-    signal = '🟡'; signalColor = '#C9A96E'; signalLabel = 'Watch it';
+    signal = '🟡'; signalColor = '#A68E6A'; signalLabel = 'Watch it';
   } else {
-    signal = '🟢'; signalColor = '#87A08B'; signalLabel = 'On track';
+    signal = '🟢'; signalColor = '#7D9B82'; signalLabel = 'On track';
   }
 
   // Won approximation (1 EUR ≈ 1,450 KRW)
@@ -2060,7 +2087,7 @@ function renderSModeExpenses() {
       <p class="text-sm font-600" style="color:${signalColor}">${fmtMoney(Math.abs(remaining))} ${isOverBudget ? 'over' : 'left'}</p>
     </div>
 
-    <button onclick="showAddExpenseModal()" class="tap w-full py-3 px-4 rounded-xl mb-4 font-600 text-sm text-white transition" style="background:#C9A96E">+ Add Expense</button>
+    <button onclick="showAddExpenseModal()" class="tap w-full py-3 px-4 rounded-xl mb-4 font-600 text-sm text-white transition" style="background:#A68E6A">+ Add Expense</button>
 
     ${recent.length > 0 ? `<div class="space-y-2">
       ${recent.map(e => {
@@ -2072,7 +2099,7 @@ function renderSModeExpenses() {
               <p class="text-sm font-600 truncate">${e.note ? escHtml(e.note) : cat.label}</p>
               <p class="text-xs text-gray-400">Day ${e.day}</p>
             </div>
-            <span class="font-600 text-sm" style="color:#C9A96E">${fmtMoney(e.amount)}</span>
+            <span class="font-600 text-sm" style="color:#A68E6A">${fmtMoney(e.amount)}</span>
           </div>
         </div>`;
       }).join('')}
@@ -2095,7 +2122,7 @@ function renderSModeSettingsCard() {
       </div>
     </div>
     <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Showing simplified views with essential info first. Tap "More" buttons to reveal details, or turn off S Mode for the full experience.</p>
-    <button onclick="toggleSMode()" class="tap px-4 py-2 rounded-xl text-xs font-600 transition" style="border:1px solid rgba(201,169,110,0.3);color:#C9A96E">Turn Off S Mode</button>
+    <button onclick="toggleSMode()" class="tap px-4 py-2 rounded-xl text-xs font-600 transition" style="border:1px solid rgba(166,142,106,0.3);color:#A68E6A">Turn Off S Mode</button>
   </div>`;
 }
 
@@ -2111,25 +2138,29 @@ function switchTab(tab) {
   saveState();
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
+  // S MODE accent color
+  const sActive = state.sMode;
+  const accentColor = sActive ? '#A68E6A' : phaseColor('austria');
+  const activeBgLight = sActive ? 'rgba(166,142,106,0.08)' : 'rgba(13,148,136,0.1)';
+  const activeBgDark = sActive ? 'rgba(166,142,106,0.12)' : 'rgba(13,148,136,0.15)';
   // Mobile bottom bar
   document.querySelectorAll('.tab-btn').forEach(b => {
     const isActive = b.dataset.tab === tab;
-    b.classList.toggle('bg-teal-50', isActive && !state.darkMode);
-    if (isActive && state.darkMode) {
-      b.style.backgroundColor = 'rgba(13,148,136,0.15)';
-    } else if (!isActive) {
+    b.classList.remove('bg-teal-50');
+    if (isActive) {
+      b.style.backgroundColor = state.darkMode ? activeBgDark : activeBgLight;
+    } else {
       b.style.backgroundColor = '';
-      b.classList.remove('bg-teal-50');
     }
-    b.style.color = isActive ? phaseColor('austria') : '';
+    b.style.color = isActive ? accentColor : '';
     b.style.fontWeight = isActive ? '700' : '500';
   });
   // Desktop sidebar
   document.querySelectorAll('.desktop-tab-btn').forEach(b => {
     const isActive = b.dataset.tab === tab;
     if (isActive) {
-      b.style.background = state.darkMode ? 'rgba(13,148,136,0.15)' : 'rgba(13,148,136,0.1)';
-      b.style.color = phaseColor('austria');
+      b.style.background = state.darkMode ? activeBgDark : activeBgLight;
+      b.style.color = accentColor;
     } else {
       b.style.background = '';
       b.style.color = '';
@@ -3677,7 +3708,7 @@ function init() {
   applySMode();
   // If S MODE is on and saved tab is hidden, redirect to days
   let initTab = state.activeTab || 'days';
-  if (state.sMode && initTab === 'expenses') initTab = 'days';
+  if (state.sMode && S_MODE_HIDDEN_TABS.includes(initTab)) initTab = 'days';
   switchTab(initTab);
   setupBackToTop();
   checkAutoNightMode();
