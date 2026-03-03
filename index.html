@@ -1723,7 +1723,9 @@ function restorePackingCats(expanded) {
   });
 }
 
+let packDragLock = false;
 function togglePackingItem(ci, ii, which) {
+  if (packDragLock) return;
   state.packingList[ci][which][ii].checked = !state.packingList[ci][which][ii].checked;
   saveState();
   const expanded = getExpandedPackingCats();
@@ -1786,8 +1788,9 @@ function removeAnyPackingItem(ci, unifiedIdx) {
 function startPackDrag(e, ci, ai) {
   e.preventDefault();
   e.stopPropagation();
+  packDragLock = true;
   const item = e.target.closest('.pack-item');
-  if (!item) return;
+  if (!item) { packDragLock = false; return; }
   const container = item.parentElement;
   const rect = item.getBoundingClientRect();
   const startY = e.clientY;
@@ -1835,6 +1838,8 @@ function startPackDrag(e, ci, ai) {
     document.querySelectorAll('.pack-item.dragging').forEach(d => d.classList.remove('dragging'));
     document.querySelectorAll('.pack-item.drag-over').forEach(d => d.classList.remove('drag-over'));
     if (moved && currentOver !== ai) reorderPackingItem(ci, ai, currentOver);
+    // Release click lock after browser fires the click event
+    setTimeout(() => { packDragLock = false; }, 300);
   }
 
   document.addEventListener('pointermove', onMove);
