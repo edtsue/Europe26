@@ -1756,16 +1756,12 @@ function removePackingItem(ci, ii) {
 function reorderPackingItem(ci, fromIdx, toIdx) {
   if (fromIdx === toIdx) return;
   const cat = state.packingList[ci];
-  const unified = [...cat.items.map((it, i) => ({...it, src: 'items', idx: i})), ...cat.customItems.map((it, i) => ({...it, src: 'customItems', idx: i}))];
+  // Merge into single flat list, reorder, then store all as items
+  const unified = [...cat.items, ...cat.customItems].map(it => ({ text: it.text, checked: it.checked }));
   const [moved] = unified.splice(fromIdx, 1);
   unified.splice(toIdx, 0, moved);
-  cat.items = [];
+  cat.items = unified;
   cat.customItems = [];
-  unified.forEach(u => {
-    const entry = { text: u.text, checked: u.checked };
-    if (u.src === 'customItems') cat.customItems.push(entry);
-    else cat.items.push(entry);
-  });
   saveState();
   const expanded = getExpandedPackingCats();
   renderPacking();
