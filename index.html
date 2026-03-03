@@ -1807,17 +1807,23 @@ function startPackDrag(e, ci, ai) {
     const y = ev.clientY;
     if (!moved && Math.abs(y - startY) > 3) moved = true;
     ghost.style.top = (y - offsetY) + 'px';
-    // Find drop target
-    const siblings = container.querySelectorAll('.pack-item[data-ci="' + ci + '"]');
+    // Find closest item by midpoint distance
+    const siblings = Array.from(container.querySelectorAll('.pack-item[data-ci="' + ci + '"]'));
     document.querySelectorAll('.pack-item.drag-over').forEach(d => d.classList.remove('drag-over'));
-    siblings.forEach(sib => {
+    let closestIdx = ai;
+    let closestDist = Infinity;
+    for (const sib of siblings) {
+      const sibIdx = +sib.dataset.ai;
+      if (sibIdx === ai) continue;
       const r = sib.getBoundingClientRect();
-      const midY = r.top + r.height / 2;
-      if (y > r.top && y < r.bottom && +sib.dataset.ai !== ai) {
-        sib.classList.add('drag-over');
-        currentOver = +sib.dataset.ai;
-      }
-    });
+      const dist = Math.abs(y - (r.top + r.height / 2));
+      if (dist < closestDist) { closestDist = dist; closestIdx = sibIdx; }
+    }
+    if (closestIdx !== ai) {
+      const target = siblings.find(s => +s.dataset.ai === closestIdx);
+      if (target) target.classList.add('drag-over');
+    }
+    currentOver = closestIdx;
   }
 
   function onUp(ev) {
