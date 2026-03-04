@@ -1741,7 +1741,7 @@ function renderSModeDays() {
 }
 
 function renderSModeDayCard(d) {
-  // Hard constraints (flights, rental)
+  // Hard constraints (flights only — car/traffic hidden in S MODE)
   let hardHtml = '';
   if (d.flights) {
     hardHtml += d.flights.map(f => `<div class="flex items-center gap-2 mb-2">
@@ -1752,14 +1752,6 @@ function renderSModeDayCard(d) {
     <p class="text-xs text-gray-500 dark:text-gray-400 mb-1 ml-1">${escHtml(f.route)}</p>
     <p class="text-xs text-gray-500 dark:text-gray-400 mb-3 ml-1">🛫 ${escHtml(f.depart)} → 🛬 ${escHtml(f.arrive)}</p>`).join('');
   }
-  if (d.rentalCar) {
-    hardHtml += `<div class="flex items-center gap-2 mb-2">
-      <span class="s-badge-fixed">🔒 Rental</span>
-      <span class="text-sm font-600">🚗 ${escHtml(d.rentalCar.company)}</span>
-      <span class="text-xs px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 font-mono">${escHtml(d.rentalCar.confirmation)}</span>
-    </div>
-    <p class="text-xs text-gray-500 dark:text-gray-400 mb-3 ml-1">${escHtml(d.rentalCar.pickup)} → ${escHtml(d.rentalCar.dropoff)}</p>`;
-  }
 
   // The plan — AM/PM
   const planHtml = `<div class="mb-3">
@@ -1767,15 +1759,7 @@ function renderSModeDayCard(d) {
     <div class="flex gap-2 items-start"><span class="s-badge-flex">PM</span><p class="text-sm">${escHtml(d.pm)}</p></div>
   </div>`;
 
-  // Warnings only — skip "must-know" box if there are no actual warnings
-  const warnings = [];
-  if (d.parking && d.parkingStatus === 'warn') warnings.push(`🅿️ ${escHtml(d.parking)}`);
-  if (d.ztl && d.ztl !== '—' && (d.ztlStatus === 'warn' || d.ztlStatus === 'danger')) {
-    warnings.push(`🚦 ${escHtml(d.ztl)}`);
-  }
-  const warningsHtml = warnings.length > 0 ? `<div class="rounded-xl p-3 mb-3" style="background:rgba(176,115,88,0.05);border:1px solid rgba(176,115,88,0.12)">
-    ${warnings.map(w => `<p class="text-xs mb-0.5">${w}</p>`).join('')}
-  </div>` : '';
+  const warningsHtml = '';
 
   // Top spots — only show if 4+ destinations (on resort/simple days the plan covers it)
   let destsHtml = '';
@@ -1798,22 +1782,17 @@ function renderSModeDayCard(d) {
     }
   }
 
-  // Heads-up reminders — exclude ZTL (already in warnings above)
+  // Heads-up reminders — exclude car/traffic content
   let headsUpHtml = '';
+  const carKeywords = /vignette|driving permit|winter tires|right turn|ztl|rental|parking|toll|autobahn|speed|highway|petrol|gas station|diesel|car seat/i;
   const headsUpItems = [];
-  if (d.reminders) d.reminders.forEach(r => headsUpItems.push(r.text));
+  if (d.reminders) d.reminders.forEach(r => { if (!carKeywords.test(r.text)) headsUpItems.push(r.text); });
   if (headsUpItems.length > 0) {
     headsUpHtml = `<button class="s-more-btn mb-3" onclick="toggleSModeSection(this, 'headsup-${d.day}')">⚠️ ${headsUpItems.length} reminder${headsUpItems.length > 1 ? 's' : ''} →</button>
     <div id="s-headsup-${d.day}" class="hidden mb-3 space-y-2">${headsUpItems.map(t => `<div class="rounded-lg p-2.5" style="background:rgba(176,115,88,0.06);border:1px solid rgba(176,115,88,0.12)"><p class="text-xs">⚠️ ${escHtml(t.length > 150 ? t.substring(0, 150) + '...' : t)}</p></div>`).join('')}</div>`;
   }
 
-  // Full details escape hatch
-  let fullDetailsHtml = '';
-  const hasAlts = d.alternatives && d.alternatives.length > 0;
-  const hasMidway = d.midwayStops && d.midwayStops.length > 0;
-  if (hasAlts || hasMidway) {
-    fullDetailsHtml = `<button class="s-more-btn" onclick="state.sMode=false;applySMode();saveState();renderDays();showToast('Showing full details','success')">Full details →</button>`;
-  }
+  const fullDetailsHtml = '';
 
   return `<div data-day-card data-day="${d.day}" id="day-${d.day}" class="s-card">
     <div class="s-card-header">
