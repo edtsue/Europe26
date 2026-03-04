@@ -464,7 +464,7 @@ tailwind.config = {
       </div>
       <div class="flex items-center gap-1">
         <button onclick="toggleSMode()" id="sModeToggle" class="s-mode-toggle" aria-label="Toggle S Mode" title="S Mode">🌸</button>
-        <button onclick="quickCloudPush()" id="cloudSyncBtn" class="tap flex items-center justify-center w-11 h-11 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="Sync to cloud" title="Push to cloud">
+        <button onclick="quickCloudSync()" id="cloudSyncBtn" class="tap flex items-center justify-center w-11 h-11 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="Sync to cloud" title="Sync with cloud">
           <span id="cloudSyncIcon" class="text-lg">☁️</span>
         </button>
         <button onclick="cycleFontSize()" class="tap flex items-center justify-center w-11 h-11 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="Change font size" title="Font size">
@@ -1256,6 +1256,7 @@ function loadState() {
       if (state.autoNightMode === undefined) state.autoNightMode = false;
       if (!state.packingList) state.packingList = initPackingList();
       if (state.sMode === undefined) state.sMode = false;
+      if (state.lastModified === undefined) state.lastModified = Date.now();
     } else {
       state = getDefaultState();
     }
@@ -1268,9 +1269,17 @@ function saveState() {
   clearTimeout(saveTimeout);
   saveTimeout = setTimeout(() => {
     try {
+      state.lastModified = Date.now();
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch (e) { /* quota exceeded fallback */ }
   }, 200);
+}
+
+// Flush saveState immediately (for sync)
+function saveStateNow() {
+  clearTimeout(saveTimeout);
+  state.lastModified = Date.now();
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
 }
 
 // ============================================================
@@ -1341,6 +1350,7 @@ function sanitizeState(s) {
   if (!['EUR','USD'].includes(s.currency)) s.currency = 'EUR';
   if (typeof s.fontSize !== 'number' || s.fontSize < 0 || s.fontSize > 2) s.fontSize = 0;
   if (typeof s.sMode !== 'boolean') s.sMode = false;
+  if (typeof s.lastModified !== 'number') s.lastModified = 0;
   // Sanitize expense amounts
   s.expenses = s.expenses.filter(e => e && typeof e === 'object').map(e => ({
     ...e,
@@ -3549,10 +3559,23 @@ async function syncToCloud() {
   saveSyncToken(token);
   setSyncStatus('Pushing...', false);
 
+  saveStateNow();
   const body = JSON.stringify(state, null, 2);
-  const gistId = getSyncGistId();
+  let gistId = getSyncGistId();
 
   try {
+    // Search for existing gist before creating a duplicate
+    if (!gistId) {
+      const listRes = await fetch('https://api.github.com/gists?per_page=100', {
+        headers: { 'Authorization': 'token ' + token }
+      });
+      if (listRes.ok) {
+        const gists = await listRes.json();
+        const found = gists.find(g => g.files && g.files[GIST_FILENAME]);
+        if (found) { gistId = found.id; localStorage.setItem(SYNC_GIST_KEY, gistId); }
+      }
+    }
+
     if (gistId) {
       // Update existing gist
       const res = await fetch('https://api.github.com/gists/' + gistId, {
@@ -3563,7 +3586,7 @@ async function syncToCloud() {
       if (!res.ok) throw new Error('Update failed: ' + res.status);
       setSyncStatus('Pushed! ' + new Date().toLocaleTimeString(), false);
     } else {
-      // Create new gist
+      // Create new gist (no existing one found)
       const res = await fetch('https://api.github.com/gists', {
         method: 'POST',
         headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
@@ -3625,28 +3648,81 @@ async function syncFromCloud() {
     // Sanitize and merge cloud state into local
     state = sanitizeState(cloudState);
     if (!state.packingList) state.packingList = initPackingList();
-    saveState();
+    if (!state.visitedDests) state.visitedDests = [];
+    saveStateNow();
     applyDarkMode();
     applyFontSize();
+    applySMode();
     setSyncStatus('Pulled! ' + new Date().toLocaleTimeString(), false);
-    switchTab(state.activeTab || 'days');
+    let pullTab = state.activeTab || 'days';
+    if (state.sMode && S_MODE_HIDDEN_TABS.includes(pullTab)) pullTab = 'days';
+    switchTab(pullTab);
   } catch (e) {
     setSyncStatus('Error: ' + e.message, true);
   }
 }
 
-async function quickCloudPush() {
+async function quickCloudSync() {
   const token = getSyncToken();
   if (!token) {
-    showToast('Set up GitHub token in Settings first.', 'info');
+    showToast('Set up sync token in Settings first', 'info');
+    // Temporarily unhide settings if in S MODE
+    if (state.sMode) { state.sMode = false; applySMode(); saveState(); }
     switchTab('settings');
     return;
   }
   const icon = document.getElementById('cloudSyncIcon');
   icon.textContent = '⏳';
   try {
+    // 1. Ensure we have a gist ID (search for existing one if needed)
+    let gistId = getSyncGistId();
+    if (!gistId) {
+      const listRes = await fetch('https://api.github.com/gists?per_page=100', {
+        headers: { 'Authorization': 'token ' + token }
+      });
+      if (listRes.ok) {
+        const gists = await listRes.json();
+        const found = gists.find(g => g.files && g.files[GIST_FILENAME]);
+        if (found) { gistId = found.id; localStorage.setItem(SYNC_GIST_KEY, gistId); }
+      }
+    }
+
+    // 2. Pull cloud state if gist exists
+    let cloudState = null;
+    if (gistId) {
+      const pullRes = await fetch('https://api.github.com/gists/' + gistId, {
+        headers: { 'Authorization': 'token ' + token }
+      });
+      if (pullRes.ok) {
+        const data = await pullRes.json();
+        const content = data.files[GIST_FILENAME] && data.files[GIST_FILENAME].content;
+        if (content) cloudState = JSON.parse(content);
+      }
+    }
+
+    // 3. Decide: use cloud if it's newer, otherwise push local
+    const localTime = state.lastModified || 0;
+    const cloudTime = (cloudState && cloudState.lastModified) || 0;
+    let direction = 'push';
+
+    if (cloudState && cloudTime > localTime) {
+      // Cloud is newer — adopt cloud state
+      direction = 'pull';
+      state = sanitizeState(cloudState);
+      if (!state.packingList) state.packingList = initPackingList();
+      if (!state.visitedDests) state.visitedDests = [];
+      saveStateNow();
+      applyDarkMode();
+      applyFontSize();
+      applySMode();
+      let syncTab = state.activeTab || 'days';
+      if (state.sMode && S_MODE_HIDDEN_TABS.includes(syncTab)) syncTab = 'days';
+      switchTab(syncTab);
+    }
+
+    // 4. Push current state to cloud
+    saveStateNow(); // ensure lastModified is fresh
     const body = JSON.stringify(state, null, 2);
-    const gistId = getSyncGistId();
     if (gistId) {
       const res = await fetch('https://api.github.com/gists/' + gistId, {
         method: 'PATCH',
@@ -3655,6 +3731,7 @@ async function quickCloudPush() {
       });
       if (!res.ok) throw new Error(res.status);
     } else {
+      // No gist exists anywhere — create one
       const res = await fetch('https://api.github.com/gists', {
         method: 'POST',
         headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
@@ -3664,13 +3741,19 @@ async function quickCloudPush() {
       const data = await res.json();
       localStorage.setItem(SYNC_GIST_KEY, data.id);
     }
+
     icon.textContent = '✅';
+    showToast(direction === 'pull' ? 'Synced — updated from cloud' : 'Synced to cloud', 'success');
     setTimeout(() => { icon.textContent = '☁️'; }, 2000);
   } catch (e) {
     icon.textContent = '❌';
+    showToast('Sync failed: ' + e.message, 'error');
     setTimeout(() => { icon.textContent = '☁️'; }, 2000);
   }
 }
+
+// Backwards compat alias
+const quickCloudPush = quickCloudSync;
 
 // ============================================================
 // INITIALIZATION
@@ -3692,6 +3775,12 @@ function init() {
   window.addEventListener('online', function() { document.getElementById('offlineBanner').classList.remove('show'); showToast('Back online!', 'success'); });
   window.addEventListener('offline', function() { document.getElementById('offlineBanner').classList.add('show'); });
   if (!navigator.onLine) document.getElementById('offlineBanner').classList.add('show');
+  // Auto-sync from cloud on load (silent, non-blocking)
+  if (getSyncToken() && getSyncGistId()) {
+    setTimeout(() => {
+      quickCloudSync().catch(() => {}); // silent fail
+    }, 1000);
+  }
 }
 
 // Start the app
