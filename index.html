@@ -423,8 +423,8 @@ tailwind.config = {
   body.s-mode.dark .bottom-bar { background: rgba(28,31,43,0.96); border-color: rgba(255,255,255,0.06); }
 
   /* S MODE day nav pills */
-  body.s-mode .day-nav { background: #FAF8F4 !important; }
-  body.s-mode.dark .day-nav { background: #1C1F2B !important; }
+  body.s-mode .day-nav, body.s-mode .day-nav-wrap { background: #FAF8F4 !important; }
+  body.s-mode.dark .day-nav, body.s-mode.dark .day-nav-wrap { background: #1C1F2B !important; }
 
   /* S MODE dark mode combo */
   body.s-mode.dark { background: #1C1F2B; color: #E8E4DC; }
@@ -508,7 +508,10 @@ tailwind.config = {
     <div id="tab-days" class="tab-panel active" role="tabpanel" aria-label="Days">
       <div class="max-w-lg mx-auto px-4 pt-2 pb-4">
         <!-- Day Nav -->
-        <div class="day-nav flex gap-2 py-3 pb-4 sticky z-40 bg-gray-50 dark:bg-gray-900 md-sticky-top" id="dayNav" style="top: var(--header-h, 48px)"></div>
+        <div class="day-nav-wrap flex items-center gap-2 py-3 pb-4 sticky z-40 bg-gray-50 dark:bg-gray-900 md-sticky-top" style="top: var(--header-h, 48px)">
+          <div class="day-nav flex gap-2 overflow-x-auto flex-1" id="dayNav"></div>
+          <button onclick="toggleAllDays()" id="collapseAllBtn" class="tap flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition" aria-label="Collapse/Expand all days" title="Collapse/Expand all"></button>
+        </div>
         <!-- Day Cards -->
         <div id="dayCards" class="flex flex-col gap-4 mt-1"></div>
       </div>
@@ -2485,8 +2488,9 @@ function renderDays() {
   const cards = document.getElementById('dayCards');
   cards.innerHTML = DAYS.map(d => renderCollapsibleDay(d)).join('');
 
-  // Highlight current day pill immediately
+  // Highlight current day pill + set collapse button state
   highlightDayNav(currentDay);
+  updateCollapseBtn();
 
   // Auto-scroll to current day, then start observer after scroll settles
   setTimeout(() => {
@@ -2717,6 +2721,42 @@ function toggleDay(dayNum) {
     }
   }
   if (chev) chev.classList.toggle('open');
+  updateCollapseBtn();
+}
+
+function updateCollapseBtn() {
+  const btn = document.getElementById('collapseAllBtn');
+  if (!btn) return;
+  const allExpanded = state.expandedDays.length >= DAYS.length;
+  btn.innerHTML = allExpanded
+    ? '<span class="text-sm">⬆️</span>'
+    : '<span class="text-sm">⬇️</span>';
+  btn.title = allExpanded ? 'Collapse all' : 'Expand all';
+}
+
+function toggleAllDays() {
+  const allExpanded = state.expandedDays.length >= DAYS.length;
+  if (allExpanded) {
+    // Collapse all
+    state.expandedDays = [];
+    DAYS.forEach(d => {
+      const body = document.getElementById('dayBody-' + d.day);
+      const chev = document.getElementById('chev-' + d.day);
+      if (body) body.classList.add('hidden');
+      if (chev) chev.classList.remove('open');
+    });
+  } else {
+    // Expand all
+    state.expandedDays = DAYS.map(d => d.day);
+    DAYS.forEach(d => {
+      const body = document.getElementById('dayBody-' + d.day);
+      const chev = document.getElementById('chev-' + d.day);
+      if (body) body.classList.remove('hidden');
+      if (chev) chev.classList.add('open');
+    });
+  }
+  saveState();
+  updateCollapseBtn();
 }
 
 function scrollToDay(dayNum) {
