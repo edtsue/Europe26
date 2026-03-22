@@ -1264,11 +1264,12 @@ function loadState() {
   }
 }
 
-function saveState() {
+function saveState(bumpModified) {
+  if (bumpModified === undefined) bumpModified = true;
   clearTimeout(saveTimeout);
   saveTimeout = setTimeout(() => {
     try {
-      state.lastModified = Date.now();
+      if (bumpModified) state.lastModified = Date.now();
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch (e) { /* quota exceeded fallback */ }
   }, 200);
@@ -2118,7 +2119,7 @@ function isDesktop() {
 
 function switchTab(tab) {
   state.activeTab = tab;
-  saveState();
+  saveState(false);
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
   // S MODE accent color
@@ -2707,7 +2708,7 @@ function toggleDay(dayNum) {
   } else {
     state.expandedDays.push(dayNum);
   }
-  saveState();
+  saveState(false);
   const body = document.getElementById('dayBody-' + dayNum);
   const chev = document.getElementById('chev-' + dayNum);
   if (body) {
