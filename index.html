@@ -3627,7 +3627,7 @@ function setSyncStatus(msg, isError) {
 
 async function syncToCloud() {
   const token = document.getElementById('syncToken').value.trim();
-  if (!token) { setSyncStatus('Please enter your GitHub token', true); return; }
+  if (!token) { showToast('Enter your GitHub token first', 'error'); return; }
   saveSyncToken(token);
   setSyncStatus('Pushing...', false);
 
@@ -3641,24 +3641,22 @@ async function syncToCloud() {
       const listRes = await fetch('https://api.github.com/gists?per_page=100', {
         headers: { 'Authorization': 'token ' + token }
       });
-      if (listRes.ok) {
-        const gists = await listRes.json();
-        const found = gists.find(g => g.files && g.files[GIST_FILENAME]);
-        if (found) { gistId = found.id; localStorage.setItem(SYNC_GIST_KEY, gistId); }
-      }
+      if (!listRes.ok) throw new Error('Auth failed: ' + listRes.status + ' — check your token');
+      const gists = await listRes.json();
+      const found = gists.find(g => g.files && g.files[GIST_FILENAME]);
+      if (found) { gistId = found.id; localStorage.setItem(SYNC_GIST_KEY, gistId); }
     }
 
     if (gistId) {
-      // Update existing gist
       const res = await fetch('https://api.github.com/gists/' + gistId, {
         method: 'PATCH',
         headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
         body: JSON.stringify({ files: { [GIST_FILENAME]: { content: body } } })
       });
-      if (!res.ok) throw new Error('Update failed: ' + res.status);
-      setSyncStatus('Pushed! ' + new Date().toLocaleTimeString(), false);
+      if (!res.ok) throw new Error('Push failed: ' + res.status);
+      renderSettings();
+      showToast('✅ Pushed to cloud!', 'success');
     } else {
-      // Create new gist (no existing one found)
       const res = await fetch('https://api.github.com/gists', {
         method: 'POST',
         headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
@@ -3671,39 +3669,41 @@ async function syncToCloud() {
       if (!res.ok) throw new Error('Create failed: ' + res.status);
       const data = await res.json();
       localStorage.setItem(SYNC_GIST_KEY, data.id);
-      setSyncStatus('Synced! Cloud storage created.', false);
+      renderSettings();
+      showToast('✅ Cloud sync created!', 'success');
     }
-    renderSettings();
   } catch (e) {
+    showToast('Sync error: ' + e.message, 'error');
     setSyncStatus('Error: ' + e.message, true);
   }
 }
 
 async function syncFromCloud() {
   const token = document.getElementById('syncToken').value.trim();
-  if (!token) { setSyncStatus('Please enter your GitHub token', true); return; }
+  if (!token) { showToast('Enter your GitHub token first', 'error'); return; }
   saveSyncToken(token);
 
   const gistId = getSyncGistId();
   if (!gistId) {
-    // Try to find existing gist by searching user's gists
-    setSyncStatus('Searching for existing sync...', false);
+    setSyncStatus('Searching...', false);
     try {
       const res = await fetch('https://api.github.com/gists?per_page=100', {
         headers: { 'Authorization': 'token ' + token }
       });
-      if (!res.ok) throw new Error('Failed to list gists: ' + res.status);
+      if (!res.ok) throw new Error('Auth failed: ' + res.status + ' — check your token');
       const gists = await res.json();
       const found = gists.find(g => g.files && g.files[GIST_FILENAME]);
       if (found) {
         localStorage.setItem(SYNC_GIST_KEY, found.id);
-        return syncFromCloud(); // retry with found ID
+        return syncFromCloud();
       } else {
-        setSyncStatus('No cloud data found. Push first to create it.', true);
+        showToast('No cloud data found — push from mobile first', 'error');
+        setSyncStatus('', false);
         return;
       }
     } catch (e) {
-      setSyncStatus('Error: ' + e.message, true);
+      showToast('Sync error: ' + e.message, 'error');
+      setSyncStatus('', false);
       return;
     }
   }
@@ -3717,7 +3717,6 @@ async function syncFromCloud() {
     const data = await res.json();
     const content = data.files[GIST_FILENAME].content;
     const cloudState = JSON.parse(content);
-    // Sanitize and merge cloud state into local
     state = sanitizeState(cloudState);
     if (!state.packingList) state.packingList = initPackingList();
     if (!state.visitedDests) state.visitedDests = [];
@@ -3725,12 +3724,14 @@ async function syncFromCloud() {
     applyDarkMode();
     applyFontSize();
     applySMode();
-    setSyncStatus('Pulled! ' + new Date().toLocaleTimeString(), false);
+    setSyncStatus('', false);
+    showToast('✅ Pulled from cloud!', 'success');
     let pullTab = state.activeTab || 'days';
     if (state.sMode && S_MODE_HIDDEN_TABS.includes(pullTab)) pullTab = 'days';
     switchTab(pullTab);
   } catch (e) {
-    setSyncStatus('Error: ' + e.message, true);
+    showToast('Sync error: ' + e.message, 'error');
+    setSyncStatus('', false);
   }
 }
 
@@ -3848,7 +3849,8 @@ function init() {
   window.addEventListener('offline', function() { document.getElementById('offlineBanner').classList.add('show'); });
   if (!navigator.onLine) document.getElementById('offlineBanner').classList.add('show');
   // Auto-sync from cloud on load (silent, non-blocking)
-  if (getSyncToken() && getSyncGistId()) {
+  // Only requires a token — gist ID is discovered automatically if not cached locally
+  if (getSyncToken()) {
     setTimeout(() => {
       quickCloudSync().catch(() => {}); // silent fail
     }, 1000);
