@@ -100,7 +100,7 @@ A dedicated space for trip notes, packing checklists, and expense tracking. Thre
 
 **📋 Pre-Trip To-Do:**
 - [ ] Book Salzburg hotel
-- [ ] Book Val d'Orcia hotel
+- [ ] Book Dolomites hotel
 - [ ] Book Verona hotel
 - [ ] Book Florence airport hotel
 - [ ] Reserve rental car (Munich pickup → Florence drop-off)
@@ -244,9 +244,9 @@ This is a phone app used one-handed in European cities and moving cars.
 ## FULL ITINERARY DATA
 
 ### Hero Section
-- Title: **"Alps to Tuscany"**
+- Title: **"Alps to Dolomites"**
 - Subtitle: "Family Trip Hub"
-- Route: Munich → Salzburg → Grossarl → Val d'Orcia → Verona → Florence
+- Route: Munich → Salzburg → Grossarl → Dolomites → Verona → Florence
 - Dates: March 23 – April 2
 - Stats: 11 Days · 5 Hotels · 2 Countries
 - Animated route: 🏔 → 🌻 → 🏛 → ✈️ (gentle float animation)
@@ -333,34 +333,36 @@ This is a phone app used one-handed in European cities and moving cars.
 
 ---
 
-### DAY 5 — Mar 27 (Fri) 🚗 — "Alps to Tuscany" ⭐ Big Drive Day
+### DAY 5 — Mar 27 (Fri) 🚗 — "Alps to Dolomites" ⭐ Big Drive Day
 - **Phase**: transition
-- ☀️ AM: Scenic 5 hr drive south → Coffee stop in Innsbruck + Brenner Pass into Italy
-- 🌙 PM: Arrive Val d'Orcia — Tuscan countryside welcome!
-- 🛏 Sleep: Val d'Orcia (1/3) (🌻)
-- 🚗 Parking: ✅ On-site estate parking
-- 🚦 ZTL: ✅ Stay outside towns — no issues
-- 👨‍👩‍👧‍👦 Family Tip: "Big drive day! Pack snacks, download movies, bring coloring books. Innsbruck coffee stop breaks it up. Brenner Pass is exciting — you're crossing the Alps! Let kids spot the Italy border signs."
+- ☀️ AM: Scenic 3 hr drive south → Coffee stop in Innsbruck + Brenner Pass into Italy
+- 🌙 PM: Arrive Dolomites — dramatic rocky spires, alpine meadows, and mountain villages!
+- 🛏 Sleep: Dolomites (1/3) (🏔️)
+- 🚗 Parking: ✅ Free hotel/resort parking
+- 🚦 ZTL: ✅ No ZTL in mountain villages
+- 👨‍👩‍👧‍👦 Family Tip: "Much shorter drive than Tuscany! Innsbruck coffee stop breaks it up perfectly. Brenner Pass is exciting — you're crossing the Alps! Once in the Dolomites, the scenery is jaw-dropping. Kids will love spotting the jagged rock towers."
 
 **Drive Route:**
 - Grossarl → Innsbruck (~2 hrs): Scenic motorway through alpine valleys
 - [Innsbruck Old Town](https://www.innsbruck.info/en/) — Quick coffee & leg stretch. Golden Roof fun to spot.
 - Innsbruck → Brenner Pass (~30 min): Cross into Italy!
-- Brenner → Val d'Orcia (~4 hrs): A22 south through Trentino, A1 toward Siena
-- **Total: ~5 hours driving + stops**
+- Brenner → Bolzano/Bressanone (A22, ~30 min): Gateway to the Dolomites
+- Bressanone → Val Gardena/Alta Badia (~45 min): Stunning mountain road into the heart of the Dolomites
+- **Total: ~3.5–4 hours driving + stops**
 
 **Destinations:**
 - ⭐ [Innsbruck Old Town](https://www.innsbruck.info/en/) — Quick coffee & leg stretch. Golden Roof (Goldenes Dachl). Mountains tower over the city!
-- [Val d'Orcia UNESCO Site](https://www.italia.it/en/tuscany/things-to-do/val-orcia) — Rolling hills, cypress trees, medieval villages.
+- ⭐ [Val Gardena (Ortisei)](https://www.valgardena.it/en/) — UNESCO Dolomites valley. Car-free village center, ski lifts, incredible hiking. Ladin culture and cuisine.
+- [Alpe di Siusi / Seiser Alm](https://www.seiseralm.it/en/) — Europe's largest alpine meadow at 2,000m — dramatic Dolomite spires as backdrop.
 
 **Hotels:**
 | Name | Why | Parking | Price | Family Perk |
 |------|-----|---------|-------|-------------|
-| [Rosewood Castiglion del Bosco](https://www.rosewoodhotels.com/en/castiglion-del-bosco) | Ultra-luxury Tuscan resort. Vineyards, spa, golf, stunning suites. | Free estate parking | €€€€€ | Kids programs, pool, cooking classes |
-| [Adler Thermae Spa Resort](https://www.adler-thermae.com/en/) | Luxury thermal spa in Bagno Vignoni. Central Val d'Orcia. | Free on-site | €€€€ | Thermal pools, kids activities |
-| [Tenuta Santo Pietro](https://www.tenutasantopietro.com/) | Family-friendly luxury agriturismo. Cooking classes, truffle hunting! | Free on-site | €€€ | Cooking classes, farm animals, truffle hunts |
-| [Castello Banfi – Il Borgo](https://www.castellobanfiwineresort.it/en/) | Relais & Chateaux wine estate near Montalcino. Historic castle. | Estate parking | €€€€ | Castle tours, vineyard walks |
-| [L'Olmo](https://www.olmopienza.it/) | Boutique 4-star just outside Pienza, only 8 rooms. Pool, rolling fields. | Free on-site | €€€ | Intimate, quiet, pool |
+| [Hotel Rosa Alpina](https://www.rosalpina.it/en/) | Legendary 5-star in San Cassiano, Alta Badia. Michelin-star dining, ski-in/ski-out. | Free on-site | €€€€€ | Michelin dining, ski-in/out, stunning views |
+| [Alpenroyal Grand Hotel](https://www.alpenroyal.com/en/) | Luxury 5-star in Val Gardena/Selva. Adults spa, family pools, ski-in access. | Free garage | €€€€ | Pools, ski access, panoramic views |
+| [Hotel Ciasa Salares](https://www.ciasasalares.it/en/) | Boutique 5-star in Alta Badia. Known for stunning breakfasts and renowned wine cellar. | Free on-site | €€€€ | Legendary breakfast, wine cellar, spa |
+| [Cristallo Hotel Cortina](https://www.cristallo.it/en/) | Iconic grand hotel in Cortina d'Ampezzo. Pool, spa, ski shuttle, mountain views. | Free parking | €€€€€ | Pool, spa, ski shuttle, Cortina glamour |
+| [Hotel Tyrol Selva](https://www.hoteltyrol.com/en/) | Family-friendly 4-star in Selva di Val Gardena. Indoor pool, kids' playroom, ski access. | Free garage | €€€ | Kids playroom, indoor pool, ski access |
 
 ---
 
@@ -368,7 +370,7 @@ This is a phone app used one-handed in European cities and moving cars.
 - **Phase**: italy
 - ☀️ AM: Pienza — cheese tasting, Renaissance streets, panoramic views
 - 🌙 PM: Montepulciano — tower climb + vineyard dinner
-- 🛏 Sleep: Val d'Orcia (2/3) (🌻)
+- 🛏 Sleep: Dolomites (2/3) (🏔️)
 - 🚗 Parking: ⚠️ Park OUTSIDE town walls
 - 🚦 ZTL: ⚠️ Do NOT drive into historic town centers!
 - 👨‍👩‍👧‍👦 Family Tip: "Pienza's pecorino cheese shops have free samples everywhere! In Montepulciano, climb the Palazzo Comunale tower for a 360° view. Streets named 'Love', 'Kiss' and 'Good Luck'!"
@@ -384,9 +386,9 @@ This is a phone app used one-handed in European cities and moving cars.
 
 ### DAY 7 — Mar 29 (Sun) 🇮🇹 — "Tuscan Slow Day"
 - **Phase**: italy
-- ☀️ AM: Farm visit or countryside drive — gelato stops mandatory
-- 🌙 PM: Sunset dinner with Val d'Orcia views
-- 🛏 Sleep: Val d'Orcia (3/3) (🌻)
+- ☀️ AM: Cable car up to Alpe di Siusi — Europe's largest alpine meadow with Dolomite panorama
+- 🌙 PM: Sunset dinner with Dolomite views — magical golden hour on the peaks
+- 🛏 Sleep: Dolomites (3/3) (🏔️)
 - 🚗 Parking: ✅ No driving needed from estate
 - 🚦 ZTL: ✅ No issues from countryside
 - 👨‍👩‍👧‍👦 Family Tip: "Visit Podere il Casale — kids can meet 1,000+ sheep and watch pecorino cheese being made! Bagno Vignoni has a Roman thermal pool in the town square — surreal."
@@ -402,7 +404,7 @@ This is a phone app used one-handed in European cities and moving cars.
 
 ### DAY 8 — Mar 30 (Mon) 🇮🇹 — "Verona — Romeo & Juliet City"
 - **Phase**: italy
-- ☀️ AM: 2.5–3 hr drive Val d'Orcia → Verona
+- ☀️ AM: ~2.5 hr drive Dolomites → Verona
 - 🌙 PM: Arena di Verona (older than the Colosseum!) + Piazza evening stroll
 - 🛏 Sleep: Verona — OUTSIDE ZTL (🏛)
 - 🚗 Parking: ⚠️ Hotel garage OUTSIDE old town — critical!
@@ -452,7 +454,14 @@ This is a phone app used one-handed in European cities and moving cars.
 - 🛏 Sleep: Florence Airport Hotel (✈️)
 - 🚗 Parking: ✅ Hotel parking
 - 🚦 ZTL: ✅ No ZTL
-- 👨‍👩‍👧‍👦 Family Tip: "This is YOUR day. Let kids swim, do laundry, pack calmly. One last pizza. Set out tomorrow's travel clothes tonight!"
+- 👨‍👩‍👧‍👦 Family Tip: "This is YOUR day. Let kids swim, do laundry, pack calmly. One last pizza. Set out tomorrow's travel clothes tonight! Fill up the rental car with fuel near the hotel — don't wait until 4 AM tomorrow!"
+
+**🚕 Florence Taxi Info:**
+- **055 4390** — SO.CO.TA (main Florence radio taxi)
+- **055 4242** — CO.TA.FI (main Florence radio taxi)
+- **App: itTaxi** — Official Italy taxi app, covers Florence. Book in advance!
+- **App: FREE NOW** — Works in Florence, formerly myTaxi
+- White cabs only — never unlicensed drivers. Meter starts at €3.30 daytime / €6.60 nights & holidays. Airport surcharge ~€2.50.
 
 ---
 
@@ -461,7 +470,13 @@ This is a phone app used one-handed in European cities and moving cars.
 - ✈️ **Flights** (Confirmation: ZGD5EE):
   - AF 1267: Florence (FLR) → Paris (CDG) — Depart 6:50 AM CEST → Arrive 8:40 AM CEST
   - AF 0062: Paris (CDG) → New York (EWR) — Depart 12:15 PM CEST → Arrive 2:35 PM EDT
-- ☀️ AM: Return rental car → AF 1267 departs 6:50 AM → Paris CDG → AF 0062 departs 12:15 PM → Land Newark 2:35 PM
+- ☀️ AM: Wake 3:30 AM → Leave hotel 4:00 AM → Return Sixt at FLR P3 car park → Walk ~5 min to Departures → Check in by 4:30 AM → AF 1267 departs 6:50 AM → Paris CDG → AF 0062 departs 12:15 PM → Land Newark 2:35 PM
+
+**🚗 Sixt Car Return at FLR:**
+- Follow "Car Rental Return / Autonoleggio" signs → P3 multi-story car park (ground level Sixt bays)
+- If desk closed at 4 AM: use KEY DROP BOX outside Sixt counter — photo car + odometer first
+- Walk from P3 to Departures terminal: ~3–5 min covered walkway. No shuttle needed.
+- ⏱ Timeline: Leave hotel 4:00 AM → Car returned 4:20 AM → Check-in 4:30 AM → Security 5:00 AM → Gate 5:30 AM → Departs 6:50 AM
 - 🌙 PM: —
 - 🛏 Sleep: Home sweet home (🏠)
 - 🚗 Parking: ✅ Return car at airport
